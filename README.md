@@ -1,7 +1,7 @@
 # Liste de Tâches pour le Projet de Forum
 
 ## 1. Inscription et Connexion
-- [ ] Créer un formulaire d'inscription avec les champs suivants :
+- [x] Créer un formulaire d'inscription avec les champs suivants :
   - Surnom
   - Âge
   - Genre
@@ -33,7 +33,7 @@
 - [ ] Assurer la réception en temps réel des messages via WebSockets.
 
 ## 4. Base de Données (SQLite)
-- [ ] Concevoir le schéma de la base de données pour stocker les utilisateurs, publications, commentaires et messages privés.
+- [x] Concevoir le schéma de la base de données pour stocker les utilisateurs, publications, commentaires et messages privés.
 - [ ] Implémenter les opérations CRUD (Créer, Lire, Mettre à jour, Supprimer) pour chaque entité.
 
 ## 5. Backend (Golang)
