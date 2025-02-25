@@ -8,6 +8,7 @@ CREATE TABLE "USERS" (
 	"Email"	TEXT NOT NULL UNIQUE,
 	"Password"	TEXT NOT NULL,
 	"DateRegister"	TEXT NOT NULL
+	"Status" TEXT DEFAULT 'offline'
 );
 
 CREATE TABLE "POSTS" (
