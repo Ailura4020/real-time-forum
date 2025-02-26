@@ -61,8 +61,10 @@ func CloseDB() {
 	}
 }
 
-func InsertUser(nickname, age int, gender string, firstName, lastName, email, password string) error {
-
+func InsertUser(nickname string, age int, gender string, firstName, lastName, email, password string) error {
+	_, err := DB.Exec("INSERT INTO USERS (Nickname, Age, Gender, FirstName, LastName, Email, Password, DateRegister) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))",
+		nickname, age, gender, firstName, lastName, email, password)
+	return err
 }
 
 // fonction qui vérifie si la colonne Status existe et l'ajoute si nécessaire

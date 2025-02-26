@@ -7,6 +7,16 @@
     <title>Forum</title>
 </head>
 <body>
+    <section id="login">
+        <h1>Login</h1>
+        <form action="/login" method="POST">
+            <label for="identifier">Nickname or Email:</label>
+            <input type="text" id="identifier" name="identifier" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+    </section>
     <section id="register">
 <form action="/register" method="POST">
     <label for="Nickname">Nickname :</label>
@@ -18,7 +28,7 @@
         <option value="Select your gender">Select your gender</option>
         <option value="masculin">Male</option>
         <option value="feminin">Female</option>
-        <option value="non-binaire">non-binary</option>
+        <option value="non-binaire">Non-binary</option>
     </select>
     <label for="First_Name">First Name :</label>
     <input type="text" id="first_name" name="first_name" required>
