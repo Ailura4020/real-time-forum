@@ -1,0 +1,67 @@
+# Go (Golang) specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+*.cgo1.go
+*.cgo2.go
+*.a
+*.o
+*.obj
+*.s
+*.swp
+*.tmp
+*.log
+vendor/
+bin/
+build/
+coverage/
+*.cover
+*.cov
+*.out
+*.zip
+
+# Go modules
+#go.sum
+#go.mod
+
+# Node.js / JavaScript specific
+node_modules/
+dist/
+build/
+coverage/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# IDEs and editors
+.idea/
+**/.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+*.iml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+._*
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Project
+/server/db/forum.db
