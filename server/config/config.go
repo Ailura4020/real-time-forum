@@ -14,11 +14,10 @@ func SetJWTSecret(secret string) {
 	jwtSecret = []byte(secret)
 }
 
-//
-//// GetJWTSecret returns the JWT secret
-//func GetJWTSecret() []byte {
-//	return jwtSecret
-//}
+// // GetJWTSecret returns the JWT secret
+func GetJWTSecret() []byte {
+	return jwtSecret
+}
 
 func LoadEnv(filename string) error {
 	file, err := os.Open(filename)

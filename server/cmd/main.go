@@ -87,8 +87,8 @@ func main() {
 	//mux.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(initDB)))
 
 	// todo: API endpoints (new method)
-	//router.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(initDB))).Methods("POST")
-	//router.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(initDB))).Methods("POST")
+	router.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(initDB), errorLogger)).Methods("POST")
+	router.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(initDB), errorLogger)).Methods("POST")
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.GetPostsHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts/{id}", middleware.ErrorHandler(handler.GetPostHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.CreatePostHandler(initDB))).Methods("POST")
@@ -137,6 +137,6 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 		ErrorLog:       errorLogger,
 	}
-	fmt.Printf("Server running on http://localhost%s\n", srv.Addr)
+	fmt.Printf("Server running on http://localhost%s\n", srv.Addr) // valid only on local
 	log.Fatal(srv.ListenAndServe())
 }
