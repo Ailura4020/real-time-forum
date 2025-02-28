@@ -140,13 +140,3 @@ func main() {
 	fmt.Printf("Server running on http://localhost%s\n", srv.Addr)
 	log.Fatal(srv.ListenAndServe())
 }
-
-// middleware orders (recommended order)
-//Logging Middleware (optional, at the start)
-//CORS Middleware
-//Rate Limiter Middleware
-//Authentication Middleware
-//Authorization Middleware (if applicable)
-//Main Application Handler
-//Error Handling Middleware (at the end)
-// todo, refactor the middlewares order
