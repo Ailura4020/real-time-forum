@@ -1,58 +1,132 @@
-# Liste de Tâches pour le Projet de Forum
+# Real-Time Forum
 
-## 1. Inscription et Connexion
-- [x] Créer un formulaire d'inscription avec les champs suivants :
-  - Surnom
-  - Âge
-  - Genre
-  - Prénom
-  - Nom de famille
-  - E-mail
-  - Mot de passe
-- [ ] Implémenter la logique de validation des données du formulaire d'inscription.
-- [ ] Créer un système de connexion permettant l'authentification via pseudo ou e-mail et mot de passe.
-- [ ] Implémenter la déconnexion accessible depuis n'importe quelle page.
-- [ ] Gérer les sessions utilisateurs pour maintenir l'état de connexion.
+## Description
 
-## 2. Articles et Commentaires
-- [ ] Créer une interface pour permettre aux utilisateurs de créer des publications.
-- [ ] Implémenter la fonctionnalité de catégorisation des publications.
-- [ ] Afficher les publications dans un flux sur la page d'accueil.
-- [ ] Permettre aux utilisateurs de commenter les publications.
-- [ ] Afficher les commentaires uniquement lorsque l'utilisateur clique sur une publication.
+* Create a new forum with registration, login, post creation, commenting, and private messaging features
+* Use SQLite for data storage, Golang for backend and WebSockets, JavaScript for frontend events and client WebSockets, HTML for page organization, and CSS for styling
+* Implement a single-page application with JavaScript handling page changes
+* Ensure real-time functionality for private messages using WebSockets
 
-## 3. Messages Privés
-- [ ] Créer une section de chat pour les messages privés.
-- [ ] Afficher une liste d'utilisateurs en ligne/hors ligne, triée par dernier message ou par ordre alphabétique pour les nouveaux utilisateurs.
-- [ ] Permettre l'envoi de messages privés aux utilisateurs en ligne.
-- [ ] Implémenter une section pour afficher les messages passés d'une conversation.
-- [ ] Charger les 10 derniers messages d'une conversation et permettre le chargement de 10 messages supplémentaires lors du défilement.
-- [ ] Formater les messages pour inclure :
-  - Date d'envoi
-  - Nom d'utilisateur de l'expéditeur
-- [ ] Assurer la réception en temps réel des messages via WebSockets.
+## Table of Contents (Optional)
 
-## 4. Base de Données (SQLite)
-- [x] Concevoir le schéma de la base de données pour stocker les utilisateurs, publications, commentaires et messages privés.
-- [ ] Implémenter les opérations CRUD (Créer, Lire, Mettre à jour, Supprimer) pour chaque entité.
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [API Documentation](#api-documentation)
+- [Licence](#license)
+- [Acknowledgments](#acknowledgments)
 
-## 5. Backend (Golang)
-- [ ] Configurer le serveur Golang pour gérer les requêtes HTTP.
-- [ ] Implémenter les WebSockets pour la communication en temps réel.
-- [ ] Gérer les routes pour l'inscription, la connexion, la création de publications, les commentaires et les messages privés.
+## Installation
 
-## 6. Frontend (HTML, CSS, JavaScript)
-- [ ] Créer un fichier HTML unique pour l'application.
-- [ ] Organiser les éléments de la page avec HTML.
-- [ ] Styliser les éléments de la page avec CSS.
-- [ ] Gérer les événements frontend avec JavaScript, y compris la navigation entre les différentes sections de l'application.
-- [ ] Implémenter la logique pour gérer les WebSockets côté client.
+## Usage
 
-## 7. Tests et Débogage
-- [ ] Tester chaque fonctionnalité pour s'assurer qu'elle fonctionne comme prévu.
-- [ ] Déboguer les problèmes rencontrés lors des tests.
-- [ ] Effectuer des tests de performance pour s'assurer que l'application peut gérer plusieurs utilisateurs simultanément.
+## Configuration
 
-## 8. Documentation
-- [ ] Documenter le code et les fonctionnalités de l'application.
-- [ ] Rédiger un guide d'utilisation pour les utilisateurs finaux.
+- Basic commands or features.
+- Examples of how to run the application.
+- Screenshots or GIFs to illustrate usage (if applicable).
+
+## API Documentation
+
+- Endpoint URLs.
+- Request methods (GET, POST, etc.).
+- Request and response formats.
+- Example requests and responses.
+
+## License
+
+## Acknowledgments
+
+***
+
+*work in progress*
+
+## Techno
+
+- Database Layer: SQLite
+- Business Logic Layer: Golang
+- ~~API Layer: RESTful API using Golang and Gorilla WebSocket~~
+- Frontend Layer: HTML, CSS, and JavaScript
+- WebSocket Layer: Gorilla WebSocket and JavaScript WebSocket API
+  (optional)
+- ~~Caching Layer: Redis or Memcached~~
+
+## Folder Structure
+
+### BACK
+
+```
+/real-time-forum
+│
+├── /cmd
+│   └── main.go              # Entry point of the application
+│
+├── /config                  # Configuration handling
+│   └── config.go            # Load and manage configuration
+├── /db
+│   ├── db.go                # Code for database connection and operations
+│   ├── forum.db             # The actual database file (SQLite)
+│   └── schema.sql           # Defines the structure of the database (tables, columns, etc.)
+│
+├── /models                   # Data models (structs)
+│   └── user.go              # Example model for a user
+│   └── post.go              # Example model for a post
+│
+├── /repository               # Database access
+│   └── user_repository.go    # User data access methods
+│   └── post_repository.go    # Post data access methods
+│
+├── /service                  # Business logic
+│   └── user_service.go       # User-related business logic
+│   └── post_service.go       # Post-related business logic
+│
+├── /handler                  # HTTP handlers (controllers)
+│   └── user_handler.go       # User-related HTTP handlers
+│   └── post_handler.go       # Post-related HTTP handlers
+│
+├── /middleware               # Middleware functions
+│   └── auth_middleware.go    # Example authentication middleware
+│
+├── /api                      # API route definitions
+│   └── routes.go            # Define API routes
+│
+├── /utils                    # Utility functions
+│   └── helpers.go           # Helper functions
+│
+├── go.mod                    # Go module file
+└── go.sum                    # Go module dependencies
+```
+
+### Explanation of Each Folder
+
+- **`/cmd`**: Contains the main application entry point. This is where your application starts.
+- **`/config`**: A simple directory for managing configuration settings, such as loading environment variables or configuration files.
+- **`/db`**: This directory is related to database management.
+- **`/models`**: Define your data structures here. For a forum, you might have models for users, posts, comments, etc.
+- **`/repository`**: This is where you handle data access. You can create separate files for different entities (e.g., users, posts) to keep things organized.
+- **`/service`**: Contains the business logic for your application. This is where you implement the core functionality related to users and posts.
+- **`/handler`**: HTTP handlers that respond to incoming requests. Each handler file can correspond to a specific resource (e.g., user-related handlers, post-related handlers).
+- **`/middleware`**: Custom middleware functions for handling requests, such as authentication or logging.
+- ~~**`/api`**: This directory contains the API route definitions. You can define your routes in a single file for simplicity.~~ ? utility?
+- **`/utils`**: Utility functions that can be reused across the application.
+
+CMD
+
+```bash
+mkdir -p ./{cmd,config,models,repository,service,handler,middleware,api,utils} && touch ./{cmd/main.go,config/config.go,models/{user.go,post.go},repository/{user_repository.go,post_repository.go},service/{user_service.go,post_service.go},handler/{user_handler.go,post_handler.go},middleware/auth_middleware.go,api/routes.go,utils/helpers.go}
+mkdir -p my-forum-api/db/migrations && touch my-forum-api/db/schema.sql
+```
+
+### FRONT
+
+todo
+
+## Lexical
+
+- **Cross-Origin Resource Sharing (CORS)**: is a security feature implemented in web browsers that allows or restricts web applications running at one origin (domain) to make requests to resources on a different origin. It uses HTTP headers to inform the browser whether to allow or deny the request based on the origin of the request. CORS is essential for enabling secure interactions between different web applications while preventing unauthorized access to resources.
+- **WebSocket**: A protocol for bidirectional, real-time communication between a client and a server over the web.
+- **Concurrent connections**: Multiple clients connected to a server simultaneously.
+- **Message persistence**: Storing messages in a data store to ensure they are not lost in case of a connection drop or server restart.
+- **Concurrency**: To handle multiple clients and messages concurrently, you'll need to use Go's concurrency features, such as goroutines and channels. You can use channels to communicate between goroutines and handle messages.
+- **Message broadcasting**: To broadcast messages to all connected clients, you'll need to maintain a list of active connections and send messages to each client. You can use a map to store active connections and iterate over it to send messages.
+- **Message queue**: To handle messages efficiently, you can use a message queue to store incoming messages and process them in a separate goroutine.
