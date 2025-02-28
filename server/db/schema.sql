@@ -1,3 +1,4 @@
+-- called schema because it defines the structure of the database (the blueprint of the database.)
 CREATE TABLE IF NOT EXISTS USERS
 (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
