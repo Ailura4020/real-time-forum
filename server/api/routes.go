@@ -2,11 +2,12 @@ package api
 
 import (
 	"database/sql"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"real-time-forum/handler"
 	middleware "real-time-forum/middlware"
+
+	"github.com/gorilla/mux"
 )
 
 func RegisterRoutes(router *mux.Router, db *sql.DB, errorLogger *log.Logger) {
@@ -20,6 +21,7 @@ func RegisterRoutes(router *mux.Router, db *sql.DB, errorLogger *log.Logger) {
 	// todo: API endpoints (new method)
 	router.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(db), errorLogger)).Methods("POST")
 	router.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(db), errorLogger)).Methods("POST")
+	router.HandleFunc("/ws", handler.HandleWebSocket)
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.GetPostsHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts/{id}", middleware.ErrorHandler(handler.GetPostHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.CreatePostHandler(initDB))).Methods("POST")
