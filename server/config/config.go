@@ -6,19 +6,19 @@ import (
 	"strings"
 )
 
-// JWT secret key (old method, in os ENV's)
-var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+var jwtSecret []byte
 
 // SetJWTSecret sets the JWT secret from an environment variable
 func SetJWTSecret(secret string) {
 	jwtSecret = []byte(secret)
 }
 
-// // GetJWTSecret returns the JWT secret
+// GetJWTSecret returns the JWT secret
 func GetJWTSecret() []byte {
 	return jwtSecret
 }
 
+// LoadEnv load and read the .env file
 func LoadEnv(filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {
