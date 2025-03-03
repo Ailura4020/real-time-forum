@@ -13,7 +13,7 @@ import (
 	"real-time-forum/config"
 	"real-time-forum/db"
 	"real-time-forum/handler"
-	"real-time-forum/middlware"
+	middleware "real-time-forum/middlware"
 )
 
 // AppConfig holds the application configuration
@@ -25,7 +25,7 @@ type appConfig struct {
 // initConfig initializes the application configuration from the .env file (/root)
 func initConfig() (*appConfig, error) {
 	// Load environment variables from .env file
-	if err := config.LoadEnv("../.env"); err != nil {
+	if err := config.LoadEnv(".env"); err != nil {
 		return nil, fmt.Errorf("error loading .env file: %w", err)
 	}
 
@@ -89,6 +89,7 @@ func main() {
 	// todo: API endpoints (new method)
 	router.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(initDB), errorLogger)).Methods("POST")
 	router.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(initDB), errorLogger)).Methods("POST")
+	router.HandleFunc("/ws", handler.HandleWebSocket)
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.GetPostsHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts/{id}", middleware.ErrorHandler(handler.GetPostHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.CreatePostHandler(initDB))).Methods("POST")
@@ -123,9 +124,9 @@ func main() {
 	//handler := middleware.CORSMiddleware(middleware.RateLimit(mux)) // Chaining Middleware
 
 	// Apply global middleware (new method)
-	router.Use(middleware.SecurityHeaders) // protect your application from various attacks (like XSS, clickjacking, etc.)
-	router.Use(middleware.CORSMiddleware)  // handling cross-origin requests
-	router.Use(middleware.RateLimit)       // ensure that it can track and limit requests effectively
+	// router.Use(middleware.SecurityHeaders) // protect your application from various attacks (like XSS, clickjacking, etc.)
+	// router.Use(middleware.CORSMiddleware)  // handling cross-origin requests
+	// router.Use(middleware.RateLimit)       // ensure that it can track and limit requests effectively
 
 	// Start server
 	srv := &http.Server{

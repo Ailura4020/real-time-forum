@@ -250,3 +250,64 @@ document.addEventListener('DOMContentLoaded', function() {
     // Run initial UI update
     updateUI();
 });
+
+
+// gestion du chat Websocket 
+let socket;
+
+const connectWebSocket = () => {
+    socket = new WebSocket('ws://localhost:8080/ws'); 
+
+    socket.onopen = () => {
+        console.log('WebSocket connection established');
+    };
+
+    socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        displayMessage(message);
+    };
+
+    socket.onclose = () => {
+        console.log('WebSocket connection closed');
+    };
+
+    socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+};
+
+const sendMessage = (message) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(message));
+    } else {
+        console.error('WebSocket is not open. Unable to send message.');
+    }
+};
+
+const displayMessage = (message) => {
+    const messagesDiv = document.querySelector('.messages');
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `${message.username}: ${message.text} (${message.date})`;
+    messagesDiv.appendChild(messageElement);
+};
+
+// Handle sending messages
+document.getElementById('sendButton').addEventListener('click', () => {
+    const messageInput = document.getElementById('messageInput');
+    const messageText = messageInput.value;
+
+    if (messageText) {
+        const message = {
+            username: 'YourUsername', 
+            text: messageText,
+            date: new Date().toISOString()
+        };
+        sendMessage(message);
+        messageInput.value = ''; 
+    }
+});
+
+// Connect to WebSocket when the user logs in
+if (isLoggedIn()) {
+    connectWebSocket();
+}
