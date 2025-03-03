@@ -44,6 +44,7 @@ label {
 
 /* Style des champs de saisie */
 input[type="text"],
+input[type="password"],
 select {
     width: 100%;
     padding: 10px;

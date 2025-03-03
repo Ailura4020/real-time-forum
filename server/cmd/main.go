@@ -45,14 +45,14 @@ func main() {
 	// dedicated logger for the server errors
 	errorLogger := log.New(os.Stderr, "ERROR: ", log.LstdFlags)
 
-	// like it said, init the config
+	// init the config
 	appEnv, err := initConfig()
 	if err != nil {
 		errorLogger.Printf("Error loading .env file: %v", err)
 		//log.Fatalf("Failed to initialize configuration: %v", err)
 	}
 
-	// fill the environment variables
+	// fill the environment variables from the .env file
 	addr := appEnv.ServerAddr
 	secretFromEnv := appEnv.Token
 
@@ -62,7 +62,7 @@ func main() {
 	if secretFromEnv != "" {
 		config.SetJWTSecret(secretFromEnv)
 	} else {
-		log.Printf("Warning: You should set JWT_SECRET environment variable:\n\t\t    export JWT_SECRET=\"your secret\"\n")
+		log.Printf("Warning: You should set JWT_SECRET environment variable.")
 	}
 
 	// init the database from the sql statements (schema.sql)
@@ -70,12 +70,10 @@ func main() {
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
-
+			log.Printf("Error closing db: %v", err)
 		}
 	}(initDB)
 
-	// define mux (old method)
-	//mux := http.NewServeMux()
 	// Define routes (new method w/ gorilla)
 	router := mux.NewRouter()
 
@@ -89,7 +87,6 @@ func main() {
 	// todo: API endpoints (new method)
 	router.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(initDB), errorLogger)).Methods("POST")
 	router.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(initDB), errorLogger)).Methods("POST")
-	router.HandleFunc("/ws", handler.HandleWebSocket)
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.GetPostsHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts/{id}", middleware.ErrorHandler(handler.GetPostHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.CreatePostHandler(initDB))).Methods("POST")
@@ -124,20 +121,26 @@ func main() {
 	//handler := middleware.CORSMiddleware(middleware.RateLimit(mux)) // Chaining Middleware
 
 	// Apply global middleware (new method)
-	// router.Use(middleware.SecurityHeaders) // protect your application from various attacks (like XSS, clickjacking, etc.)
-	// router.Use(middleware.CORSMiddleware)  // handling cross-origin requests
-	// router.Use(middleware.RateLimit)       // ensure that it can track and limit requests effectively
+	router.Use(middleware.SecurityHeaders) // protect your application from various attacks (like XSS, clickjacking, etc.)
+	router.Use(middleware.CORSMiddleware)  // handling cross-origin requests
+	router.Use(middleware.RateLimit)       // ensure that it can track and limit requests effectively
 
 	// Start server
-	srv := &http.Server{
-		Handler:        router,
-		Addr:           addr,
-		WriteTimeout:   15 * time.Second,
-		ReadTimeout:    15 * time.Second,
-		IdleTimeout:    120 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+	server := &http.Server{
+		Addr: addr,
+		// Good practice to set timeouts to avoid "Slow Loris" attacks [wiki](https://en.wikipedia.org/wiki/Slowloris_(cyber_attack)).
+		WriteTimeout:   time.Second * 15,
+		ReadTimeout:    time.Second * 15,
+		IdleTimeout:    time.Second * 60,
+		MaxHeaderBytes: 4096, // 4 KB
 		ErrorLog:       errorLogger,
+		Handler:        router, // pass instance to Gorilla mux
 	}
-	fmt.Printf("Server running on http://localhost%s\n", srv.Addr) // valid only on local
-	log.Fatal(srv.ListenAndServe())
+
+	fmt.Printf("Server running on http://localhost%s\n", server.Addr) // valid only on local
+
+	log.Fatal(server.ListenAndServe())
 }
+
+//MaxHeaderBytes: 1 << 20, // 1048576 bytes, or 1 megabyte (MB)
+//MaxHeaderBytes: 16384, // 16 KB
