@@ -265,7 +265,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateUI();
 });
 
-<<<<<<< HEAD
 
 // gestion du chat Websocket 
 let socket;
@@ -325,53 +324,4 @@ document.getElementById('sendButton').addEventListener('click', () => {
 // Connect to WebSocket when the user logs in
 if (isLoggedIn()) {
     connectWebSocket();
-=======
-// TEST CORS middleware
-
-async function testApi(endpoint) {
-    try {
-        const response = await fetch(endpoint, {
-            method: 'GET', // Change to 'POST', 'PUT', etc. as needed
-            headers: {
-                'Content-Type': 'application/json',
-                // Include any other headers you need
-            },
-            credentials: 'include' // Include credentials if your API requires them
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('API Response:', data);
-        return data; // Return the data for further processing if needed
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        throw error; // Rethrow the error to be handled by the caller
-    }
-}
-
-
-
-// TEST error middleware
-async function testErrorHandler() {
-    try {
-        // const response = await fetch('http://localhost:8080/bad-request');
-        const response = await fetch('http://localhost:8080/not-found');
-        // const response = await fetch('http://localhost:8080/panic');
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Error:', errorData);
-            alert(`Error ${errorData.code}: ${errorData.message}`);
-        } else {
-            const data = await response.json();
-            console.log('Success:', data);
-        }
-    } catch (error) {
-        console.error('Network error:', error);
-        // alert('A network error occurred. Please try again later.');
-    }
->>>>>>> 4fb187e32fd43d116479d983b674448003e2b6e7
 }
