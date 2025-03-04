@@ -37,3 +37,11 @@ type Response struct {
 	Data    interface{} `json:"data,omitempty"`
 	Token   string      `json:"token,omitempty"`
 }
+
+type PrivateMessage struct {
+	ID         int    `json:"id"`
+	SenderID   int    `json:"sender_id"`
+	ReceiverID int    `json:"receiver_id"`
+	Content    string `json:"content"`
+	DateSent   string `json:"date_sent"`
+}
