@@ -32,16 +32,16 @@ CREATE TABLE "USERS" (
 --     FOREIGN KEY ("UserId") REFERENCES "USERS"("UserId")
 -- );
 --
--- CREATE TABLE "PRIVATEMESSAGE" (
---     "PrivateMessageId" INTEGER PRIMARY KEY AUTOINCREMENT,
---     "TextContent" TEXT NOT NULL,
---     "DateSent" DATETIME DEFAULT CURRENT_TIMESTAMP,
---     "SenderId" INTEGER,
---     "ReceiverId" INTEGER,
---     FOREIGN KEY ("SenderId") REFERENCES "USERS"("UserId"),
---     FOREIGN KEY ("ReceiverId") REFERENCES "USERS"("UserId")
--- );
---
+CREATE TABLE "PRIVATEMESSAGE" (
+    "PrivateMessageId" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "TextContent" TEXT NOT NULL,
+    "DateSent" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "SenderId" INTEGER,
+    "ReceiverId" INTEGER,
+    FOREIGN KEY ("SenderId") REFERENCES "USERS"("UserId"),
+    FOREIGN KEY ("ReceiverId") REFERENCES "USERS"("UserId")
+);
+
 -- CREATE TABLE "NOTIF" (
 --
 -- )
