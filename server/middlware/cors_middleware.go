@@ -1,20 +1,27 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 )
 
 // AllowedOrigins is a list of origins that are allowed to access the API
 var AllowedOrigins = []string{
-	"http://localhost:8080", // Frontend running on localhost
-	"https://example.com",   // Other allowed origins
-	"https://another-example.com",
+	"*",
+	"http://localhost:63344",
+	"http://localhost:*",
+	"http://localhost",
+	//"http://localhost:8080", // Frontend running on localhost
+	//"https://example.com",   // Other allowed origins
+	//"https://another-example.com",
 }
 
 // CORSMiddleware handles CORS requests
 func CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
+
+		fmt.Println("[ORIGIN]", origin)
 
 		// Check if the origin is allowed
 		if isOriginAllowed(origin) {

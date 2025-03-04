@@ -21,13 +21,13 @@ func RegisterRoutes(router *mux.Router, db *sql.DB, errorLogger *log.Logger) {
 	// todo: API endpoints (new method)
 	router.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(db), errorLogger)).Methods("POST")
 	router.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(db), errorLogger)).Methods("POST")
-	router.HandleFunc("/ws", handler.HandleWebSocket)
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.GetPostsHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts/{id}", middleware.ErrorHandler(handler.GetPostHandler(initDB))).Methods("GET")
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.CreatePostHandler(initDB))).Methods("POST")
 	//router.HandleFunc("/api/comments", middleware.ErrorHandler(handler.AddCommentHandler(initDB))).Methods("POST")
 
-	// todo: websocket for the CHAT?
+	// websocket for the CHAT
+	router.HandleFunc("/ws", handler.HandleWebSocket)
 
 	// todo: add a protected route (endpoint that requires authentication and/or authorization to access > ex: for CRUD operations)
 	router.HandleFunc("/api/protected", middleware.ErrorHandler(middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
