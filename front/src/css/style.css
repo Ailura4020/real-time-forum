@@ -7,7 +7,13 @@
     --text_input: #f0f0f0;
 }
 
+/* Reset */
 
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 /* Style général du corps de la page */
 body {
@@ -19,13 +25,14 @@ body {
 }
 
 /* Style de la section d'inscription */
-#register {
+#login,#register,#chat {
     background-color: var(--background-register); 
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5); 
     padding: 20px;
     max-width: 400px;
-    margin: 0 auto; 
+    margin: 0 auto;
+    margin-bottom: 20px;
 }
 
 /* Style des titres de section */
@@ -76,6 +83,7 @@ button:hover {
 /* CHAT */
 /* Style de la section de chat */
 #chat {
+    display: box;
     background-color: var(--background-register);
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
