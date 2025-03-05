@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"real-time-forum/config"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // AuthMiddleware checks if the request has a valid JWT
