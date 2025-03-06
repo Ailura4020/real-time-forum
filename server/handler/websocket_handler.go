@@ -38,13 +38,36 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Erreur lors de l'upgrade :", err)
 		return
 	}
-	defer conn.Close()
+
+	defer func(conn *websocket.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
+
+	// Read the first message to get user information
+	_, msg, err := conn.ReadMessage()
+	if err != nil {
+		fmt.Println("Erreur lors de la lecture du message", err)
+		return
+	}
+	var userInfo struct {
+		Username string `json:"username"`
+		UserId   int    `json:"userId"`
+	}
+	if err := json.Unmarshal(msg, &userInfo); err != nil {
+		fmt.Println("Erreur lors de la désérialisation du message", err)
+		return
+	}
+
+	fmt.Printf("User Info: %+v\n", userInfo)
 
 	// création d'un nouveau client
 	client := &Client{
 		Conn:     conn,
-		Username: "user1",
-		UserId:   1,
+		Username: "",
+		UserId:   0,
 	}
 
 	// ajout du client à la map

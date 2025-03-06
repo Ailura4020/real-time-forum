@@ -52,6 +52,8 @@ label {
 /* Style des champs de saisie */
 input[type="text"],
 input[type="password"],
+input[type="number"],
+input[type="email"],
 select {
     width: 100%;
     padding: 10px;
@@ -131,3 +133,31 @@ button:hover {
     background-color: rgba(255, 215, 0, 0.8);
     transition: background-color 0.3s;
 }
+
+/* CHAT */
+
+.messages {
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.messages div {
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #222222; /* Light gray background for messages */
+}
+
+#messageInput {
+    width: calc(100% - 100px); /* Adjust width to fit the button */
+    padding: 10px;
+}
+
+#sendButton {
+    padding: 10px;
+}
+
+/*  */
