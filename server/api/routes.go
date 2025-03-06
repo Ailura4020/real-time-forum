@@ -27,7 +27,7 @@ func RegisterRoutes(router *mux.Router, db *sql.DB, errorLogger *log.Logger) {
 	//router.HandleFunc("/api/comments", middleware.ErrorHandler(handler.AddCommentHandler(initDB))).Methods("POST")
 
 	// websocket for the CHAT
-	//router.HandleFunc("/ws", handler.HandleWebSocket)
+	router.HandleFunc("/ws", handler.HandleWebSocket)
 
 	// todo: add a protected route (endpoint that requires authentication and/or authorization to access > ex: for CRUD operations)
 	router.HandleFunc("/api/protected", middleware.ErrorHandler(middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {

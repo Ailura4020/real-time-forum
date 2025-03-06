@@ -26,10 +26,17 @@ type Client struct {
 }
 
 // Map pour stocker les clients connectés
-var clients = make(map[*Client]bool)
+// var clients = make(map[*Client]bool)
+var clients = make(map[int]*Client)
 
 // var pour la connexion la db
 var db *sql.DB
+
+func updateUserStatusInDB(userId int, status string) error {
+	query := `UPDATE USERS SET Status = ? WHERE UserId = ?`
+	_, err := db.Exec(query, status, userId)
+	return err
+}
 
 // function gestion des connexions WebSocket
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
@@ -38,13 +45,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Erreur lors de l'upgrade :", err)
 		return
 	}
-
-	defer func(conn *websocket.Conn) {
-		err := conn.Close()
-		if err != nil {
-
-		}
-	}(conn)
+	defer conn.Close()
 
 	// Read the first message to get user information
 	_, msg, err := conn.ReadMessage()
@@ -60,26 +61,38 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Erreur lors de la désérialisation du message", err)
 		return
 	}
+	// Mise à jour de l'état de l'utilisateur dans la base de données
+	if err := updateUserStatusInDB(userInfo.UserId, "online"); err != nil {
+		fmt.Println("Erreur lors de la mise à jour du statut :", err)
+	}
 
 	fmt.Printf("User Info: %+v\n", userInfo)
 
 	// création d'un nouveau client
 	client := &Client{
 		Conn:     conn,
-		Username: "",
-		UserId:   0,
+		Username: userInfo.Username,
+		UserId:   userInfo.UserId,
 	}
 
 	// ajout du client à la map
-	clients[client] = true
+	clients[client.UserId] = client
 	fmt.Println("client connecté", client.Username)
+	fmt.Println(client.UserId)
+
+	defer func() {
+		if err := updateUserStatusInDB(client.UserId, "offline"); err != nil {
+			fmt.Println("Erreur lors de la mise à jour du statut :", err)
+		}
+		delete(clients, client.UserId) // Retirer le client de la map
+	}()
 
 	// boucle lecture d'un message client
 	for {
 		messageType, msg, err := conn.ReadMessage()
 		if err != nil {
 			fmt.Println("Erreur lors de la lecture du message", err)
-			delete(clients, client)
+			delete(clients, client.UserId)
 			break
 		}
 
@@ -95,17 +108,25 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		// fmt.Printf("Message reçu : %s\n", msg)
 
 		// envoie le message au destinataire
-		for c := range clients {
-			if c.UserId == message.ReceiverID {
-				err := c.Conn.WriteMessage(messageType, msg)
-				if err != nil {
-					fmt.Println("Erreur lors de l'envoi du message", err)
-					c.Conn.Close()
-					delete(clients, c)
-				}
-				break
+		if recipient, ok := clients[message.ReceiverID]; ok {
+			err := recipient.Conn.WriteMessage(messageType, msg)
+			if err != nil {
+				fmt.Println("Erreur lors de l'envoi du message", err)
+				recipient.Conn.Close()
+				delete(clients, recipient.UserId)
 			}
 		}
+		// for c := range clients {
+		// 	if c.UserId == message.ReceiverID {
+		// 		err := c.Conn.WriteMessage(messageType, msg)
+		// 		if err != nil {
+		// 			fmt.Println("Erreur lors de l'envoi du message", err)
+		// 			c.Conn.Close()
+		// 			delete(clients, c)
+		// 		}
+		// 		break
+		// 	}
+		// }
 	}
 }
 
