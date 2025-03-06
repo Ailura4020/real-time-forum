@@ -27,7 +27,7 @@ func LoadEnv(filename string) error {
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-
+			return
 		}
 	}(file)
 

@@ -43,10 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('http://localhost:8080/api/register', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data)
             });
+
+            // Check if the response is OK (status in the range 200-299)
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
             const result = await response.json();
             registerMessage.textContent = result.message; // Show success or error message
@@ -88,23 +93,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle sending messages via WebSocket
-    sendButton.addEventListener('click', () => {
-        const message = messageInput.value;
-        if (message) {
-            socket.send(message); // Send the message to the WebSocket server
-            messageInput.value = ''; // Clear the input field
-        }
-    });
+    // // Handle sending messages via WebSocket
+    // sendButton.addEventListener('click', () => {
+    //     const message = messageInput.value;
+    //     if (message) {
+    //         socket.send(message); // Send the message to the WebSocket server
+    //         messageInput.value = ''; // Clear the input field
+    //     }
+    // });
+    //
+    // // Optional: Handle pressing Enter to send messages
+    // messageInput.addEventListener('keypress', (event) => {
+    //     if (event.key === 'Enter') {
+    //         sendButton.click(); // Trigger the send button click
+    //     }
+    // });
+    //
 
-    // Optional: Handle pressing Enter to send messages
-    messageInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            sendButton.click(); // Trigger the send button click
-        }
-    });
-
-    // Clear messages function
+    // UI:Clear messages function
     const clearMessages = (messageElement) => {
         messageElement.textContent = '';
     };

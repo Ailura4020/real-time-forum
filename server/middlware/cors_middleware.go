@@ -21,10 +21,12 @@ func CORSMiddleware(next http.Handler) http.Handler {
 		origin := r.Header.Get("Origin")
 
 		//fmt.Println("[ORIGIN]", origin)
+		fmt.Println("Request Method:", r.Method)
+		fmt.Println("Request Origin:", origin)
 
 		// Check if the origin is allowed
 		if isOriginAllowed(origin) {
-			fmt.Println("[ALLOWED ORIGIN]", origin)
+			fmt.Println("[ALLOWED]", origin)
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")

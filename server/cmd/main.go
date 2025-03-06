@@ -77,6 +77,11 @@ func main() {
 	// Define routes (new method w/ gorilla)
 	router := mux.NewRouter()
 
+	//// testing routes (not for production)
+	//api.DevRoutes(router, errorLogger)
+	//// Register routes with the initialized DB connection
+	//api.RegisterRoutes(router, initDB, errorLogger)
+
 	// Apply global middleware (new chaining method w/Gorilla)
 	router.Use(middleware.SecurityHeaders) // protect your application from various attacks (like XSS, clickjacking, etc.)
 	router.Use(middleware.CORSMiddleware)  // handling cross-origin requests
