@@ -19,6 +19,8 @@ CREATE TABLE "USERS" (
 -- 	"TextContent"	TEXT,
 -- 	"DateCreation"	DATETIME DEFAULT CURRENT_TIMESTAMP,
 -- 	"UserId"	INTEGER,
+--	"Like" int
+--	"Dislike" int
 -- 	FOREIGN KEY ("UserId") REFERENCES "USERS"("UserId")
 -- );
 --
@@ -28,6 +30,8 @@ CREATE TABLE "USERS" (
 --     "CreateDate" DATETIME DEFAULT CURRENT_TIMESTAMP,
 --     "UserId" INTEGER,
 --     "PostId" INTEGER,
+--		"Like" int
+--		"Dislike" int
 --     FOREIGN KEY ("PostId") REFERENCES "POSTS"("PostId"),
 --     FOREIGN KEY ("UserId") REFERENCES "USERS"("UserId")
 -- );
@@ -42,9 +46,16 @@ CREATE TABLE "PRIVATEMESSAGE" (
     FOREIGN KEY ("ReceiverId") REFERENCES "USERS"("UserId")
 );
 
--- CREATE TABLE "NOTIF" (
---
--- )
+CREATE TABLE "NOTIF" (
+"NotifId" INTEGER PRIMARY KEY AUTOINCREMENT,
+"UserId" INTEGER NOT NULL,
+"Message" TEXT NOT NULL,
+"DateCreated" DATETIME DEFAULT CURRENT_TIMESTAMP,
+"IsRead" 	BOOLEAN DEFAULT 0,
+FOREIGN KEY ("UserId") REFERENCES "USERS"("UserId")
+)
 
+-- INSERT INTO NOTIF (UserId, Message) VALUE (1, 'Vous avez un nouveau message.');
+-- INSERT INTO NOTIF (UserId, Message) VALUE (2, 'Votre post a été aimé.');
 -- NOTIF
 -- LIKE/DISLIKE
