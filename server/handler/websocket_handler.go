@@ -61,6 +61,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Erreur lors de la désérialisation du message", err)
 		return
 	}
+
 	// Mise à jour de l'état de l'utilisateur dans la base de données
 	if err := updateUserStatusInDB(userInfo.UserId, "online"); err != nil {
 		fmt.Println("Erreur lors de la mise à jour du statut :", err)

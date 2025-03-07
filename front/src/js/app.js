@@ -94,24 +94,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // // Handle sending messages via WebSocket
-    // sendButton.addEventListener('click', () => {
-    //     const message = messageInput.value;
-    //     if (message) {
-    //         socket.send(message); // Send the message to the WebSocket server
-    //         messageInput.value = ''; // Clear the input field
-    //     }
-    // });
-    //
+    sendButton.addEventListener('click', () => {
+        const message = messageInput.value;
+        if (message) {
+            socket.send(message); // Send the message to the WebSocket server
+            messageInput.value = ''; // Clear the input field
+        }else{
+            console.error('Websocket is not open. Message not sent.')
+        }
+    });
+    
     // // Optional: Handle pressing Enter to send messages
-    // messageInput.addEventListener('keypress', (event) => {
-    //     if (event.key === 'Enter') {
-    //         sendButton.click(); // Trigger the send button click
-    //     }
-    // });
-    //
+    messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            sendButton.click(); // Trigger the send button click
+        }
+    });
+    
 
     // UI:Clear messages function
     const clearMessages = (messageElement) => {
         messageElement.textContent = '';
     };
 });
+
+socket.addEventListener('close', () => {
+    console.log('Websocket connection closed');
+})
