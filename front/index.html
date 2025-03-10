@@ -47,13 +47,43 @@
     </form>
 </section>
 
-<section id="chat">
+<!-- <section id="chat">
    <h2>Chat</h2>
    <div class="messages" id="messageContainer"></div>
    <input type="text" id="messageInput" placeholder="Enter your message here ..."/>
    <button id="sendButton">Send</button>
-</section>
+</section> -->
+<h2>WebSocket Client</h2>
+    <input type="text" id="messageInput" placeholder="Enter message" />
+    <button onclick="sendMessage()">Send</button>
+    <pre id="messages"></pre>
 
+    <script>
+      const socket = new WebSocket('ws://localhost:8080/ws'); // Assurez-vous que le chemin correspond à celui défini dans le serveur
+
+socket.onopen = function(event) {
+    console.log('Connection established');
+};
+
+socket.onmessage = function(event) {
+    console.log('Message from server: ', event.data);
+};
+
+socket.onerror = function(error) {
+    console.error('WebSocket Error: ', error);
+};
+
+socket.onclose = function(event) {
+    console.log('Connection closed: ', event);
+};
+
+
+        function sendMessage() {
+            let message = document.getElementById("messageInput").value;
+            socket.send(message);
+            document.getElementById("messageInput").value = "";
+        }
+    </script>
 </body>
 <script src="./src/js/app.js"></script>
 </html>
