@@ -18,6 +18,12 @@ func NewUserService(userRepo *repository.UserRepository) *UserService {
 	return &UserService{UserRepo: userRepo}
 }
 
+// GetUserByID retrieves a user by their ID
+func (s *UserService) GetUserByID(id int) (*models.User, error) {
+	return s.UserRepo.GetUserByID(id)
+	//return s.repo.GetUserByID(id)
+}
+
 // RegisterUser handles user registration
 func (s *UserService) RegisterUser(req models.RegisterRequest) (models.User, error) {
 	hashedPassword, err := HashPassword(req.Password)

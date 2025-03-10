@@ -17,6 +17,35 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{DB: db}
 }
 
+// GetUserByID retrieves a user from the database by ID
+func (r *UserRepository) GetUserByID(id int) (*models.User, error) {
+	query := `
+		SELECT id, nickname, age, gender, first_name, last_name, email, date_register
+		FROM users
+		WHERE id = ?
+	`
+
+	row := r.DB.QueryRow(query, id)
+
+	var user models.User
+	err := row.Scan(
+		&user.ID,
+		&user.Nickname,
+		&user.Age,
+		&user.Gender,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.DateRegister,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // CreateUser inserts a new user into the database
 func (r *UserRepository) CreateUser(user models.User) (int64, error) {
 	query := `

@@ -19,6 +19,7 @@ func RegisterRoutes(router *mux.Router, db *sql.DB, errorLogger *log.Logger) {
 	router.Handle("/", http.FileServer(http.Dir("./static")))
 
 	// todo: API endpoints (new method)
+	router.HandleFunc("/api/user", middleware.ErrorHandler(handler.UserHandler(db), errorLogger)).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(db), errorLogger)).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(db), errorLogger)).Methods("POST", "OPTIONS")
 	//router.HandleFunc("/api/posts", middleware.ErrorHandler(handler.GetPostsHandler(initDB))).Methods("GET")

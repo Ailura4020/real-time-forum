@@ -6,21 +6,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageContainer = document.getElementById('messageContainer');
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
+    const userInfoContainer = document.getElementById('userInfoContainer');
 
-    // WebSocket connection
-    const socket = new WebSocket('ws://localhost:8080/ws');
+    // Chat container elements - assuming you want to hide/show these based on auth status
+    const chatSection = document.getElementById('chatSection');
+    const loginSection = document.getElementById('login');
+    const registerSection = document.getElementById('register');
 
-    // Handle WebSocket connection open
-    socket.addEventListener('open', () => {
-        console.log('WebSocket connection established');
-    });
+    let socket = null;
 
-    // Handle incoming messages
-    socket.addEventListener('message', (event) => {
+    // Initialize WebSocket connection with authentication
+    const initializeWebSocket = (token) => {
+        // Close existing connection if any
+        if (socket) {
+            socket.close();
+        }
+
+        socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
+
+        socket.addEventListener('open', () => {
+            console.log('WebSocket connection established');
+            // Show chat UI when connection is established
+            showChatInterface();
+        });
+
+        socket.addEventListener('message', (event) => {
+            try {
+                // Try to parse as JSON first
+                const data = JSON.parse(event.data);
+                displayFormattedMessage(data);
+            } catch (e) {
+                // If not JSON, display as plain text
+                const message = document.createElement('div');
+                message.textContent = event.data;
+                messageContainer.appendChild(message);
+                // Auto-scroll to bottom
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+        });
+
+        socket.addEventListener('close', () => {
+            console.log('WebSocket connection closed');
+        });
+
+        socket.addEventListener('error', (error) => {
+            console.error('WebSocket error:', error);
+        });
+    };
+
+    // Display formatted messages
+    const displayFormattedMessage = (data) => {
         const message = document.createElement('div');
-        message.textContent = event.data; // Display the incoming message
+        message.className = 'message';
+
+        // Format based on message type
+        if (data.user) {
+            message.innerHTML = `<strong>${data.user}</strong>: ${data.content}`;
+            message.className += data.user === getUserInfo().nickname ? ' own-message' : ' other-message';
+        } else {
+            message.textContent = data.content || data;
+        }
+
         messageContainer.appendChild(message);
-    });
+        // Auto-scroll to bottom
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    };
 
     // Handle registration
     registerForm.addEventListener('submit', async (event) => {
@@ -36,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
             last_name: formData.get('last_name'),
             email: formData.get('email'),
             password: formData.get('password'),
-            date_register: new Date().toISOString() // Use current date in ISO format
         };
 
         try {
@@ -48,17 +97,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(data)
             });
 
-            // Check if the response is OK (status in the range 200-299)
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(result.message || `HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
-            registerMessage.textContent = result.message; // Show success or error message
-            registerMessage.style.color = result.success ? 'green' : 'red';
+            registerMessage.textContent = result.message;
+            registerMessage.style.color = 'green';
+
+            if (result.success) {
+                // Store user data and token
+                storeUserSession(result.data, result.token);
+                // Initialize WebSocket with the token
+                initializeWebSocket(result.token);
+                // Reset form
+                registerForm.reset();
+            }
         } catch (error) {
             console.error('Error during registration:', error);
-            registerMessage.textContent = 'Registration failed. Please try again.';
+            registerMessage.textContent = error.message || 'Registration failed. Please try again.';
             registerMessage.style.color = 'red';
         }
     });
@@ -70,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData(loginForm);
         const data = {
-            email: formData.get('identifier'), // Assuming identifier is the email
+            email: formData.get('identifier'),
             password: formData.get('password')
         };
 
@@ -84,40 +142,185 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            loginMessage.textContent = result.message; // Show success or error message
-            loginMessage.style.color = result.success ? 'green' : 'red';
+
+            if (!response.ok) {
+                throw new Error(result.message || `HTTP error! status: ${response.status}`);
+            }
+
+            loginMessage.textContent = result.message;
+            loginMessage.style.color = 'green';
+
+            if (result.success) {
+                // Store user data and token
+                storeUserSession(result.data, result.token);
+                // Initialize WebSocket with the token
+                initializeWebSocket(result.token);
+                // Reset form
+                loginForm.reset();
+            }
         } catch (error) {
             console.error('Error during login:', error);
-            loginMessage.textContent = 'Login failed. Please try again.';
+            loginMessage.textContent = error.message || 'Login failed. Please try again.';
             loginMessage.style.color = 'red';
         }
     });
 
-    // // Handle sending messages via WebSocket
+    // Handle sending messages via WebSocket
     sendButton.addEventListener('click', () => {
-        const message = messageInput.value;
-        if (message) {
-            socket.send(message); // Send the message to the WebSocket server
-            messageInput.value = ''; // Clear the input field
-        }else{
-            console.error('Websocket is not open. Message not sent.')
-        }
+        sendMessage();
     });
-    
-    // // Optional: Handle pressing Enter to send messages
+
+    // Handle pressing Enter to send messages
     messageInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
-            sendButton.click(); // Trigger the send button click
+            event.preventDefault(); // Prevent default to avoid form submission
+            sendMessage();
         }
     });
-    
 
-    // UI:Clear messages function
+    // Extract sending logic to a separate function
+    const sendMessage = () => {
+        const message = messageInput.value.trim();
+        if (message && socket && socket.readyState === WebSocket.OPEN) {
+            // Send as JSON with user info
+            const userData = getUserInfo();
+            const messageData = {
+                content: message,
+                user: userData.nickname,
+                userId: userData.id
+            };
+
+            socket.send(JSON.stringify(messageData));
+            messageInput.value = '';
+        } else if (!socket || socket.readyState !== WebSocket.OPEN) {
+            console.error('WebSocket is not open. Message not sent.');
+            // Try to reconnect
+            const token = getToken();
+            if (token) {
+                initializeWebSocket(token);
+            }
+        }
+    };
+
+    // UI: Clear messages function
     const clearMessages = (messageElement) => {
         messageElement.textContent = '';
     };
-});
 
-socket.addEventListener('close', () => {
-    console.log('Websocket connection closed');
-})
+    // Store the token and user data in local storage
+    const storeUserSession = (userData, token) => {
+        localStorage.setItem('token', token);
+        localStorage.setItem('userData', JSON.stringify(userData));
+        displayUserInfo(userData);
+    };
+
+    // Helper to get token
+    const getToken = () => {
+        return localStorage.getItem('token');
+    };
+
+    // Helper to get user info
+    const getUserInfo = () => {
+        const userData = localStorage.getItem('userData');
+        return userData ? JSON.parse(userData) : null;
+    };
+
+    // Display user information
+    const displayUserInfo = (userData) => {
+        userInfoContainer.innerHTML = `
+            <p>Welcome, ${userData.nickname}!</p>
+            <p>Email: ${userData.email}</p>
+            <p>Age: ${userData.age}</p>
+            <p>Gender: ${userData.gender}</p>
+            <button id="logoutButton">Logout</button>
+        `;
+
+        // Add logout button functionality
+        document.getElementById('logoutButton').addEventListener('click', logout);
+    };
+
+    // Handle logout
+    const logout = () => {
+        // Close the WebSocket connection
+        if (socket) {
+            socket.close();
+        }
+
+        // Clear local storage
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+
+        // Reset UI
+        userInfoContainer.innerHTML = '';
+        messageContainer.innerHTML = '';
+
+        // Show login/register forms
+        showAuthInterface();
+    };
+
+    // Show chat interface, hide login/register
+    const showChatInterface = () => {
+        if (chatSection) chatSection.style.display = 'block';
+        if (loginSection) loginSection.style.display = 'none';
+        if (registerSection) registerSection.style.display = 'none';
+    };
+
+    // Show login/register interface, hide chat
+    const showAuthInterface = () => {
+        if (chatSection) chatSection.style.display = 'none';
+        if (loginSection) loginSection.style.display = 'block';
+        if (registerSection) registerSection.style.display = 'block';
+    };
+
+    // Fetch user information using the token and check user status
+    const checkUserStatus = async (token) => {
+        try {
+            const response = await fetch('http://localhost:8080/api/user', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    // Token is invalid or expired
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userData');
+                    userInfoContainer.textContent = 'Your session has expired. Please log in again.';
+                    userInfoContainer.style.color = 'red';
+                    showAuthInterface();
+                } else {
+                    throw new Error(result.message || `HTTP error! status: ${response.status}`);
+                }
+            } else {
+                // Store updated user data
+                localStorage.setItem('userData', JSON.stringify(result.data));
+                displayUserInfo(result.data);
+                // Initialize WebSocket with the token
+                initializeWebSocket(token);
+            }
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+            showAuthInterface();
+        }
+    };
+
+    // Initialize: Check token and set up the app accordingly
+    const initialize = () => {
+        const token = getToken();
+        if (token) {
+            // If we have a token, validate it
+            checkUserStatus(token);
+        } else {
+            // No token, show login/register
+            showAuthInterface();
+        }
+    };
+
+    // Start the app
+    initialize();
+});
