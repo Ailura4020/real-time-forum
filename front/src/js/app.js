@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginSection = document.getElementById('login');
     const registerSection = document.getElementById('register');
 
+    // Cache user data in memory during the session, not in localStorage
+    let currentUser = null;
     let socket = null;
 
     // Initialize WebSocket connection with authentication
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Format based on message type
         if (data.user) {
             message.innerHTML = `<strong>${data.user}</strong>: ${data.content}`;
-            message.className += data.user === getUserInfo().nickname ? ' own-message' : ' other-message';
+            message.className += currentUser && data.user === currentUser.nickname ? ' own-message' : ' other-message';
         } else {
             message.textContent = data.content || data;
         }
@@ -107,8 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
             registerMessage.style.color = 'green';
 
             if (result.success) {
-                // Store user data and token
-                storeUserSession(result.data, result.token);
+                // Store token and minimal user data
+                storeUserSession(result.token);
+                // Set current user in memory
+                currentUser = result.data;
+                // Display user info
+                displayUserInfo(result.data);
                 // Initialize WebSocket with the token
                 initializeWebSocket(result.token);
                 // Reset form
@@ -151,8 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
             loginMessage.style.color = 'green';
 
             if (result.success) {
-                // Store user data and token
-                storeUserSession(result.data, result.token);
+                // Store token only
+                storeUserSession(result.token);
+                // Set current user in memory
+                currentUser = result.data;
+                // Display user info
+                displayUserInfo(result.data);
                 // Initialize WebSocket with the token
                 initializeWebSocket(result.token);
                 // Reset form
@@ -181,13 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Extract sending logic to a separate function
     const sendMessage = () => {
         const message = messageInput.value.trim();
-        if (message && socket && socket.readyState === WebSocket.OPEN) {
+        if (message && socket && socket.readyState === WebSocket.OPEN && currentUser) {
             // Send as JSON with user info
-            const userData = getUserInfo();
             const messageData = {
                 content: message,
-                user: userData.nickname,
-                userId: userData.id
+                user: currentUser.nickname,
+                userId: currentUser.id
             };
 
             socket.send(JSON.stringify(messageData));
@@ -199,6 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (token) {
                 initializeWebSocket(token);
             }
+        } else if (!currentUser) {
+            console.error('User information not available. Message not sent.');
+            checkUserStatus(getToken());
         }
     };
 
@@ -207,22 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
         messageElement.textContent = '';
     };
 
-    // Store the token and user data in local storage
-    const storeUserSession = (userData, token) => {
+    // Store only the token in local storage
+    const storeUserSession = (token) => {
         localStorage.setItem('token', token);
-        localStorage.setItem('userData', JSON.stringify(userData));
-        displayUserInfo(userData);
     };
 
     // Helper to get token
     const getToken = () => {
         return localStorage.getItem('token');
-    };
-
-    // Helper to get user info
-    const getUserInfo = () => {
-        const userData = localStorage.getItem('userData');
-        return userData ? JSON.parse(userData) : null;
     };
 
     // Display user information
@@ -246,9 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
             socket.close();
         }
 
-        // Clear local storage
+        // Clear local storage and memory
         localStorage.removeItem('token');
-        localStorage.removeItem('userData');
+        currentUser = null;
 
         // Reset UI
         userInfoContainer.innerHTML = '';
@@ -274,6 +278,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch user information using the token and check user status
     const checkUserStatus = async (token) => {
+        if (!token) {
+            showAuthInterface();
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:8080/api/user', {
                 method: 'GET',
@@ -289,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.status === 401 || response.status === 403) {
                     // Token is invalid or expired
                     localStorage.removeItem('token');
-                    localStorage.removeItem('userData');
+                    currentUser = null;
                     userInfoContainer.textContent = 'Your session has expired. Please log in again.';
                     userInfoContainer.style.color = 'red';
                     showAuthInterface();
@@ -297,8 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(result.message || `HTTP error! status: ${response.status}`);
                 }
             } else {
-                // Store updated user data
-                localStorage.setItem('userData', JSON.stringify(result.data));
+                // Store user data in memory, not localStorage
+                currentUser = result.data;
                 displayUserInfo(result.data);
                 // Initialize WebSocket with the token
                 initializeWebSocket(token);
