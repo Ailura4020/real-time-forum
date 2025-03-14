@@ -1,0 +1,163 @@
+/* variable colors*/
+:root{
+    --background-principal:#000;
+    --background-register: #222;
+    --background_champs:#333;
+    --color-text:#FFD700;
+    --text_input: #f0f0f0;
+}
+
+/* Reset */
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Style général du corps de la page */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-principal); 
+    color: var(--text_input); 
+    margin: 0;
+    padding: 20px;
+}
+
+/* Style de la section d'inscription */
+#login,#register,#chat {
+    background-color: var(--background-register); 
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5); 
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+
+/* Style des titres de section */
+h1 {
+    text-align: center;
+    color: var(--color-text); 
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); 
+}
+
+/* Style des labels */
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-text); 
+}
+
+/* Style des champs de saisie */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="email"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-text); 
+    border-radius: 4px;
+    background-color: var(--background_champs); 
+    color: var(--text_input); 
+}
+
+/* Style du bouton de soumission */
+button {
+    background-color: var(--color-text);
+    color: var(--background-principal); 
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold; 
+}
+
+button:hover {
+    background-color: var(--color-text); 
+    transition: background-color 0.3s; 
+}
+
+
+/* CHAT */
+/* Style de la section de chat */
+#chat {
+    display: box;
+    background-color: var(--background-register);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+    padding: 20px;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* Style des messages */
+.messages {
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--background_champs);
+    border: 1px solid var(--color-text);
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    color: var(--text_input);
+}
+
+/* Style de l'input de message */
+#messageInput {
+    width: calc(100% - 22px); /* Pour prendre en compte le padding */
+    padding: 10px;
+    border: 1px solid var(--color-text);
+    border-radius: 4px;
+    background-color: var(--background_champs);
+    color: var(--text_input);
+    margin-bottom: 10px;
+}
+
+/* Style du bouton d'envoi */
+#sendButton {
+    background-color: var(--color-text);
+    color: var(--background-principal);
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+}
+
+#sendButton:hover {
+    background-color: rgba(255, 215, 0, 0.8);
+    transition: background-color 0.3s;
+}
+
+/* CHAT */
+
+.messages {
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.messages div {
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #222222; /* Light gray background for messages */
+}
+
+#messageInput {
+    width: calc(100% - 100px); /* Adjust width to fit the button */
+    padding: 10px;
+}
+
+#sendButton {
+    padding: 10px;
+}
+
+/*  */

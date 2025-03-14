@@ -4,12 +4,21 @@
 
 ## 1. Base de Données (SQLite)
 - [x] Concevoir le schéma de la base de données pour stocker les utilisateurs, publications, commentaires et messages privés.
+<<<<<<< HEAD
 - [ ] Implémenter les opérations CRUD (CREATE, READ(SELECT), UPDATE, and DELETE / Créer, Lire, Mettre à jour, Supprimer) pour chaque entité.
 
 ## 2. Backend (Golang)
 - [ ] Configurer le serveur Golang pour gérer les requêtes HTTP.
 - [ ] Implémenter les WebSockets pour la communication en temps réel.
 - [ ] Gérer les routes pour l'inscription, la connexion, la création de publications, les commentaires et les messages privés.
+=======
+- [⌛] Implémenter les opérations CRUD (CREATE, READ(SELECT), UPDATE, and DELETE / Créer, Lire, Mettre à jour, Supprimer) pour chaque entité.
+
+## 2. Backend (Golang)
+- [x] Configurer le serveur Golang pour gérer les requêtes HTTP.
+- [⌛] Implémenter les WebSockets pour la communication en temps réel.
+- [⌛] Gérer les routes pour l'inscription, la connexion, la création de publications, les commentaires et les messages privés.
+>>>>>>> 4985cebfc7a411760bc6aa0dd8c2b9798a91e74d
 
 ## FRONT
 

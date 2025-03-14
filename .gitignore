@@ -64,6 +64,10 @@ Icon?
 .env.production
 
 # Project
+<<<<<<< HEAD
 /server/db/forum.db
 /lib/
 doc.txt
+=======
+/server/db/forum.db
+>>>>>>> 4985cebfc7a411760bc6aa0dd8c2b9798a91e74d

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./src/css/style.css">
+    <title>Forum</title>
+</head>
+<body>
+
+<section id="userInfoContainer">
+<!-- user informations display -->
+</section>
+
+<section id="login">
+    <h2>Login</h2>
+    <div id="loginMessage" class="message"></div>
+    <form action="/login" method="POST">
+        <label for="identifier">Nickname or Email:</label>
+        <input type="text" id="identifier" name="identifier" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+    </form>
+</section>
+
+<section id="register">
+    <h2>Register</h2>
+    <div id="registerMessage" class="message"></div>
+    <form action="/register" method="POST">
+        <label for="nickname">Nickname :</label>
+        <input type="text" id="nickname" name="nickname" required>
+        <label for="age">Age :</label>
+        <input type="number" id="age" name="age" required min="1" max="120">
+        <label for="gender">Gender :</label>
+        <select name="gender" id="gender" required>
+            <option value="">Select your gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="non-binary">Non-binary</option>
+        </select>
+        <label for="first_name">First Name :</label>
+        <input type="text" id="first_name" name="first_name" required>
+        <label for="last_name">Last Name :</label>
+        <input type="text" id="last_name" name="last_name" required>
+        <label for="email">E-mail :</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password :</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Register</button>
+    </form>
+</section>
+
+<section id="chat">
+   <h2>Chat</h2>
+   <div class="messages" id="messageContainer"></div>
+   <input type="text" id="messageInput" placeholder="Enter your message here ..."/>
+   <button id="sendButton">Send</button>
+</section>
+
+</body>
+<script src="./src/js/app.js"></script>
+</html>
