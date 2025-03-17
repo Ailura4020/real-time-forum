@@ -1,22 +1,27 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
-	"real-time-forum/models"
-	"time"
+	"strings"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
 
-// Config de l'upgrader WebSocket pour accepter toutes les origines
+// Config WebSocket sécurisé
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true
+		return true // Autoriser temporairement toutes les origines (à restreindre en production)
 	},
 }
+
+// Map des clients WebSocket
+var (
+	clients      = make(map[int]*Client)
+	clientsMutex = sync.Mutex{}
+)
 
 // Structure d'un client connecté via WebSocket
 type Client struct {
@@ -25,116 +30,81 @@ type Client struct {
 	UserId   int
 }
 
-// Map pour stocker les clients connectés
-// var clients = make(map[*Client]bool)
-var clients = make(map[int]*Client)
-
-// var pour la connexion la db
-var db *sql.DB
-
-func updateUserStatusInDB(userId int, status string) error {
-	query := `UPDATE USERS SET Status = ? WHERE UserId = ?`
-	_, err := db.Exec(query, status, userId)
-	return err
-}
-
-// function gestion des connexions WebSocket
+// Fonction de gestion des connexions WebSocket
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
+	log.Println("📡 Tentative de connexion WebSocket reçue...")
+
+	log.Println("🔍 Headers reçus pour WebSocket :")
+	for name, values := range r.Header {
+		for _, value := range values {
+			log.Printf("%s: %s", name, value)
+		}
+	}
+
+	// Vérifier que la requête est bien une WebSocket
+	if r.Header.Get("Upgrade") != "websocket" {
+		log.Println("❌ Erreur: Le header Upgrade n'est pas 'websocket'")
+		http.Error(w, "Invalid WebSocket request", http.StatusBadRequest)
+		return
+	}
+	if !strings.Contains(strings.ToLower(r.Header.Get("Connection")), "upgrade") {
+		log.Println("❌ Erreur: Le header Connection ne contient pas 'Upgrade'")
+		http.Error(w, "Invalid WebSocket request", http.StatusBadRequest)
+		return
+	}
+
+	// Connexion WebSocket établie
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("Erreur lors de l'upgrade :", err)
+		log.Println("❌ Erreur lors de l'upgrade WebSocket :", err)
 		return
 	}
 	defer conn.Close()
 
-	// Read the first message to get user information
+	log.Println("✅ Connexion WebSocket réussie !")
+
+	// Lire le premier message pour obtenir les infos utilisateur
 	_, msg, err := conn.ReadMessage()
 	if err != nil {
-		fmt.Println("Erreur lors de la lecture du message", err)
+		log.Println("❌ Erreur lors de la lecture du message initial :", err)
 		return
 	}
+	log.Println("📩 Message reçu à la connexion:", string(msg))
+
 	var userInfo struct {
 		Username string `json:"username"`
 		UserId   int    `json:"userId"`
 	}
+
+	log.Println("🔍 Tentative de parsing des infos utilisateur...")
 	if err := json.Unmarshal(msg, &userInfo); err != nil {
-		fmt.Println("Erreur lors de la désérialisation du message", err)
+		log.Println("❌ Erreur lors du parsing du message initial :", err)
+		log.Println("🔴 Contenu du message reçu:", string(msg))
 		return
 	}
 
-	// Mise à jour de l'état de l'utilisateur dans la base de données
-	if err := updateUserStatusInDB(userInfo.UserId, "online"); err != nil {
-		fmt.Println("Erreur lors de la mise à jour du statut :", err)
-	}
+	log.Printf("✅ Utilisateur connecté: %s (ID: %d)\n", userInfo.Username, userInfo.UserId)
 
-	fmt.Printf("User Info: %+v\n", userInfo)
-
-	// création d'un nouveau client
 	client := &Client{
 		Conn:     conn,
 		Username: userInfo.Username,
 		UserId:   userInfo.UserId,
 	}
 
-	// ajout du client à la map
+	// Ajouter le client en verrouillant l'accès
+	clientsMutex.Lock()
 	clients[client.UserId] = client
-	fmt.Println("client connecté", client.Username)
-	fmt.Println(client.UserId)
+	clientsMutex.Unlock()
 
-	defer func() {
-		if err := updateUserStatusInDB(client.UserId, "offline"); err != nil {
-			fmt.Println("Erreur lors de la mise à jour du statut :", err)
-		}
-		delete(clients, client.UserId) // Retirer le client de la map
-	}()
+	log.Printf("✅ Client connecté: %s (ID: %d)\n", client.Username, client.UserId)
 
-	// boucle lecture d'un message client
+	// Rester en écoute des messages
 	for {
-		messageType, msg, err := conn.ReadMessage()
+		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Erreur lors de la lecture du message", err)
-			delete(clients, client.UserId)
+			log.Println("❌ Erreur de lecture du message :", err)
 			break
 		}
-
-		var message models.PrivateMessage
-		if err := json.Unmarshal(msg, &message); err != nil {
-			fmt.Println("Erreur lors de la désérialisation du message", err)
-			continue
-		}
-		// enregistre le message dans la db
-		if err := savePrivateMessage(db, client.UserId, message.ReceiverID, message.Content); err != nil {
-			fmt.Println("Erreur lors de l'enregistrement du message", err)
-		}
-		// fmt.Printf("Message reçu : %s\n", msg)
-
-		// envoie le message au destinataire
-		if recipient, ok := clients[message.ReceiverID]; ok {
-			err := recipient.Conn.WriteMessage(messageType, msg)
-			if err != nil {
-				fmt.Println("Erreur lors de l'envoi du message", err)
-				recipient.Conn.Close()
-				delete(clients, recipient.UserId)
-			}
-		}
-		// for c := range clients {
-		// 	if c.UserId == message.ReceiverID {
-		// 		err := c.Conn.WriteMessage(messageType, msg)
-		// 		if err != nil {
-		// 			fmt.Println("Erreur lors de l'envoi du message", err)
-		// 			c.Conn.Close()
-		// 			delete(clients, c)
-		// 		}
-		// 		break
-		// 	}
-		// }
+		log.Printf("📩 Message reçu : %s\n", msg)
 	}
-}
-
-// function pour enregistrer un msg privé dans la DB
-func savePrivateMessage(db *sql.DB, senderID int, receiverId int, content string) error {
-	dateSent := time.Now().Format(time.RFC3339)
-	query := `INSERT INTO PRIVATEMESSAGE (TextContent, DateSent, SenderId, ReceiverId) VALUE ( ?, ?, ?, ?)`
-	_, err := db.Exec(query, content, dateSent, senderID, receiverId)
-	return err
 }

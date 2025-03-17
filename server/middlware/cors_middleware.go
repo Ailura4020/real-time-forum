@@ -31,6 +31,8 @@ func CORSMiddleware(next http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials if needed
+			w.Header().Set("Access-Control-Expose-Headers", "Upgrade, Connection")
+			w.Header().Set("Access-Control-Allow-Headers", "Upgrade, Connection, Sec-WebSocket-Key, Sec-WebSocket-Version, Sec-WebSocket-Protocol")
 		}
 
 		if r.Method == "OPTIONS" {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -65,14 +64,15 @@ func main() {
 		log.Printf("Warning: You should set JWT_SECRET environment variable.")
 	}
 
-	// init the database from the sql statements (schema.sql)
-	initDB := db.InitDB()
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			log.Printf("Error closing db: %v", err)
+	err = db.InitDB()
+	if err != nil {
+		log.Fatalf("Erreur lors de l'initialisation de la base de données: %v", err)
+	}
+	defer func() {
+		if db.DB != nil {
+			db.DB.Close()
 		}
-	}(initDB)
+	}()
 
 	// Define routes (new method w/ gorilla)
 	router := mux.NewRouter()
@@ -90,7 +90,7 @@ func main() {
 	// testing routes (not for production)
 	api.DevRoutes(router, errorLogger)
 	// Register routes with the initialized DB connection
-	api.RegisterRoutes(router, initDB, errorLogger)
+	api.RegisterRoutes(router, db.DB, errorLogger)
 
 	// Start server
 	server := &http.Server{

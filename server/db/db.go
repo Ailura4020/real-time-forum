@@ -8,21 +8,25 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Variable globale pour stocker la connexion DB
+var DB *sql.DB
+
 // InitDB initializes the database and creates tables if they don't exist
-func InitDB() *sql.DB {
+func InitDB() error {
 	_, err := os.Stat("db/forum.db")
 	dbExists := !os.IsNotExist(err)
 
-	db, err := sql.Open("sqlite3", "db/forum.db")
+	DB, err = sql.Open("sqlite3", "db/forum.db") // Stocker la connexion dans DB
 	if err != nil {
 		log.Fatalf("Failed to open database: %v", err)
+		return err
 	}
 
 	if !dbExists {
-		createTablesFromSQLFile(db)
+		createTablesFromSQLFile(DB)
 	}
 
-	return db
+	return nil
 }
 
 // Create necessary tables in the database

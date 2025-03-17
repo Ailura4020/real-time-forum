@@ -17,45 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
     let socket = null;
 
-    // Initialize WebSocket connection with authentication
-    const initializeWebSocket = (token) => {
-        // Close existing connection if any
-        if (socket) {
-            socket.close();
-        }
-
-        socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
-
-        socket.addEventListener('open', () => {
-            console.log('WebSocket connection established');
-            // Show chat UI when connection is established
-            showChatInterface();
-        });
-
-        socket.addEventListener('message', (event) => {
-            try {
-                // Try to parse as JSON first
-                const data = JSON.parse(event.data);
-                displayFormattedMessage(data);
-            } catch (e) {
-                // If not JSON, display as plain text
-                const message = document.createElement('div');
-                message.textContent = event.data;
-                messageContainer.appendChild(message);
-                // Auto-scroll to bottom
-                messageContainer.scrollTop = messageContainer.scrollHeight;
-            }
-        });
-
-        socket.addEventListener('close', () => {
-            console.log('WebSocket connection closed');
-        });
-
-        socket.addEventListener('error', (error) => {
-            console.error('WebSocket error:', error);
-        });
-    };
-
+  
     // Display formatted messages
     const displayFormattedMessage = (data) => {
         const message = document.createElement('div');
@@ -115,8 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentUser = result.data;
                 // Display user info
                 displayUserInfo(result.data);
-                // Initialize WebSocket with the token
-                initializeWebSocket(result.token);
+       
                 // Reset form
                 registerForm.reset();
             }
@@ -163,8 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentUser = result.data;
                 // Display user info
                 displayUserInfo(result.data);
-                // Initialize WebSocket with the token
-                initializeWebSocket(result.token);
+         
                 // Reset form
                 loginForm.reset();
             }
@@ -188,33 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Extract sending logic to a separate function
-    const sendMessage = () => {
-        const message = messageInput.value.trim();
-        if (message && socket && socket.readyState === WebSocket.OPEN && currentUser) {
-            // Send as JSON with user info
-            const messageData = {
-                content: message,
-                user: currentUser.nickname,
-                userId: currentUser.id
-            };
-
-            socket.send(JSON.stringify(messageData));
-            messageInput.value = '';
-        } else if (!socket || socket.readyState !== WebSocket.OPEN) {
-            console.error('WebSocket is not open. Message not sent.');
-            // Try to reconnect
-            const token = getToken();
-            if (token) {
-                initializeWebSocket(token);
-            }
-        } else if (!currentUser) {
-            console.error('User information not available. Message not sent.');
-            checkUserStatus(getToken());
-        }
-    };
-
-    // UI: Clear messages function
+     // UI: Clear messages function
     const clearMessages = (messageElement) => {
         messageElement.textContent = '';
     };
@@ -276,47 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (registerSection) registerSection.style.display = 'block';
     };
 
-    // Fetch user information using the token and check user status
-    const checkUserStatus = async (token) => {
-        if (!token) {
-            showAuthInterface();
-            return;
-        }
-
-        try {
-            const response = await fetch('http://localhost:8080/api/user', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 403) {
-                    // Token is invalid or expired
-                    localStorage.removeItem('token');
-                    currentUser = null;
-                    userInfoContainer.textContent = 'Your session has expired. Please log in again.';
-                    userInfoContainer.style.color = 'red';
-                    showAuthInterface();
-                } else {
-                    throw new Error(result.message || `HTTP error! status: ${response.status}`);
-                }
-            } else {
-                // Store user data in memory, not localStorage
-                currentUser = result.data;
-                displayUserInfo(result.data);
-                // Initialize WebSocket with the token
-                initializeWebSocket(token);
-            }
-        } catch (error) {
-            console.error('Error fetching user info:', error);
-            showAuthInterface();
-        }
-    };
+   
 
     // Initialize: Check token and set up the app accordingly
     const initialize = () => {
