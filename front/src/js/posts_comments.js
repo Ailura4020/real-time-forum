@@ -111,7 +111,7 @@ function renderComments(index) {
 
     posts[index].comments.forEach(comment => {
         const commentElement = document.createElement('div');
-        commentElement.className = '
+        commentElement.className = 'comment';
             commentElement.className = 'comment';
         commentElement.innerText = comment;
         commentList.appendChild(commentElement);
