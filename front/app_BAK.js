@@ -15,64 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cache user data in memory during the session, not in localStorage
     let currentUser = null;
-    let socket = null;
-
-    // Initialize WebSocket connection with authentication
-    const initializeWebSocket = (token) => {
-        // Close existing connection if any
-        if (socket) {
-            socket.close();
-        }
-
-        socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
-
-        socket.addEventListener('open', () => {
-            console.log('WebSocket connection established');
-            // Show chat UI when connection is established
-            showChatInterface();
-        });
-
-        socket.addEventListener('message', (event) => {
-            try {
-                // Try to parse as JSON first
-                const data = JSON.parse(event.data);
-                displayFormattedMessage(data);
-            } catch (e) {
-                // If not JSON, display as plain text
-                const message = document.createElement('div');
-                message.textContent = event.data;
-                messageContainer.appendChild(message);
-                // Auto-scroll to bottom
-                messageContainer.scrollTop = messageContainer.scrollHeight;
-            }
-        });
-
-        socket.addEventListener('close', () => {
-            console.log('WebSocket connection closed');
-        });
-
-        socket.addEventListener('error', (error) => {
-            console.error('WebSocket error:', error);
-        });
-    };
-
-    // Display formatted messages
-    const displayFormattedMessage = (data) => {
-        const message = document.createElement('div');
-        message.className = 'message';
-
-        // Format based on message type
-        if (data.user) {
-            message.innerHTML = `<strong>${data.user}</strong>: ${data.content}`;
-            message.className += currentUser && data.user === currentUser.nickname ? ' own-message' : ' other-message';
-        } else {
-            message.textContent = data.content || data;
-        }
-
-        messageContainer.appendChild(message);
-        // Auto-scroll to bottom
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-    };
 
     // Handle registration
     registerForm.addEventListener('submit', async (event) => {
@@ -175,50 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle sending messages via WebSocket
-    sendButton.addEventListener('click', () => {
-        sendMessage();
-    });
-
-    // Handle pressing Enter to send messages
-    messageInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent default to avoid form submission
-            sendMessage();
-        }
-    });
-
-    // Extract sending logic to a separate function
-    const sendMessage = () => {
-        const message = messageInput.value.trim();
-        if (message && socket && socket.readyState === WebSocket.OPEN && currentUser) {
-            // Send as JSON with user info
-            const messageData = {
-                content: message,
-                user: currentUser.nickname,
-                userId: currentUser.id
-            };
-
-            socket.send(JSON.stringify(messageData));
-            messageInput.value = '';
-        } else if (!socket || socket.readyState !== WebSocket.OPEN) {
-            console.error('WebSocket is not open. Message not sent.');
-            // Try to reconnect
-            const token = getToken();
-            if (token) {
-                initializeWebSocket(token);
-            }
-        } else if (!currentUser) {
-            console.error('User information not available. Message not sent.');
-            checkUserStatus(getToken());
-        }
-    };
-
-    // UI: Clear messages function
-    const clearMessages = (messageElement) => {
-        messageElement.textContent = '';
-    };
-
     // Store only the token in local storage
     const storeUserSession = (token) => {
         localStorage.setItem('token', token);
@@ -264,14 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show chat interface, hide login/register
     const showChatInterface = () => {
-        if (chatSection) chatSection.style.display = 'block';
         if (loginSection) loginSection.style.display = 'none';
         if (registerSection) registerSection.style.display = 'none';
     };
 
     // Show login/register interface, hide chat
     const showAuthInterface = () => {
-        if (chatSection) chatSection.style.display = 'none';
         if (loginSection) loginSection.style.display = 'block';
         if (registerSection) registerSection.style.display = 'block';
     };
@@ -292,6 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            console.log('[CURRENT USER]',currentUser);
+
             const result = await response.json();
 
             if (!response.ok) {
@@ -309,8 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Store user data in memory, not localStorage
                 currentUser = result.data;
                 displayUserInfo(result.data);
-                // Initialize WebSocket with the token
-                initializeWebSocket(token);
+                // console.log('CURRENT USER:\n',currentUser);
             }
         } catch (error) {
             console.error('Error fetching user info:', error);

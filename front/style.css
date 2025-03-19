@@ -1,28 +1,28 @@
-/* variable colors*/
-:root{
-    --background-principal:#000;
-    --background-register: #222;
-    --background_champs:#333;
-    --color-text:#FFD700;
-    --text_input: #f0f0f0;
-}
+/*!* variable colors*!*/
+/*:root{*/
+/*    --background-principal:#000;*/
+/*    --background-register: #222;*/
+/*    --background_champs:#333;*/
+/*    --color-text:#FFD700;*/
+/*    --text_input: #f0f0f0;*/
+/*}*/
 
-/* Reset */
+/*!* Reset *!*/
 
-*{
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+/**{*/
+/*    box-sizing: border-box;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
 
-/* Style général du corps de la page */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: var(--background-principal); 
-    color: var(--text_input); 
-    margin: 0;
-    padding: 20px;
-}
+/*!* Style général du corps de la page *!*/
+/*body {*/
+/*    font-family: 'Arial', sans-serif;*/
+/*    background-color: var(--background-principal); */
+/*    color: var(--text_input); */
+/*    margin: 0;*/
+/*    padding: 20px;*/
+/*}*/
 
 /* Style de la section d'inscription */
 #login,#register,#chat {
@@ -35,12 +35,12 @@ body {
     margin-bottom: 20px;
 }
 
-/* Style des titres de section */
-h1 {
-    text-align: center;
-    color: var(--color-text); 
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); 
-}
+/*!* Style des titres de section *!*/
+/*h1 {*/
+/*    text-align: center;*/
+/*    color: var(--color-text); */
+/*    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); */
+/*}*/
 
 /* Style des labels */
 label {
@@ -80,7 +80,6 @@ button:hover {
     background-color: var(--color-text); 
     transition: background-color 0.3s; 
 }
-
 
 /* CHAT */
 /* Style de la section de chat */

@@ -1,0 +1,33 @@
+/* variable colors*/
+:root{
+    --background-principal:#000;
+    --background-register: #222;
+    --background_champs:#333;
+    --color-text:#FFD700;
+    --text_input: #f0f0f0;
+}
+
+/* Reset */
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Style général du corps de la page */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-principal);
+    color: var(--text_input);
+    margin: 0;
+    padding: 20px;
+}
+
+
+/* Style des titres de section */
+h1 {
+    text-align: center;
+    color: var(--color-text);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}

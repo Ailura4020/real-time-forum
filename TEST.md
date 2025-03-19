@@ -110,7 +110,6 @@ Access a protected route `/api/protected` for create, update and delete operatio
 curl -X GET http://localhost:8080/api/protected -H "Authorization: Bearer <token>>"
 ```
 
-
 Websocket
 
 ```shell

@@ -119,9 +119,26 @@ mkdir -p my-forum-api/db/migrations && touch my-forum-api/db/schema.sql
 
 ### FRONT
 
-todo
+### Tools
+
+- [Vite](https://vite.dev/) - ([guide](https://vite.dev/guide/))
+- [PostCSS](https://postcss.org/)
+
+## Usage
+
+```shell
+cd front
+npm install
+# run the dev version
+npm run dev
+# build
+npm run build
+npm serve
+```
 
 ## Lexical
+
+### Back
 
 - **Cross-Origin Resource Sharing (CORS)**: is a security feature implemented in web browsers that allows or restricts web applications running at one origin (domain) to make requests to resources on a different origin. It uses HTTP headers to inform the browser whether to allow or deny the request based on the origin of the request. CORS is essential for enabling secure interactions between different web applications while preventing unauthorized access to resources.
 - **WebSocket**: A protocol for bidirectional, real-time communication between a client and a server over the web.
@@ -130,3 +147,28 @@ todo
 - **Concurrency**: To handle multiple clients and messages concurrently, you'll need to use Go's concurrency features, such as goroutines and channels. You can use channels to communicate between goroutines and handle messages.
 - **Message broadcasting**: To broadcast messages to all connected clients, you'll need to maintain a list of active connections and send messages to each client. You can use a map to store active connections and iterate over it to send messages.
 - **Message queue**: To handle messages efficiently, you can use a message queue to store incoming messages and process them in a separate goroutine.
+
+### Front
+
+- **Tree-shaking**: is a term used in the context of JavaScript module bundlers (like Webpack and Rollup) to describe the process of eliminating unused code from the final bundle. It helps reduce the size of the output files by removing code that is not actually used in the application.
+- **Bundling**: is the process of combining multiple files (such as JavaScript, CSS, and images) into a single file or a few files. This is typically done to reduce the number of HTTP requests made by the browser when loading a web application.
+- **Pre-processors**: are tools that extend the capabilities of standard CSS (or other languages) by adding features such as variables, nesting, mixins, and functions. Examples of CSS pre-processors include Sass, Less, and Stylus.
+- **Post-processors**: are tools that modify CSS after it has been written, typically to add vendor prefixes, optimize the code, or apply other transformations. A common post-processor is PostCSS.
+
+***
+
+TODO:
+
+GO structure:
+
+In Go (Golang), structuring your application using a handler, service, and repository pattern is a common practice that promotes separation of concerns, maintainability, and testability.
+
+-|-
+**Handler** | The handler is responsible for handling HTTP requests. It acts as the entry point for your application’s API. The main responsibilities of a handler include: Routing, Request Validation, Response Formatting, Error Handling
+**Service** | The service layer contains the business logic of your application. It acts as an intermediary between the handler and the repository. The responsibilities of a service include: Business Logic, Coordination, Transaction Management
+**Repository** | The repository layer is responsible for data access. It abstracts the data storage and retrieval logic, allowing you to interact with your data source (e.g., a database) without exposing the details to the service layer. The responsibilities of a repository include: Data Access, Data Mapping, Encapsulation
+
+### Benefits of Using This Structure
+
+Separation of Concerns (Testability, Flexibility, Reusability, Scalability)
+
