@@ -20,9 +20,9 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 // GetUserByID retrieves a user from the database by ID
 func (r *UserRepository) GetUserByID(id int) (*models.User, error) {
 	query := `
-		SELECT id, nickname, age, gender, first_name, last_name, email, date_register
+		SELECT user_id, nickname, age, gender, first_name, last_name, email, date_register
 		FROM users
-		WHERE id = ?
+		WHERE user_id = ?
 	`
 
 	row := r.DB.QueryRow(query, id)
@@ -62,7 +62,7 @@ func (r *UserRepository) CreateUser(user models.User) (int64, error) {
 // GetUserByEmail retrieves a user by email
 func (r *UserRepository) GetUserByEmail(email string) (models.User, error) {
 	var user models.User
-	query := `SELECT id, nickname, age, gender, first_name, last_name, email, password, date_register FROM USERS WHERE email = ?`
+	query := `SELECT user_id, nickname, age, gender, first_name, last_name, email, password, date_register FROM USERS WHERE email = ?`
 	err := r.DB.QueryRow(query, email).Scan(&user.ID, &user.Nickname, &user.Age, &user.Gender, &user.FirstName, &user.LastName, &user.Email, &user.Password, &user.DateRegister)
 	if err != nil {
 		return user, err

@@ -23,7 +23,7 @@ func ErrorHandler(next http.HandlerFunc, errorLogger *log.Logger) http.HandlerFu
 					Message: "An unexpected error occurred. Please try again later.",
 				}
 
-				fmt.Println(response)
+				fmt.Println("Response: ", response)
 
 				// Set the response header and write the JSON response
 				w.Header().Set("Content-Type", "application/json")
