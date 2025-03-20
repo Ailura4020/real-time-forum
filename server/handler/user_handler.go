@@ -141,15 +141,16 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// SendResponse sends a JSON response
-func SendResponse(w http.ResponseWriter, success bool, message string, data interface{}, token string) {
-	response := models.Response{
-		Success: success,
-		Message: message,
-		Data:    data,
-		Token:   token,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
+//
+//// SendResponse sends a JSON response
+//func SendResponse(w http.ResponseWriter, success bool, message string, data interface{}, token string) {
+//	response := models.Response{
+//		Success: success,
+//		Message: message,
+//		Data:    data,
+//		Token:   token,
+//	}
+//
+//	w.Header().Set("Content-Type", "application/json")
+//	json.NewEncoder(w).Encode(response)
+//}

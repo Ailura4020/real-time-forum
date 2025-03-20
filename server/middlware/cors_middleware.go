@@ -21,8 +21,7 @@ func CORSMiddleware(next http.Handler) http.Handler {
 		origin := r.Header.Get("Origin")
 
 		//fmt.Println("[ORIGIN]", origin)
-		fmt.Println("Request Method:", r.Method)
-		fmt.Println("Request Origin:", origin)
+		fmt.Println("Request Method:", r.Method, " / Request Origin:", origin)
 
 		// Check if the origin is allowed
 		if isOriginAllowed(origin) {
@@ -46,16 +45,16 @@ func CORSMiddleware(next http.Handler) http.Handler {
 func isOriginAllowed(origin string) bool {
 	for _, allowedOrigin := range AllowedOrigins {
 		if allowedOrigin == "*" {
-			fmt.Println("[ALLOWED ORIGIN WILDCARD]", origin)
+			//fmt.Println("[ALLOWED ORIGIN WILDCARD]", origin)
 			return true // Allow all origins if wildcard is present
 		}
 		if allowedOrigin == origin {
-			fmt.Println("[ALLOWED ORIGIN ==]", origin)
+			//fmt.Println("[ALLOWED ORIGIN ==]", origin)
 			return true // Exact match
 		}
 		// Check for localhost with any port
 		if allowedOrigin == "http://localhost:*" {
-			fmt.Println("[ALLOWED ORIGIN localhost]", origin)
+			//fmt.Println("[ALLOWED ORIGIN localhost]", origin)
 			if strings.HasPrefix(origin, "http://localhost:") {
 				return true
 			}

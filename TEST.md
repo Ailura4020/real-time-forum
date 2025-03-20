@@ -110,6 +110,46 @@ Access a protected route `/api/protected` for create, update and delete operatio
 curl -X GET http://localhost:8080/api/protected -H "Authorization: Bearer <token>>"
 ```
 
+## POSTS/COMMENTS
+
+Posting a New Post
+
+```shell
+curl -X POST http://localhost:8080/api/posts \
+-H "Authorization: Bearer YOUR_JWT_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{
+    "title": "My First Post",
+    "category": "General",
+    "content": "This is the content of my first post."
+}'
+```
+
+Retrieving All Posts
+
+```shell
+curl -X GET http://localhost:8080/api/posts
+```
+
+Retrieving a Specific Post with Comments
+
+```shell
+curl -X GET http://localhost:8080/api/posts/1
+```
+
+Adding a Comment to a Post
+
+```shell
+curl -X POST http://localhost:8080/api/comments \
+-H "Authorization: Bearer YOUR_JWT_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{
+    "postId": 1,
+    "content": "This is a comment on the first post."
+}'
+```
+
+
 Websocket
 
 ```shell
