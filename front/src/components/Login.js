@@ -1,18 +1,109 @@
-import styles from '../styles/App.module.css';
+import { api, updateAuthUI } from '../main.js';
+import { router } from '../router.js';
+import '../styles/Login.module.css';
 
-export default function LoginModal({ onLogin, onClose }) {
-    return `
-        <div class="${styles.modal}">
-            <div class="${styles.modalContent}">
-                <span class="${styles.close}" onclick="${onClose}">&times;</span>
-                <h2>Login</h2>
-                <form id="loginForm">
-                    <input type="email" name="identifier" placeholder="Email" required />
-                    <input type="password" name="password" placeholder="Password" required />
-                    <button type="submit">Login</button>
-                </form>
-                <div id="loginMessage"></div>
-            </div>
-        </div>
+export function renderLoginPage(container) {
+    // Check if user is already logged in
+    if (localStorage.getItem('token')) {
+        container.innerHTML = `
+      <div class="auth-container">
+        <h1>Already Logged In</h1>
+        <p>You are already logged in.</p>
+        <button id="go-home" class="btn btn-primary">Go to Home</button>
+        <button id="logout" class="btn btn-secondary">Logout</button>
+      </div>
     `;
+
+        // Add event listeners
+        setTimeout(() => {
+            document.getElementById('go-home').addEventListener('click', () => {
+                router.navigate('/');
+            });
+
+            document.getElementById('logout').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('userData');
+                updateAuthUI();
+                renderLoginPage(container);
+            });
+        }, 0);
+
+        return;
+    }
+
+    // Render login form
+    container.innerHTML = `
+    <div class="auth-form-container">
+      <h1>Login</h1>
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div id="login-error" class="error-message hidden"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+      </form>
+      <p class="auth-link">Don't have an account? <a href="/register" id="register-link">Register</a></p>
+    </div>
+  `;
+
+    // Add event listeners
+    setTimeout(() => {
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+
+        document.getElementById('register-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            router.navigate('/register');
+        });
+    }, 0);
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errorElement = document.getElementById('login-error');
+
+    // Reset error message
+    errorElement.classList.add('hidden');
+    errorElement.textContent = '';
+
+    // Validate inputs
+    if (!email || !password) {
+        errorElement.textContent = 'Please fill in all fields';
+        errorElement.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        // Send login request
+        const response = await api.post('/login', { email, password });
+
+        if (response.success) {
+            // Store token and user data
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('userData', JSON.stringify(response.data));
+
+            // Update UI
+            updateAuthUI(response.data);
+
+            // Redirect to home page
+            router.navigate('/');
+        } else {
+            // Show error message
+            errorElement.textContent = response.message || 'Login failed';
+            errorElement.classList.remove('hidden');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        errorElement.textContent = 'Connection error. Please try again later.';
+        errorElement.classList.remove('hidden');
+    }
 }

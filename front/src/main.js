@@ -1,175 +1,118 @@
-// src/main.js
 import { router } from './router.js';
-import { renderTemplate } from './templates.js';
-import LoginModal from './components/Login.js';
-import RegisterModal from './components/Registration.js';
+import { renderNavigation } from './components/Navigation.js';
+import './styles/Main.module.css';
 
-let currentUser = null;
-let socket = null;
+document.addEventListener('DOMContentLoaded', () => {
+    const appElement = document.getElementById('app');
 
-function render() {
-    const app = document.getElementById('app');
-    const page = router();
-    app.innerHTML = renderTemplate(page);
-}
+    // Render navigation bar
+    const navElement = renderNavigation();
+    appElement.appendChild(navElement);
 
-function showModal(modalContent) {
-    const app = document.getElementById('app');
-    app.innerHTML += modalContent;
-}
+    // Create main content container
+    const mainContent = document.createElement('main');
+    mainContent.id = 'main-content';
+    appElement.appendChild(mainContent);
 
-function closeModal() {
-    const modal = document.querySelector('.modal');
-    if (modal) {
-        modal.remove();
-    }
-}
+    // Initialize router
+    router.init();
 
-window.addEventListener('popstate', render);
-document.addEventListener('click', (event) => {
-    if (event.target.tagName === 'A') {
-        event.preventDefault();
-        const path = event.target.getAttribute('href');
-        window.history.pushState({}, '', path);
-        render();
-    } else if (event.target.id === 'openLoginModal') {
-        showModal(LoginModal({ onLogin: handleLogin, onClose: closeModal }));
-    } else if (event.target.id === 'openRegisterModal') {
-        showModal(RegisterModal({ onRegister: handleRegister, onClose: closeModal }));
+    // Check if user is already logged in
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('userData');
+
+    if (token && userData) {
+        // Update UI for logged in user
+        const userDataObj = JSON.parse(userData);
+        updateAuthUI(userDataObj);
     }
 });
 
-// Handle login
-async function handleLogin(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = {
-        email: formData.get('identifier'),
-        password: formData.get('password')
-    };
+// Function to update UI elements based on authentication state
+export function updateAuthUI(userData = null) {
+    const authContainer = document.getElementById('auth-container');
+    if (!authContainer) return;
 
-    try {
-        const response = await fetch('http://localhost:8080/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json
-        if (!response.ok) {
-            throw new Error(result.message || `HTTP error! status: ${response.status}`);
-        }
-
-        // Handle successful login
-        closeModal(); // Close the modal
-        displayUserInfo(result.data); // Display user info
-        currentUser = result.data; // Set current user in memory
-        initializeWebSocket(result.token); // Initialize WebSocket with the token
-    } catch (error) {
-        console.error('Error during login:', error);
-        const loginMessage = document.getElementById('loginMessage');
-        loginMessage.textContent = error.message || 'Login failed. Please try again.';
-        loginMessage.style.color = 'red';
-    }
-}
-
-// Handle registration
-async function handleRegister(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = {
-        nickname: formData.get('nickname'),
-        age: parseInt(formData.get('age')),
-        gender: formData.get('gender'),
-        first_name: formData.get('first_name'),
-        last_name: formData.get('last_name'),
-        email: formData.get('email'),
-        password: formData.get('password'),
-    };
-
-    try {
-        const response = await fetch('http://localhost:8080/api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || `HTTP error! status: ${response.status}`);
-        }
-
-        // Handle successful registration
-        closeModal(); // Close the modal
-        displayUserInfo(result.data); // Display user info
-        currentUser = result.data; // Set current user in memory
-        initializeWebSocket(result.token); // Initialize WebSocket with the token
-    } catch (error) {
-        console.error('Error during registration:', error);
-        const registerMessage = document.getElementById('registerMessage');
-        registerMessage.textContent = error.message || 'Registration failed. Please try again.';
-        registerMessage.style.color = 'red';
-    }
-}
-
-// Display user information
-function displayUserInfo(userData) {
-    const userInfoContainer = document.getElementById('userInfoContainer');
-    userInfoContainer.innerHTML = `
-        <p>Welcome, ${userData.nickname}!</p>
-        <p>Email: ${userData.email}</p>
-        <p>Age: ${userData.age}</p>
-        <p>Gender: ${userData.gender}</p>
-        <button id="logoutButton">Logout</button>
+    if (userData) {
+        // User is logged in
+        authContainer.innerHTML = `
+      <span class="welcome-message">Welcome, ${userData.nickname}</span>
+      <button id="logout-button" class="nav-button">Logout</button>
     `;
 
-    // Add logout button functionality
-    document.getElementById('logoutButton').addEventListener('click', logout);
-}
-
-// Handle logout
-function logout() {
-    if (socket) {
-        socket.close();
-    }
-    localStorage.removeItem('token');
-    currentUser = null;
-    document.getElementById('userInfoContainer').innerHTML = '';
-    showAuthInterface(); // Show login/register forms
-}
-
-// Show authentication interface
-function showAuthInterface() {
-    // Logic to show login/register forms
-}
-
-// Initialize WebSocket connection
-function initializeWebSocket(token) {
-    // Logic to initialize WebSocket connection
-}
-
-// Helper to get token
-const getToken = () => {
-    return localStorage.getItem('token');
-};
-
-// Initial render
-window.addEventListener('popstate', render);
-document.addEventListener('DOMContentLoaded', () => {
-    render();
-    const token = getToken();
-    if (token) {
-        checkUserStatus(token); // Check user status if token exists
+        // Add logout event listener
+        document.getElementById('logout-button').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            updateAuthUI();
+            router.navigate('/');
+        });
     } else {
-        showAuthInterface(); // Show login/register if no token
+        // User is not logged in
+        authContainer.innerHTML = `
+      <button id="login-button" class="nav-button">Login</button>
+      <button id="register-button" class="nav-button">Register</button>
+    `;
+
+        // Add login/register event listeners
+        document.getElementById('login-button').addEventListener('click', () => {
+            router.navigate('/login');
+        });
+
+        document.getElementById('register-button').addEventListener('click', () => {
+            router.navigate('/register');
+        });
     }
-});
+}
 
+// Create a simple API client
+export const api = {
+    baseUrl: 'http://localhost:8080/api',
 
-// Initial render
-render();
+    async get(endpoint) {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        try {
+            const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                method: 'GET',
+                headers
+            });
+
+            return await response.json();
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+        }
+    },
+
+    async post(endpoint, data) {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        try {
+            const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data)
+            });
+
+            return await response.json();
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+        }
+    }
+};

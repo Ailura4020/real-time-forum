@@ -1,0 +1,38 @@
+export function renderNavigation() {
+    const nav = document.createElement('nav');
+    nav.classList.add('main-nav');
+
+    nav.innerHTML = `
+    <div class="nav-content">
+      <div class="logo-container">
+        <a href="/" class="logo">Forum App</a>
+      </div>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/about" class="nav-link">About</a>
+      </div>
+      <div id="auth-container" class="auth-container">
+        <button id="login-button" class="nav-button">Login</button>
+        <button id="register-button" class="nav-button">Register</button>
+      </div>
+    </div>
+  `;
+
+    // Add event listeners
+    const loginButton = nav.querySelector('#login-button');
+    const registerButton = nav.querySelector('#register-button');
+
+    loginButton.addEventListener('click', () => {
+        window.history.pushState({}, '', '/login');
+        const event = new PopStateEvent('popstate');
+        window.dispatchEvent(event);
+    });
+
+    registerButton.addEventListener('click', () => {
+        window.history.pushState({}, '', '/register');
+        const event = new PopStateEvent('popstate');
+        window.dispatchEvent(event);
+    });
+
+    return nav;
+}
