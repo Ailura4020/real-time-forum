@@ -78,6 +78,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("🔍 Tentative de parsing des infos utilisateur...")
 	if err := json.Unmarshal(msg, &userInfo); err != nil {
+		log.Printf("🔍 Données utilisateur reçues: %+v\n", userInfo)
 		log.Println("❌ Erreur lors du parsing du message initial :", err)
 		log.Println("🔴 Contenu du message reçu:", string(msg))
 		return

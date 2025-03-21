@@ -34,6 +34,11 @@ const ws = new WebSocket(`${protocol}://${window.location.hostname}:8080/ws`);
         console.log("✅ WebSocket connecté !");
         currentUser = await isLoggedIn();
         if (currentUser) {
+          console.log("📤 Envoi des infos utilisateur :", JSON.stringify({
+            username: currentUser?.username || "inconnu",
+            userId: currentUser?.id || 0
+        }));
+        
           ws.send(
             JSON.stringify({
               username: currentUser.username,

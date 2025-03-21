@@ -64,8 +64,7 @@ func main() {
 		log.Printf("Warning: You should set JWT_SECRET environment variable.")
 	}
 
-	err = db.InitDB()
-	if err != nil {
+	if err := db.InitDB(); err != nil {
 		log.Fatalf("Erreur lors de l'initialisation de la base de données: %v", err)
 	}
 	defer func() {
