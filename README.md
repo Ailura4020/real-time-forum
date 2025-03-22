@@ -148,6 +148,9 @@ npm serve
 - **Message broadcasting**: To broadcast messages to all connected clients, you'll need to maintain a list of active connections and send messages to each client. You can use a map to store active connections and iterate over it to send messages.
 - **Message queue**: To handle messages efficiently, you can use a message queue to store incoming messages and process them in a separate goroutine.
 
+- JWT token
+  - **Bearer** prefix indicates the type of authentication being used and is part of the standard way to send access tokens in HTTP requests. Bearer Token: A Bearer token is a type of access token that is used to authenticate requests to a server. The term "Bearer" indicates that the token is a bearer token, meaning that whoever possesses the token (the "bearer") can access the associated resources without needing to provide additional credentials.
+
 ### Front
 
 - **Tree-shaking**: is a term used in the context of JavaScript module bundlers (like Webpack and Rollup) to describe the process of eliminating unused code from the final bundle. It helps reduce the size of the output files by removing code that is not actually used in the application.
