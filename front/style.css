@@ -17,7 +17,7 @@
 body {
     background-image: url('http://localhost:8080/static/background.png');
     background-size: 110%;
-    background-position: center;
+    background-position: top center;
     font-family: 'Arial', sans-serif;
     color: #ffffff;
     margin: 0;
