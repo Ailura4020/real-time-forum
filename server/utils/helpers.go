@@ -48,8 +48,11 @@ func ValidateJWT(tokenString string) (*Claims, error) {
 		},
 	)
 
+	//if err != nil {
+	//	return nil, err
+	//}
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
 
 	// Check if the token is valid

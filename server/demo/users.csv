@@ -1,0 +1,11 @@
+nickname,age,gender,first_name,last_name,email,password,date_register
+LukeSkywalker,19,male,Luke,Skywalker,luke@jedi.com,password123,2021-05-15
+LeiaOrgana,19,female,Leia,Organa,leia@rebels.com,password123,2020-11-22
+HanSolo,32,male,Han,Solo,han@smuggler.com,password123,2019-08-30
+DarthVader,45,male,Anakin,Skywalker,anakin@empire.com,password123,2022-01-10
+Yoda,900,male,Yoda,Master,yoda@jedi.com,password123,2023-03-05
+ObiWanKenobi,57,male,Obi-Wan,Kenobi,obiwan@jedi.com,password123,2021-12-01
+Chewbacca,200,male,Chewbacca,Wookiee,chewie@rebels.com,password123,2020-07-19
+R2D2,50,male,R2-D2,Droid,r2d2@droid.com,password123,2024-09-15
+C3PO,50,male,C-3PO,Droid,c3po@droid.com,password123,2023-01-25
+PadmeAmidala,27,female,Padmé,Amidala,padme@senate.com,password123,2025-03-01

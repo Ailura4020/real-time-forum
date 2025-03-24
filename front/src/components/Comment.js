@@ -1,6 +1,6 @@
 // src/components/Comment.js
 import { api } from '../main.js';
-import '../styles/Comment.module.css';
+// import '../styles/Comment.module.css';
 
 export function renderComments(container, postId, existingComments = null) {
     // Add comment form if user is logged in
@@ -111,6 +111,31 @@ function displayComments(container, comments) {
     });
 }
 
+// async function submitComment(postId, parentContainer) {
+//     const contentTextarea = document.getElementById('comment-content');
+//     const content = contentTextarea.value;
+//
+//     if (!content.trim()) {
+//         alert('Please enter a comment');
+//         return;
+//     }
+//
+//     try {
+//         // This is a placeholder - you would need to implement an API endpoint for this
+//         console.log('Submitting comment for post:', postId, 'content:', content);
+//         alert('Comment submission not implemented in this demo. Would send: ' + content);
+//
+//         // Reset form
+//         contentTextarea.value = '';
+//
+//         // Reload comments
+//         const commentsListContainer = document.getElementById('comments-list');
+//         loadComments(postId, commentsListContainer);
+//     } catch (error) {
+//         console.error('Error submitting comment:', error);
+//         alert('Failed to submit comment. Please try again.');
+//     }
+// }
 async function submitComment(postId, parentContainer) {
     const contentTextarea = document.getElementById('comment-content');
     const content = contentTextarea.value;
@@ -121,18 +146,47 @@ async function submitComment(postId, parentContainer) {
     }
 
     try {
-        // This is a placeholder - you would need to implement an API endpoint for this
-        console.log('Submitting comment for post:', postId, 'content:', content);
-        alert('Comment submission not implemented in this demo. Would send: ' + content);
+        const token = localStorage.getItem('token'); // Get the JWT token from local storage
+        const response = await fetch('http://localhost:8080/api/comments', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text_content: content, // Use the correct field name for the comment content
+                // post_id: postId // Include the post ID in the request body
+                post_id: parseInt(postId, 10)
+            })
+        });
+
+        console.log('Sending comment:', {
+            text_content: content,
+            post_id: postId
+        });
+
+        // if (!response.ok) {
+        //     throw new Error('Network response was not ok ' + response.statusText);
+        // }
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            console.error('Error response:', errorResponse);
+            throw new Error('Network response was not ok: ' + errorResponse.message);
+        }
+
+        const result = await response.json();
+        console.log('Comment submitted successfully:', result);
+        alert('Comment submitted successfully!');
 
         // Reset form
         contentTextarea.value = '';
 
         // Reload comments
         const commentsListContainer = document.getElementById('comments-list');
-        loadComments(postId, commentsListContainer);
+        await loadComments(postId, commentsListContainer);
     } catch (error) {
         console.error('Error submitting comment:', error);
         alert('Failed to submit comment. Please try again.');
     }
 }
+

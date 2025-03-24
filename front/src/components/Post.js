@@ -1,7 +1,7 @@
 // src/components/Post.js
 import { api } from '../main.js';
 import { renderComments } from './Comment.js';
-import '../styles/Post.module.css';
+// import '../styles/Post.module.css';
 
 export async function renderPostPage(container, params) {
     const postId = params.id;
@@ -46,13 +46,13 @@ export async function renderPostPage(container, params) {
         <div class="post-content">
           <p>${post.text_content}</p>
         </div>
-        <div class="post-actions">
+        <!--<div class="post-actions">
           <button class="like-button" data-id="${post.id}">
             <span class="like-icon">👍</span> <span class="like-count">${post.likes}</span>
           </button>
           <button class="dislike-button" data-id="${post.id}">
             <span class="dislike-icon">👎</span> <span class="dislike-count">${post.dislikes}</span>
-          </button>
+          </button>-->
         </div>
         <div class="post-navigation">
           <a href="/" class="back-link">← Back to Posts</a>

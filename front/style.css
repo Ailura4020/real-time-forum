@@ -1,237 +1,628 @@
 /* style.css - Global styles */
 
+/*@import "tailwindcss";*/
+
 /* CSS Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
-}
-
-a {
-    color: #0066cc;
     text-decoration: none;
+    color: unset;
 }
 
-a:hover {
-    text-decoration: underline;
+/* style.css */
+
+/* Body Styles */
+body {
+    background-image: url('http://localhost:8080/static/background.png');
+    background-size: 110%;
+    background-position: center;
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
 }
 
-button {
-    cursor: pointer;
-}
-
-/* Toast notification */
-#toast-container {
+/* Navigation Styles */
+.main-nav {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
     position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1000;
-}
-
-.toast {
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 4px;
-    color: white;
-    max-width: 300px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.toast.show {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.toast-info {
-    background-color: #0066cc;
-}
-
-.toast-success {
-    background-color: #28a745;
-}
-
-.toast-warning {
-    background-color: #ffc107;
-    color: #333;
-}
-
-.toast-error {
-    background-color: #dc3545;
-}
-
-/* Common utility classes */
-.hidden {
-    display: none !important;
-}
-
-.error-message {
-    color: #dc3545;
-    margin: 0.5rem 0;
-    font-size: 0.875rem;
-}
-
-.loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-    color: #666;
-    font-style: italic;
-}
-
-/* Buttons */
-.btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.25rem;
-    transition: all 0.15s ease-in-out;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #0066cc;
-    border-color: #0066cc;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #004fa6;
-}
-
-.btn-secondary {
-    color: #fff;
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-    border-color: #545b62;
-}
-
-/* Forms */
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    display: block;
     width: 100%;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
-}
-
-.form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-right: -0.5rem;
-    margin-left: -0.5rem;
-}
-
-.form-row > .form-group {
-    flex: 1 0 0%;
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
-}
-
-/* Spinner */
-.spinner {
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    border: 0.25rem solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top-color: #0066cc;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Container for page content */
-#app {
-    min-height: 100vh;
+    top: 0;
+    z-index: 1000;
     display: flex;
     flex-direction: column;
 }
 
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFD700; /* Gold color */
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #FFD700; /* Gold color on hover */
+}
+
+.auth-container {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-button {
+    background-color: #1E1E1E;
+    color: #FFD700; /* Gold color */
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #FFD700; /* Gold color on hover */
+    color: #1E1E1E; /* Dark background */
+}
+
+/* Main Content Styles */
 #main-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+    margin-top: 70px; /* Space for fixed nav */
+    padding: 20px;
 }
 
-/* Error container */
-.error-container {
+.posts-container {
+    /*background-color: rgba(0, 0, 0, 0.7);*/
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
     text-align: center;
-    padding: 3rem 1rem;
-    max-width: 800px;
-    margin: 0 auto;
+    color: #FFD700; /* Gold color */
 }
 
-.error-container h2 {
-    color: #dc3545;
-    margin-bottom: 1rem;
+.posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.error-container p {
-    margin-bottom: 1.5rem;
+.post-card {
+    background-color: rgba(0, 0, 0, 0.7);
+    /*border: 1px solid rgba(255, 255, 255, 0.3);*/
+    border-radius: 10px;
+    padding: 15px;
 }
 
-.back-link {
-    display: inline-block;
-    margin-top: 1rem;
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
+
+.post-title {
+    font-size: 20px;
+    color: #FFD700; /* Gold color */
+}
+
+.post-category {
+    background-color: #FFD700; /* Gold color */
+    color: #1E1E1E; /* Dark background */
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.post-content {
+    margin: 10px 0;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-meta {
+    font-size: 14px;
+    color: #cccccc; /* Light gray */
+}
+
+.post-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Button Styles for Post Actions (if uncommented) */
+.like-button, .dislike-button, .comment-button {
+    background-color: #1E1E1E;
+    color: #FFD700; /* Gold color */
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.like-button:hover, .dislike-button:hover, .comment-button:hover {
+    background-color: #FFD700; /* Gold color on hover */
+    color: #1E1E1E; /* Dark background */
+}
+
+/*---------------------------------------------FORM*/
+.auth-form-container {
+    max-width: 400px; /* Limit the width of the form */
+    margin: 50px auto; /* Center the form on the page */
+    padding: 20px;
+    background-color: #1a1a1a; /* Dark gray background for the form */
+    border: 2px solid #ffcc00; /* Gold border for a touch of elegance */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5); /* Glow effect */
+}
+
+h1 {
+    text-align: center; /* Center the heading */
+    color: #ffcc00; /* Gold color for the heading */
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column; /* Stack form elements vertically */
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between; /* Space out form groups */
+    margin-bottom: 15px; /* Space between rows */
+}
+
+.form-group {
+    flex: 1; /* Allow form groups to grow equally */
+    margin-right: 10px; /* Space between form groups */
+}
+
+.form-group:last-child {
+    margin-right: 0; /* Remove margin for the last group */
+}
+
+label {
+    display: block; /* Make labels block elements */
+    margin-bottom: 5px; /* Space between label and input */
+    color: #ccc; /* Light gray for labels */
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%; /* Full width inputs */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #2a2a2a; /* Slightly lighter gray for inputs */
+    color: #fff; /* White text for inputs */
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
+    border-color: #ffcc00; /* Gold border on focus */
+    outline: none; /* Remove default outline */
+}
+
+.error-message {
+    color: red; /* Red color for error messages */
+    margin-bottom: 15px; /* Space below error message */
+}
+
+.form-actions {
+    text-align: center; /* Center the button */
+}
+
+.btn {
+    background-color: #ffcc00; /* Gold background for button */
+    color: #000; /* Black text for button */
+    border: none; /* Remove default border */
+    padding: 10px 15px; /* Padding for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.btn:hover {
+    background-color: #e6b800; /* Darker gold on hover */
+}
+
+.auth-link {
+    text-align: center; /* Center the link */
+    margin-top: 15px; /* Space above the link */
+    color: #ccc; /* Light gray for the link */
+}
+
+.auth-link a {
+    color: #ffcc00; /* Gold color for the link */
+    text-decoration: none; /* Remove underline */
+}
+
+.auth-link a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+
+/*-----------------------------------------------------------BACKUP*/
+
+
+/*body {*/
+/*    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;*/
+/*    line-height: 1.6;*/
+/*    color: #333;*/
+/*    background-color: #f5f5f5;*/
+/*}*/
+
+/*a {*/
+/*    color: #0066cc;*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*a:hover {*/
+/*    text-decoration: underline;*/
+/*}*/
+
+/*button {*/
+/*    cursor: pointer;*/
+/*}*/
+
+/*!* Toast notification *!*/
+/*#toast-container {*/
+/*    position: fixed;*/
+/*    top: 1rem;*/
+/*    right: 1rem;*/
+/*    z-index: 1000;*/
+/*}*/
+
+/*.toast {*/
+/*    padding: 0.75rem 1rem;*/
+/*    margin-bottom: 0.5rem;*/
+/*    border-radius: 4px;*/
+/*    color: white;*/
+/*    max-width: 300px;*/
+/*    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);*/
+/*    transform: translateX(100%);*/
+/*    opacity: 0;*/
+/*    transition: transform 0.3s ease, opacity 0.3s ease;*/
+/*}*/
+
+/*.toast.show {*/
+/*    transform: translateX(0);*/
+/*    opacity: 1;*/
+/*}*/
+
+/*.toast-info {*/
+/*    background-color: #0066cc;*/
+/*}*/
+
+/*.toast-success {*/
+/*    background-color: #28a745;*/
+/*}*/
+
+/*.toast-warning {*/
+/*    background-color: #ffc107;*/
+/*    color: #333;*/
+/*}*/
+
+/*.toast-error {*/
+/*    background-color: #dc3545;*/
+/*}*/
+
+/*!* Common utility classes *!*/
+/*.hidden {*/
+/*    display: none !important;*/
+/*}*/
+
+/*.error-message {*/
+/*    color: #dc3545;*/
+/*    margin: 0.5rem 0;*/
+/*    font-size: 0.875rem;*/
+/*}*/
+
+/*.loading {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    padding: 2rem;*/
+/*    color: #666;*/
+/*    font-style: italic;*/
+/*}*/
+
+/*!* Buttons *!*/
+/*.btn {*/
+/*    display: inline-block;*/
+/*    font-weight: 400;*/
+/*    text-align: center;*/
+/*    white-space: nowrap;*/
+/*    vertical-align: middle;*/
+/*    user-select: none;*/
+/*    border: 1px solid transparent;*/
+/*    padding: 0.375rem 0.75rem;*/
+/*    font-size: 1rem;*/
+/*    line-height: 1.5;*/
+/*    border-radius: 0.25rem;*/
+/*    transition: all 0.15s ease-in-out;*/
+/*}*/
+
+/*.btn-primary {*/
+/*    color: #fff;*/
+/*    background-color: #0066cc;*/
+/*    border-color: #0066cc;*/
+/*}*/
+
+/*.btn-primary:hover {*/
+/*    background-color: #0056b3;*/
+/*    border-color: #004fa6;*/
+/*}*/
+
+/*.btn-secondary {*/
+/*    color: #fff;*/
+/*    background-color: #6c757d;*/
+/*    border-color: #6c757d;*/
+/*}*/
+
+/*.btn-secondary:hover {*/
+/*    background-color: #5a6268;*/
+/*    border-color: #545b62;*/
+/*}*/
+
+/*!* Forms *!*/
+/*.form-group {*/
+/*    margin-bottom: 1rem;*/
+/*}*/
+
+/*.form-group label {*/
+/*    display: block;*/
+/*    margin-bottom: 0.5rem;*/
+/*    font-weight: 500;*/
+/*}*/
+
+/*.form-group input,*/
+/*.form-group select,*/
+/*.form-group textarea {*/
+/*    display: block;*/
+/*    width: 100%;*/
+/*    padding: 0.375rem 0.75rem;*/
+/*    font-size: 1rem;*/
+/*    line-height: 1.5;*/
+/*    color: #495057;*/
+/*    background-color: #fff;*/
+/*    background-clip: padding-box;*/
+/*    border: 1px solid #ced4da;*/
+/*    border-radius: 0.25rem;*/
+/*    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;*/
+/*}*/
+
+/*.form-group input:focus,*/
+/*.form-group select:focus,*/
+/*.form-group textarea:focus {*/
+/*    border-color: #80bdff;*/
+/*    outline: 0;*/
+/*    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);*/
+/*}*/
+
+/*.form-actions {*/
+/*    display: flex;*/
+/*    justify-content: flex-end;*/
+/*    gap: 0.5rem;*/
+/*    margin-top: 1.5rem;*/
+/*}*/
+
+/*.form-row {*/
+/*    display: flex;*/
+/*    flex-wrap: wrap;*/
+/*    margin-right: -0.5rem;*/
+/*    margin-left: -0.5rem;*/
+/*}*/
+
+/*.form-row > .form-group {*/
+/*    flex: 1 0 0%;*/
+/*    padding-right: 0.5rem;*/
+/*    padding-left: 0.5rem;*/
+/*}*/
+
+/*!* Spinner *!*/
+/*.spinner {*/
+/*    display: inline-block;*/
+/*    width: 2rem;*/
+/*    height: 2rem;*/
+/*    border: 0.25rem solid rgba(0, 0, 0, 0.1);*/
+/*    border-radius: 50%;*/
+/*    border-top-color: #0066cc;*/
+/*    animation: spin 1s linear infinite;*/
+/*}*/
+
+/*@keyframes spin {*/
+/*    to {*/
+/*        transform: rotate(360deg);*/
+/*    }*/
+/*}*/
+
+/*!* Container for page content *!*/
+/*#app {*/
+/*    min-height: 100vh;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*}*/
+
+/*#main-content {*/
+/*    flex: 1;*/
+/*    padding: 1.5rem;*/
+/*    max-width: 1200px;*/
+/*    margin: 0 auto;*/
+/*    width: 100%;*/
+/*}*/
+
+/*!* Error container *!*/
+/*.error-container {*/
+/*    text-align: center;*/
+/*    padding: 3rem 1rem;*/
+/*    max-width: 800px;*/
+/*    margin: 0 auto;*/
+/*}*/
+
+/*.error-container h2 {*/
+/*    color: #dc3545;*/
+/*    margin-bottom: 1rem;*/
+/*}*/
+
+/*.error-container p {*/
+/*    margin-bottom: 1.5rem;*/
+/*}*/
+
+/*.back-link {*/
+/*    display: inline-block;*/
+/*    margin-top: 1rem;*/
+/*}*/
+
+/*!*--------------------------------------------*!*/
+/*!*NAV*!*/
+
+/*.nav-content {*/
+/*    display: flex; !* Use flexbox for layout *!*/
+/*    justify-content: space-between; !* Space between logo, links, and auth buttons *!*/
+/*    align-items: center; !* Center items vertically *!*/
+/*    background-color: #007bff; !* Primary background color for the nav *!*/
+/*    padding: 10px 20px; !* Padding around the nav content *!*/
+/*    color: white; !* Text color for nav items *!*/
+/*}*/
+
+/*.logo-container {*/
+/*    flex: 1; !* Allow logo container to grow *!*/
+/*}*/
+
+/*.logo {*/
+/*    font-size: 1.5em; !* Larger font size for the logo *!*/
+/*    text-decoration: none; !* Remove underline from the logo link *!*/
+/*    color: white; !* White color for the logo *!*/
+/*}*/
+
+/*.nav-links {*/
+/*    flex: 2; !* Allow nav links to grow *!*/
+/*    display: flex; !* Use flexbox for nav links *!*/
+/*    justify-content: center; !* Center nav links *!*/
+/*}*/
+
+/*.nav-link {*/
+/*    margin: 0 15px; !* Space between nav links *!*/
+/*    text-decoration: none; !* Remove underline from links *!*/
+/*    color: white; !* White color for nav links *!*/
+/*    font-size: 1em; !* Font size for nav links *!*/
+/*    transition: color 0.3s; !* Smooth transition for color *!*/
+/*}*/
+
+/*.nav-link:hover {*/
+/*    color: #e0e0e0; !* Lighter color on hover *!*/
+/*}*/
+
+/*.auth-container {*/
+/*    flex: 1; !* Allow auth container to grow *!*/
+/*    display: flex; !* Use flexbox for auth buttons *!*/
+/*    justify-content: flex-end; !* Align buttons to the right *!*/
+/*}*/
+
+/*.nav-button {*/
+/*    background-color: #28a745; !* Green background for buttons *!*/
+/*    color: white; !* Text color for buttons *!*/
+/*    border: none; !* Remove border *!*/
+/*    border-radius: 4px; !* Rounded corners *!*/
+/*    padding: 8px 12px; !* Padding for buttons *!*/
+/*    cursor: pointer; !* Pointer cursor on hover *!*/
+/*    font-size: 1em; !* Font size for buttons *!*/
+/*    margin-left: 10px; !* Space between buttons *!*/
+/*    transition: background-color 0.3s; !* Smooth transition for background color *!*/
+/*}*/
+
+/*.nav-button:hover {*/
+/*    background-color: #218838; !* Darker green on hover *!*/
+/*}*/
+
+/*.nav-button:disabled {*/
+/*    background-color: #ccc; !* Disabled button color *!*/
+/*    cursor: not-allowed; !* Not-allowed cursor for disabled button *!*/
+/*}*/
+
+/*body {*/
+/*    font-family: Arial, sans-serif;*/
+/*    background-image: url('http://localhost:8080/static/background.jpg'); !* Replace with your space background image URL *!*/
+/*    !*background-size: cover;*!*/
+/*    color: #fff;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+/*header {*/
+/*    !*background-image: url('http://localhost:8080/static/header_background.jpg'); !* Replace with your Star Wars header image URL *!*!*/
+/*    !*background-size: cover;*!*/
+/*    background-color: rgba(0, 0, 0, 0.8);*/
+/*    padding: 40px;*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    height: 150px; !* Increased height for the header *!*/
+/*}*/
+/*nav {*/
+/*    display: flex;*/
+/*    gap: 20px;*/
+/*}*/
+/*nav a {*/
+/*    color: #fff;*/
+/*    text-decoration: none;*/
+/*    font-size: 18px; !* Increased font size for navigation *!*/
+/*}*/
+/*.user-block {*/
+/*    display: flex;*/
+/*    gap: 10px;*/
+/*}*/
+/*.post-button {*/
+/*    margin: 20px;*/
+/*    padding: 10px 20px;*/
+/*    background-color: #ffcc00;*/
+/*    border: none;*/
+/*    cursor: pointer;*/
+/*    font-size: 16px;*/
+/*}*/
+/*.post {*/
+/*    background-color: rgba(0, 0, 0, 0.8); !* Slightly transparent background for posts *!*/
+/*    margin: 10px;*/
+/*    padding: 15px;*/
+/*    border-radius: 5px;*/
+/*}*/
+/*.footer {*/
+/*    background-color: rgba(0, 0, 0, 0.8);;*/
+/*    text-align: center;*/
+/*    padding: 10px;*/
+/*    position: relative;*/
+/*    bottom: 0;*/
+/*    width: 100%;*/
+/*}*/

@@ -8,7 +8,7 @@ import (
 
 // AllowedOrigins is a list of origins that are allowed to access the API
 var AllowedOrigins = []string{
-	"*", // Example allowed origin
+	"*", // allow all origins (not for production)
 	// Add other allowed origins here
 }
 

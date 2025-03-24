@@ -45,7 +45,7 @@
 
 - Database Layer: SQLite
 - Business Logic Layer: Golang
-- ~~API Layer: RESTful API using Golang and Gorilla WebSocket~~
+- API Layer: RESTful API using Golang and Gorilla WebSocket
 - Frontend Layer: HTML, CSS, and JavaScript
 - WebSocket Layer: Gorilla WebSocket and JavaScript WebSocket API
   (optional)

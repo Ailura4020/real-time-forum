@@ -1,5 +1,5 @@
 // src/pages/About.js
-import '../styles/About.module.css';
+// import '../styles/About.module.css';
 
 export function renderAboutPage(container) {
     container.innerHTML = `

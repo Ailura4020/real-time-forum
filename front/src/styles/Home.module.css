@@ -1,163 +1,245 @@
-/* src/styles/Home.module.css */
-
-.posts-container {
-    max-width: 800px;
-    margin: 0 auto;
+.comment-form {
+    background-color: #f9f9f9; /* Light background for the form */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 20px; /* Padding around the content */
+    max-width: 500px; /* Maximum width of the form */
+    margin: 20px auto; /* Center the form horizontally */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.posts-container h1 {
-    margin-bottom: 1.5rem;
-    text-align: center;
+.form-group {
+    margin-bottom: 15px; /* Space between form groups */
 }
 
-.create-post-button {
-    display: block;
-    margin: 0 auto 2rem;
-    padding: 0.5rem 1rem;
-    background-color: #0066cc;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+label {
+    display: block; /* Make label a block element */
+    margin-bottom: 5px; /* Space between label and textarea */
+    font-weight: bold; /* Bold text for labels */
+    color: #333; /* Darker text color */
 }
 
-.create-post-button:hover {
-    background-color: #0056b3;
+textarea {
+    width: 100%; /* Full width of the parent */
+    padding: 10px; /* Padding inside the textarea */
+    border: 1px solid #ccc; /* Border for the textarea */
+    border-radius: 4px; /* Rounded corners */
+    resize: vertical; /* Allow vertical resizing only */
+    font-size: 14px; /* Font size for the textarea */
+    color: #333; /* Text color */
 }
 
-.create-post-form {
-    background-color: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+textarea:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
 }
 
-.create-post-form h2 {
-    margin-bottom: 1rem;
-    text-align: center;
+.form-actions {
+    text-align: right; /* Align actions to the right */
 }
 
-.posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.btn {
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color for button */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size for button */
+    transition: background-color 0.3s; /* Smooth transition for background color */
 }
 
-.post-card {
-    background-color: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.btn:hover {
+    background-color: #0056b3; /* Darker shade on hover */
 }
 
-.post-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+.btn:disabled {
+    background-color: #ccc; /* Disabled button color */
+    cursor: not-allowed; /* Not-allowed cursor for disabled button */
 }
+
+/*--------------------------------------*/
+
+h2 {
+    text-align: center; /* Center the heading */
+    color: #333; /* Darker text color for the heading */
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+#post-form {
+    background-color: #f9f9f9; /* Light background for the form */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 20px; /* Padding around the content */
+    max-width: 600px; /* Maximum width of the form */
+    margin: 20px auto; /* Center the form horizontally */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Space between form groups */
+}
+
+label {
+    display: block; /* Make label a block element */
+    margin-bottom: 5px; /* Space between label and input/textarea */
+    font-weight: bold; /* Bold text for labels */
+    color: #333; /* Darker text color */
+}
+
+input[type="text"],
+select,
+textarea {
+    width: 100%; /* Full width of the parent */
+    padding: 10px; /* Padding inside the input/select/textarea */
+    border: 1px solid #ccc; /* Border for the input/select/textarea */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 14px; /* Font size for input/select/textarea */
+    color: #333; /* Text color */
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
+}
+
+.form-actions {
+    text-align: right; /* Align actions to the right */
+}
+
+button {
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color for button */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size for button */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+    margin-left: 10px; /* Space between buttons */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+button#cancel-post {
+    background-color: #dc3545; /* Red color for cancel button */
+}
+
+button#cancel-post:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+button:disabled {
+    background-color: #ccc; /* Disabled button color */
+    cursor: not-allowed; /* Not-allowed cursor for disabled button */
+}
+
+/*---------------------------*/
 
 .post-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
+    background-color: #f1f1f1; /* Light background for the header */
+    padding: 15px; /* Padding around the header */
+    border-bottom: 1px solid #ddd; /* Bottom border for separation */
 }
 
 .post-title {
-    margin: 0;
-    font-size: 1.5rem;
+    margin: 0; /* Remove default margin */
+    font-size: 4.5em !important; /* Larger font size for the title */
+    color: #007bff; /* Primary color for the title */
+    color: red;
 }
 
 .post-title a {
-    color: #333;
-    text-decoration: none;
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit color from the title */
 }
 
 .post-title a:hover {
-    color: #0066cc;
+    text-decoration: underline; /* Underline on hover */
 }
 
 .post-category {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    background-color: #e9ecef;
-    color: #495057;
-    font-size: 0.75rem;
-    border-radius: 4px;
-    margin-left: 0.5rem;
+    background-color: red;
+    display: block; /* Make category a block element */
+    font-size: 0.9em; /* Smaller font size for category */
+    color: #555; /* Darker gray for category text */
+    margin-top: 5px; /* Space above the category */
 }
 
 .post-content {
-    margin-bottom: 1.5rem;
+    padding: 15px; /* Padding around the content */
+    background-color: #fff; /* White background for content */
+}
+
+.post-content p {
+    margin: 0; /* Remove default margin */
+    line-height: 1.6; /* Increase line height for readability */
+    color: #333; /* Darker text color */
 }
 
 .post-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.875rem;
-    color: #6c757d;
+    padding: 10px 15px; /* Padding around the footer */
+    background-color: #f9f9f9; /* Light background for the footer */
+    border-top: 1px solid #ddd; /* Top border for separation */
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space between meta and actions */
+    align-items: center; /* Center items vertically */
 }
 
 .post-meta {
-    display: flex;
-    gap: 1rem;
+    font-size: 0.9em; /* Smaller font size for meta information */
+    color: #777; /* Gray color for meta text */
 }
 
 .post-actions {
-    display: flex;
-    gap: 0.5rem;
+    display: flex; /* Use flexbox for action buttons */
+    gap: 10px; /* Space between buttons */
+}
+
+button {
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color for button */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 8px 12px; /* Padding for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 14px; /* Font size for button */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
 }
 
 .like-button,
 .dislike-button,
 .comment-button {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: #6c757d;
-    font-size: 0.875rem;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
+    display: flex; /* Use flexbox for button content */
+    align-items: center; /* Center items vertically */
 }
 
-.like-button:hover,
-.dislike-button:hover,
-.comment-button:hover {
-    background-color: #f8f9fa;
+.like-icon,
+.dislike-icon,
+.comment-icon {
+    margin-right: 5px; /* Space between icon and text */
 }
 
-.no-posts {
-    text-align: center;
-    padding: 2rem;
-    color: #6c757d;
-    font-style: italic;
+button:disabled {
+    background-color: #ccc; /* Disabled button color */
+    cursor: not-allowed; /* Not-allowed cursor for disabled button */
 }
 
-@media (max-width: 768px) {
-    .post-header {
-        flex-direction: column;
-    }
+body{
+    background-color: red;
+}
 
-    .post-category {
-        margin-left: 0;
-        margin-top: 0.5rem;
-    }
-
-    .post-footer {
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: flex-start;
-    }
-
-    .post-actions {
-        margin-top: 0.5rem;
-    }
+.post-header{
+    font-size: 30px !important;
+    background-color: blue;
 }

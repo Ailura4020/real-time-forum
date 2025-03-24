@@ -1,6 +1,6 @@
 import { router } from './router.js';
 import { renderNavigation } from './components/Navigation.js';
-import './styles/Main.module.css';
+// import './styles/Main.module.css';
 
 document.addEventListener('DOMContentLoaded', () => {
     const appElement = document.getElementById('app');

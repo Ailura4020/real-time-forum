@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"real-time-forum/api"
+	"real-time-forum/demo"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -73,6 +74,13 @@ func main() {
 			log.Printf("Error closing db: %v", err)
 		}
 	}(initDB)
+
+	// DEMO
+	csvFilePathUsers := "./demo/users.csv"
+	demo.RegisterUsers(initDB, csvFilePathUsers)
+
+	csvFilePathPosts := "./demo/posts.csv"
+	demo.RegisterPosts(initDB, csvFilePathPosts)
 
 	// Define routes (new method w/ gorilla)
 	router := mux.NewRouter()

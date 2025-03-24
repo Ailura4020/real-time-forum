@@ -127,6 +127,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 		// Login user
 		user, err := userService.LoginUser(req)
 		if err != nil {
+			log.Printf("Login failed for user %s: %v", req.Email, err)
 			SendResponse(w, false, err.Error(), nil, "")
 			return
 		}
