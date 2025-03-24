@@ -1,7 +1,7 @@
 import { api } from '../main.js';
 // import classes from '../styles/Home.module.css';
 // import "../styles/Home.module.css"
-import styles from '../styles/Home.module.css';
+// import styles from '../styles/Home.module.css';
 
 export async function renderHomePage(container) {
     // Create a loading indicator

@@ -15,6 +15,7 @@
 
 /* Body Styles */
 body {
+    background-color: black;
     background-image: url('http://localhost:8080/static/background.png');
     background-size: 110%;
     background-position: top center;
