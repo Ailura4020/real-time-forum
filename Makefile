@@ -1,6 +1,10 @@
-.PHONY: all server front clean
+.PHONY: all init server front clean
 
 all: server front
+
+init:
+	@echo "Starting server..."
+	@cd server && go run cmd/main.go populate
 
 server:
 	@echo "Starting server..."
@@ -12,6 +16,6 @@ front:
 
 clean:
 	@echo "Cleaning up..."
-	@rm -f server/database.db
+	@rm -f server/db/forum.db
 	@cd front && npm run clean
 	@cd front && npm install

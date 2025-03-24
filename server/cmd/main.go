@@ -43,6 +43,13 @@ func initConfig() (*appConfig, error) {
 }
 
 func main() {
+	// check if first init
+	first := false
+	if _, err := os.Stat("./db/forum.db"); os.IsNotExist(err) {
+		fmt.Println("Database does not exist")
+		first = true
+	}
+
 	// dedicated logger for the server errors
 	errorLogger := log.New(os.Stderr, "ERROR: ", log.LstdFlags)
 
@@ -76,11 +83,13 @@ func main() {
 	}(initDB)
 
 	// DEMO
-	csvFilePathUsers := "./demo/users.csv"
-	demo.RegisterUsers(initDB, csvFilePathUsers)
-
-	csvFilePathPosts := "./demo/posts.csv"
-	demo.RegisterPosts(initDB, csvFilePathPosts)
+	if first {
+		fmt.Println("LOL")
+		csvFilePathUsers := "./demo/users.csv"
+		demo.RegisterUsers(initDB, csvFilePathUsers)
+		csvFilePathPosts := "./demo/posts.csv"
+		demo.RegisterPosts(initDB, csvFilePathPosts)
+	}
 
 	// Define routes (new method w/ gorilla)
 	router := mux.NewRouter()

@@ -1,5 +1,6 @@
 import { renderHomePage } from './pages/Home.js';
 import { renderAboutPage } from './pages/About.js';
+import { renderChat } from './pages/Chat.js';
 import { renderLoginPage } from './components/Login.js';
 import { renderRegistrationPage } from './components/Registration.js';
 import { renderPostPage } from './components/Post.js';
@@ -7,6 +8,7 @@ import { renderPostPage } from './components/Post.js';
 const routes = [
     { path: '/', component: renderHomePage },
     { path: '/about', component: renderAboutPage },
+    { path: '/chat', component: renderChat },
     { path: '/login', component: renderLoginPage },
     { path: '/register', component: renderRegistrationPage },
     { path: '/post/:id', component: renderPostPage, params: true }
