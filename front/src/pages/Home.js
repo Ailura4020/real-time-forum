@@ -10,7 +10,6 @@ export async function renderHomePage(container) {
     try {
         // Fetch posts from the API
         const postsResponse = await api.get('/posts');
-
         if (postsResponse.success) {
             const posts = postsResponse.data;
 
@@ -156,11 +155,10 @@ function createPostElement(post) {
     </button>-->
   </div>
 </div>
-
   `;
 
     // Add event listeners
-    setTimeout(() => {
+    // setTimeout(() => {
         // Like button
         // postElement.querySelector('.like-button').addEventListener('click', async () => {
         //     if (!localStorage.getItem('token')) {
@@ -198,10 +196,10 @@ function createPostElement(post) {
         // });
 
         // Comment button
-        postElement.querySelector('.comment-button').addEventListener('click', () => {
-            window.location.href = `/post/${post.id}`;
-        });
-    }, 100);
+    //     postElement.querySelector('.comment-button').addEventListener('click', () => {
+    //         window.location.href = `/post/${post.id}`;
+    //     });
+    // }, 100);
 
     return postElement;
 }
@@ -218,16 +216,20 @@ async function createPost() {
     const postData = {
         title: titleInput.value,
         category: categorySelect.value,
-        content: contentTextarea.value // Ensure this matches your API's expected field name
+        text_content: contentTextarea.value // Ensure this matches your API's expected field name
     };
 
-    if (!postData.title.trim() || !postData.category.trim() || !postData.content.trim()) {
+    if (!postData.title.trim() || !postData.category.trim() || !postData.text_content.trim()) {
         alert('Please fill in all fields');
         return;
     }
 
     try {
         const token = localStorage.getItem('token'); // Get the JWT token from local storage
+
+        console.log("[DATA]",postData)
+        console.log("[JSON]",JSON.stringify(postData))
+
         const response = await fetch('http://localhost:8080/api/posts', {
             method: 'POST',
             headers: {
@@ -243,7 +245,7 @@ async function createPost() {
 
         const result = await response.json();
         console.log('Post created successfully:', result);
-        alert('Post created successfully!');
+        // alert('Post created successfully!');
 
         // Reset form and hide it
         document.getElementById('post-form').reset();
