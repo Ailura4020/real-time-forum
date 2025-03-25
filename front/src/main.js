@@ -2,7 +2,7 @@ import { router } from './router.js';
 import { renderNavigation } from './components/Navigation.js';
 // import './styles/Main.module.css';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const appElement = document.getElementById('app');
 
     // Render navigation bar
@@ -19,40 +19,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if user is already logged in
     const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('userData');
+    // const userData = localStorage.getItem('userData');
 
-    if (token && userData) {
-        // Update UI for logged in user
-        const userDataObj = JSON.parse(userData);
-        updateAuthUI(userDataObj);
+    // if (token && userData) {
+    //     // Update UI for logged in user
+    //     const userDataObj = JSON.parse(userData);
+    //     updateAuthUI(userDataObj);
+    //
+    // }
+
+    if (token) {
+        // Fetch user data
+        try {
+            const userData = await api.get('/user'); // Assuming you have an endpoint to get user data
+            updateAuthUI(userData);
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
+        }
+
     }
+
 });
 
+// Function to fetch user data
+async function fetchUserData() {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+        const userData = await api.get('/user'); // Adjust the endpoint as necessary
+        // console.log("USERDATA",userData)
+        return userData;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        return null;
+    }
+}
+
 // Function to update UI elements based on authentication state
-export function updateAuthUI(userData = null) {
+// export function updateAuthUI(userData = null) {
+//     const authContainer = document.getElementById('auth-container');
+//     if (!authContainer) return;
+//
+//     if (userData) {
+//         // User is logged in
+//         authContainer.innerHTML = `
+//       <span class="welcome-message">Welcome, ${userData.nickname}</span>
+//       <button id="logout-button" class="nav-button">Logout</button>
+//     `;
+//
+//         // Add logout event listener
+//         document.getElementById('logout-button').addEventListener('click', () => {
+//             localStorage.removeItem('token');
+//             localStorage.removeItem('userData');
+//             updateAuthUI();
+//             router.navigate('/');
+//         });
+//     } else {
+//         // User is not logged in
+//         authContainer.innerHTML = `
+//       <button id="login-button" class="nav-button">Login</button>
+//       <button id="register-button" class="nav-button">Register</button>
+//     `;
+//
+//         // Add login/register event listeners
+//         document.getElementById('login-button').addEventListener('click', () => {
+//             router.navigate('/login');
+//         });
+//
+//         document.getElementById('register-button').addEventListener('click', () => {
+//             router.navigate('/register');
+//         });
+//     }
+// }
+
+// Update the UI based on authentication state
+export async function updateAuthUI() {
     const authContainer = document.getElementById('auth-container');
     if (!authContainer) return;
 
-    if (userData) {
-        // User is logged in
-        authContainer.innerHTML = `
-      <span class="welcome-message">Welcome, ${userData.nickname}</span>
-      <button id="logout-button" class="nav-button">Logout</button>
-    `;
+    const token = localStorage.getItem('token');
+    let userData = null;
 
-        // Add logout event listener
-        document.getElementById('logout-button').addEventListener('click', () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userData');
-            updateAuthUI();
-            router.navigate('/');
-        });
+    if (token) {
+        userData = await fetchUserData();
+        if (userData) {
+            // console.log("[SUCCESS]",userData, userData.data.nickname);
+            // User is logged in
+            authContainer.innerHTML = `
+                <span class="welcome-message">Welcome, ${userData.data.nickname}</span>
+                <button id="logout-button" class="nav-button">Logout</button>
+            `;
+
+            // Add logout event listener
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                updateAuthUI();
+                router.navigate('/');
+            });
+        }
     } else {
         // User is not logged in
         authContainer.innerHTML = `
-      <button id="login-button" class="nav-button">Login</button>
-      <button id="register-button" class="nav-button">Register</button>
-    `;
+            <button id="login-button" class="nav-button">Login</button>
+            <button id="register-button" class="nav-button">Register</button>
+        `;
 
         // Add login/register event listeners
         document.getElementById('login-button').addEventListener('click', () => {
@@ -64,6 +135,7 @@ export function updateAuthUI(userData = null) {
         });
     }
 }
+
 
 // Create a simple API client
 export const api = {

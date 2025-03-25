@@ -89,7 +89,7 @@ async function handleLogin(e) {
         if (response.success) {
             // Store token and user data
             localStorage.setItem('token', response.token);
-            localStorage.setItem('userData', JSON.stringify(response.data));
+            // localStorage.setItem('userData', JSON.stringify(response.data)); // no need
 
             // Update UI
             updateAuthUI(response.data);
