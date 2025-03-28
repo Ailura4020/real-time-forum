@@ -8,7 +8,7 @@ init:
 
 server:
 	@echo "Starting server..."
-	@cd server && go run cmd/main.go
+	@cd server && /home/nic/go/bin/air
 
 front:
 	@echo "Setting up front-end..."
