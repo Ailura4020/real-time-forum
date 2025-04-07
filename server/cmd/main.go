@@ -10,7 +10,7 @@ import (
 	"real-time-forum/demo"
 	"time"
 
-	"github.com/gorilla/mux"
+	//"github.com/gorilla/mux"
 
 	"real-time-forum/config"
 	"real-time-forum/db"
@@ -91,8 +91,13 @@ func main() {
 		demo.RegisterPosts(initDB, csvFilePathPosts)
 	}
 
-	// Define routes (new method w/ gorilla)
-	router := mux.NewRouter()
+	// Define routes
+	finalHandler := middleware.Chain(
+		api.RegisterRoutes(initDB, errorLogger), // this returns http.Handler
+		middleware.SecurityHeaders,
+		middleware.CORSMiddleware,
+		middleware.RateLimit,
+	)
 
 	//// testing routes (not for production)
 	//api.DevRoutes(router, errorLogger)
@@ -100,14 +105,14 @@ func main() {
 	//api.RegisterRoutes(router, initDB, errorLogger)
 
 	// Apply global middleware (new chaining method w/Gorilla)
-	router.Use(middleware.SecurityHeaders) // protect your application from various attacks (like XSS, clickjacking, etc.)
-	router.Use(middleware.CORSMiddleware)  // handling cross-origin requests
-	router.Use(middleware.RateLimit)       // ensure that it can track and limit requests effectively
+	//router.Use(middleware.SecurityHeaders) // protect your application from various attacks (like XSS, clickjacking, etc.)
+	//router.Use(middleware.CORSMiddleware)  // handling cross-origin requests
+	//router.Use(middleware.RateLimit)       // ensure that it can track and limit requests effectively
 
 	// testing routes (not for production)
-	api.DevRoutes(router, errorLogger)
+	//api.DevRoutes(router, errorLogger)
 	// Register routes with the initialized DB connection
-	api.RegisterRoutes(router, initDB, errorLogger)
+	//api.RegisterRoutes(router, initDB, errorLogger)
 
 	// Start server
 	server := &http.Server{
@@ -118,7 +123,7 @@ func main() {
 		IdleTimeout:    time.Second * 60,
 		MaxHeaderBytes: 4096, // 4 KB
 		ErrorLog:       errorLogger,
-		Handler:        router, // pass instance to Gorilla mux
+		Handler:        finalHandler, // pass instance to Gorilla mux
 	}
 
 	fmt.Printf("Server running on http://localhost%s\n", server.Addr) // valid only on local
