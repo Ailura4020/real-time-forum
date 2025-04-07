@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"real-time-forum/handler"
 	middleware "real-time-forum/middlware"
+	"real-time-forum/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -28,7 +29,8 @@ func RegisterRoutes(router *mux.Router, db *sql.DB, errorLogger *log.Logger) {
 	router.HandleFunc("/api/comments", middleware.ErrorHandler(handler.AddCommentHandler(db), errorLogger)).Methods("POST", "OPTIONS")
 
 	// websocket for the CHAT
-	router.HandleFunc("/ws", handler.HandleWebSocket)
+	hub := utils.NewHub()
+	router.HandleFunc("/ws", middleware.ErrorHandler(handler.HandleWebsocket(db, hub), errorLogger)).Methods("GET", "OPTIONS")
 
 	// todo: add a protected route (endpoint that requires authentication and/or authorization to access > ex: for CRUD operations)
 	router.HandleFunc("/api/protected", middleware.ErrorHandler(middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {

@@ -45,3 +45,8 @@ type PrivateMessage struct {
 	Content    string `json:"content"`
 	DateSent   string `json:"date_sent"`
 }
+
+type Userlist struct {
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+}
