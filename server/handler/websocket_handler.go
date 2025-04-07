@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"net/http"
 	"real-time-forum/models"
 	"time"
-
-	"github.com/gorilla/websocket"
+	//"github.com/gorilla/websocket"
 )
 
 // Config de l'upgrader WebSocket pour accepter toutes les origines
@@ -117,17 +117,6 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 				delete(clients, recipient.UserId)
 			}
 		}
-		// for c := range clients {
-		// 	if c.UserId == message.ReceiverID {
-		// 		err := c.Conn.WriteMessage(messageType, msg)
-		// 		if err != nil {
-		// 			fmt.Println("Erreur lors de l'envoi du message", err)
-		// 			c.Conn.Close()
-		// 			delete(clients, c)
-		// 		}
-		// 		break
-		// 	}
-		// }
 	}
 }
 

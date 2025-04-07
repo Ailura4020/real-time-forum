@@ -9,9 +9,7 @@ import (
 	"real-time-forum/api"
 	"real-time-forum/demo"
 	"time"
-
-	//"github.com/gorilla/mux"
-
+	
 	"real-time-forum/config"
 	"real-time-forum/db"
 	middleware "real-time-forum/middlware"
@@ -93,6 +91,7 @@ func main() {
 
 	// Define routes
 	finalHandler := middleware.Chain(
+		//api.DevRoutes(errorLogger), // this returns http.Handler
 		api.RegisterRoutes(initDB, errorLogger), // this returns http.Handler
 		middleware.SecurityHeaders,
 		middleware.CORSMiddleware,
