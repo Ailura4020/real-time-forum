@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"real-time-forum/handler"
 	middleware "real-time-forum/middlware"
+	"real-time-forum/utils"
 	"strings"
 )
 
@@ -18,10 +19,9 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 	// Serve static landing page
 	mux.Handle("/", http.FileServer(http.Dir("./static")))
 
-	// API routes
-	mux.HandleFunc("/api/user", middleware.ErrorHandler(handler.UserHandler(db), errorLogger))
-	mux.HandleFunc("/api/register", middleware.ErrorHandler(handler.RegisterHandler(db), errorLogger))
-	mux.HandleFunc("/api/login", middleware.ErrorHandler(handler.LoginHandler(db), errorLogger))
+	// websocket for the CHAT
+	hub := utils.NewHub()
+	router.HandleFunc("/ws", middleware.ErrorHandler(handler.HandleWebsocket(db, hub), errorLogger)).Methods("GET", "OPTIONS")
 
 	// Posts (GET /api/posts or POST /api/posts)
 	mux.HandleFunc("/api/posts", func(w http.ResponseWriter, r *http.Request) {

@@ -1,5 +1,6 @@
 import { router } from './router.js';
 import { renderNavigation } from './components/Navigation.js';
+import { connectWebSocket } from './websocket.js';
 // import './styles/Main.module.css';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     mainContent.id = 'main-content';
     appElement.appendChild(mainContent);
 
-    // Initialize router
+    // Initialize routercon
     router.init();
 
     // Check if user is already logged in
@@ -104,6 +105,7 @@ export async function updateAuthUI() {
     if (token) {
         userData = await fetchUserData();
         if (userData) {
+            connectWebSocket()
             // console.log("[SUCCESS]",userData, userData.data.nickname);
             // User is logged in
             authContainer.innerHTML = `
@@ -188,3 +190,4 @@ export const api = {
         }
     }
 };
+

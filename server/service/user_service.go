@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"real-time-forum/models"
 	"real-time-forum/repository"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // UserService provides methods for user-related operations
@@ -72,4 +73,8 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func (s *UserService) GetNickname(user) string {
+	return s.UserRepo.GetNickname(id)
 }
