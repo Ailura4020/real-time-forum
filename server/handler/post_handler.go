@@ -11,8 +11,6 @@ import (
 	"real-time-forum/utils"
 	"strconv"
 	"strings"
-
-	"github.com/gorilla/mux"
 )
 
 // GetPostsHandler returns a handler for retrieving all posts
@@ -32,10 +30,55 @@ func GetPostsHandler(db *sql.DB) http.HandlerFunc {
 }
 
 // GetPostHandler returns a handler for retrieving a specific post with its comments
+//func GetPostHandler(db *sql.DB) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		vars := mux.Vars(r)
+//		idStr := vars["id"]
+//
+//		id, err := strconv.Atoi(idStr)
+//		if err != nil {
+//			SendErrorResponse(w, err, http.StatusBadRequest)
+//			return
+//		}
+//
+//		postRepo := repository.NewPostRepository(db)
+//		postService := service.NewPostService(postRepo)
+//
+//		post, err := postService.GetPostByID(id)
+//		if err != nil {
+//			SendErrorResponse(w, err, http.StatusNotFound)
+//			return
+//		}
+//
+//		commentRepo := repository.NewCommentRepository(db)
+//		commentService := service.NewCommentService(commentRepo)
+//
+//		comments, err := commentService.GetCommentsByPostID(id)
+//		if err != nil {
+//			SendErrorResponse(w, err, http.StatusInternalServerError)
+//			return
+//		}
+//
+//		response := struct {
+//			Post     models.Post      `json:"post"`
+//			Comments []models.Comment `json:"comments"`
+//		}{
+//			Post:     post,
+//			Comments: comments,
+//		}
+//
+//		SendResponse(w, true, "Post retrieved successfully", response, "")
+//	}
+//}
+
 func GetPostHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		idStr := vars["id"]
+		// Example path: /api/posts/6
+		idStr := strings.TrimPrefix(r.URL.Path, "/api/posts/")
+		if idStr == "" {
+			SendErrorResponse(w, nil, http.StatusBadRequest)
+			return
+		}
 
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
