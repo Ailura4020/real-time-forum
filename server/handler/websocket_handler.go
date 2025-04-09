@@ -141,3 +141,15 @@ func getUserInfo(r *http.Request) (int, error) {
 	}
 	return userID, nil
 }
+
+func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var onlineUsers []models.Userlist
+	for _, client := range clients {
+		onlineUsers = append(onlineUsers, models.Userlist{
+			UserID:   client.UserId,
+			Nickname: client.Username,
+		})
+	}
+	json.NewEncoder(w).Encode(onlineUsers)
+}
