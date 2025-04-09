@@ -75,6 +75,10 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func (s *UserService) GetNickname(user) string {
-	return s.UserRepo.GetNickname(id)
+func (s *UserService) GetNickname(id int) (string, error) {
+	user, err := s.UserRepo.GetUserByID(id)
+	if err != nil {
+		return "", err
+	}
+	return user.Nickname, nil
 }

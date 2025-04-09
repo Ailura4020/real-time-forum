@@ -18,19 +18,19 @@ func NewHub() *Hub {
 	}
 }
 
-func (hub *Hub) addClient(conn *websocket.Conn, user *models.Userlist) {
+func (hub *Hub) AddClient(conn *websocket.Conn, user *models.Userlist) {
 	hub.Mutex.Lock()
 	defer hub.Mutex.Unlock()
 	hub.Clients[conn] = user
 }
 
-func (hub *Hub) removeClient(conn *websocket.Conn) {
+func (hub *Hub) RemoveClient(conn *websocket.Conn) {
 	hub.Mutex.Lock()
 	defer hub.Mutex.Unlock()
 	delete(hub.Clients, conn)
 }
 
-func (hub *Hub) broadcastMessage(message []byte) {
+func (hub *Hub) BroadcastMessage(message []byte) {
 	hub.Mutex.Lock()
 	defer hub.Mutex.Unlock()
 

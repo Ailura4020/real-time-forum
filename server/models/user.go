@@ -47,6 +47,6 @@ type PrivateMessage struct {
 }
 
 type Userlist struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
+	UserID   int    `json:"id"`
+	Nickname string `json:"username"`
 }
