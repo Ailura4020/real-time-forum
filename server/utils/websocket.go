@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"real-time-forum/models"
 	"sync"
 
@@ -30,7 +31,7 @@ func (hub *Hub) RemoveClient(conn *websocket.Conn) {
 	delete(hub.Clients, conn)
 }
 
-func (hub *Hub) BroadcastMessage(message []byte) {
+func (hub *Hub) BroadcastUser() {
 	hub.Mutex.Lock()
 	defer hub.Mutex.Unlock()
 
@@ -38,7 +39,10 @@ func (hub *Hub) BroadcastMessage(message []byte) {
 	for _, user := range hub.Clients {
 		onlineUser = append(onlineUser, user)
 	}
-
+	message, err := json.Marshal(onlineUser)
+	if err != nil {
+		return
+	}
 	for conn := range hub.Clients {
 		err := conn.WriteMessage(websocket.TextMessage, message)
 		if err != nil {

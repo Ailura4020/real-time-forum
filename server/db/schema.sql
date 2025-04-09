@@ -9,7 +9,9 @@ CREATE TABLE "users"
     "email"         TEXT NOT NULL UNIQUE,
     "password"      TEXT NOT NULL,
     "date_register" DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Changed to DATETIME for consistency
-    "status"        TEXT DEFAULT 'offline'
+    -- "status"        TEXT DEFAULT 'offline'
+        "status"    BOOLEAN
+
 );
 
 CREATE TABLE "posts"

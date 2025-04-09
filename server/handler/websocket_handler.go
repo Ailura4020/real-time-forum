@@ -2,10 +2,12 @@ package handler
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"real-time-forum/models"
+	"real-time-forum/repository"
+	"real-time-forum/service"
+	"real-time-forum/utils"
 	"strconv"
 	"time"
 
@@ -20,105 +22,46 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// Structure d'un client connecté via WebSocket
-type Client struct {
-	Conn     *websocket.Conn
-	Username string
-	UserId   int
-}
-
-// Map pour stocker les clients connectés
-// var clients = make(map[*Client]bool)
-var clients = make(map[int]*Client)
-
 // var pour la connexion la db
 var db *sql.DB
 
-func updateUserStatusInDB(userId int, status string) error {
-	query := `UPDATE USERS SET Status = ? WHERE UserId = ?`
-	_, err := db.Exec(query, status, userId)
-	return err
-}
-
 // function gestion des connexions WebSocket
-func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Println("Erreur lors de l'upgrade :", err)
-		return
-	}
-	defer conn.Close()
+func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			fmt.Println("Erreur lors de l'upgrade :", err)
+			return
+		}
+		defer conn.Close()
 
-	// Read the first message to get user information
-	_, msg, err := conn.ReadMessage()
-	if err != nil {
-		fmt.Println("Erreur lors de la lecture du message", err)
-		return
-	}
-	var userInfo struct {
-		Username string `json:"username"`
-		UserId   int    `json:"userId"`
-	}
-	if err := json.Unmarshal(msg, &userInfo); err != nil {
-		fmt.Println("Erreur lors de la désérialisation du message", err)
-		return
-	}
-
-	// Mise à jour de l'état de l'utilisateur dans la base de données
-	if err := updateUserStatusInDB(userInfo.UserId, "online"); err != nil {
-		fmt.Println("Erreur lors de la mise à jour du statut :", err)
-	}
-
-	fmt.Printf("User Info: %+v\n", userInfo)
-
-	// création d'un nouveau client
-	client := &Client{
-		Conn:     conn,
-		Username: userInfo.Username,
-		UserId:   userInfo.UserId,
-	}
-
-	// ajout du client à la map
-	clients[client.UserId] = client
-	fmt.Println("client connecté", client.Username)
-	fmt.Println(client.UserId)
-
-	defer func() {
-		if err := updateUserStatusInDB(client.UserId, "offline"); err != nil {
+		// Read the first message to get user information
+		UserRepo := repository.NewUserRepository(db)
+		UserService := service.NewUserService(UserRepo)
+		// Mise à jour de l'état de l'utilisateur dans la base de données
+		userID, err := GetUserInfo(r)
+		if err != nil {
+			fmt.Println("Erreur lors de la récupération des informations utilisateur :", err)
+		}
+		userInfo, err := UserService.GetNickname(userID)
+		if err != nil {
 			fmt.Println("Erreur lors de la mise à jour du statut :", err)
 		}
-		delete(clients, client.UserId) // Retirer le client de la map
-	}()
 
-	// boucle lecture d'un message client
-	for {
-		messageType, msg, err := conn.ReadMessage()
-		if err != nil {
-			fmt.Println("Erreur lors de la lecture du message", err)
-			delete(clients, client.UserId)
-			break
-		}
+		var userList models.Userlist
+		userList.UserID = userID
+		userList.Nickname = userInfo
+		hub.AddClient(conn, &userList)
+		hub.BroadcastUser()
 
-		var message models.PrivateMessage
-		if err := json.Unmarshal(msg, &message); err != nil {
-			fmt.Println("Erreur lors de la désérialisation du message", err)
-			continue
-		}
-		// enregistre le message dans la db
-		if err := savePrivateMessage(db, client.UserId, message.ReceiverID, message.Content); err != nil {
-			fmt.Println("Erreur lors de l'enregistrement du message", err)
-		}
-		// fmt.Printf("Message reçu : %s\n", msg)
-
-		// envoie le message au destinataire
-		if recipient, ok := clients[message.ReceiverID]; ok {
-			err := recipient.Conn.WriteMessage(messageType, msg)
+		for {
+			_, _, err := conn.ReadMessage()
 			if err != nil {
-				fmt.Println("Erreur lors de l'envoi du message", err)
-				recipient.Conn.Close()
-				delete(clients, recipient.UserId)
+				break
 			}
 		}
+		hub.RemoveClient(conn)
+		hub.BroadcastUser()
 	}
 }
 
@@ -130,7 +73,7 @@ func savePrivateMessage(db *sql.DB, senderID int, receiverId int, content string
 	return err
 }
 
-func getUserInfo(r *http.Request) (int, error) {
+func GetUserInfo(r *http.Request) (int, error) {
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		return 0, err
@@ -140,16 +83,4 @@ func getUserInfo(r *http.Request) (int, error) {
 		return 0, err
 	}
 	return userID, nil
-}
-
-func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var onlineUsers []models.Userlist
-	for _, client := range clients {
-		onlineUsers = append(onlineUsers, models.Userlist{
-			UserID:   client.UserId,
-			Nickname: client.Username,
-		})
-	}
-	json.NewEncoder(w).Encode(onlineUsers)
 }
