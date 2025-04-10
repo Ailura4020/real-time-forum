@@ -4,11 +4,25 @@ import { connectWebSocket } from '../websocket.js';
 // import "../styles/Home.module.css"
 // import styles from '../styles/Home.module.css';
 
+function updateConnectedUsers(userContainer, usersList){
+  userContainer.innerHTML='';
+  usersList.forEach(user => {
+    const userElement = document.createElement('div');
+    userElement.className = 'user-item';
+    userElement.textContent = user.nickname;
+    userContainer.appendChild(userElement);
+});
+}
 export async function renderHomePage(container) {
     // Create a loading indicator
     container.innerHTML = '<div class="loading">Loading posts...</div>';
 
     try {
+      // connexion websockets pour afficher la liste des users connectés
+      connectWebSocket(usersList => {
+        updateConnectedUsers(userContainer, usersList);
+      });
+  
         // Fetch posts from the API
         const postsResponse = await api.get('/posts');
         if (postsResponse.success) {
@@ -25,13 +39,6 @@ export async function renderHomePage(container) {
             const heading = document.createElement('h1');
             heading.textContent = 'Recent Posts';
             postsContainer.appendChild(heading);
-
-            // créer un conteneur pour la liste de users connectés
-            const userContainer = document.createElement('div');
-            userContainer.id ='connected-users';
-            postsContainer.appendChild(userContainer);
-            // mise à jour de la liste
-            updateConnectedUsers(userContainer);
 
             // Check if user is logged in to show create post button
             if (localStorage.getItem('token')) {
