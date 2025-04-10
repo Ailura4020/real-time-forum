@@ -20,15 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Check if user is already logged in
     const token = localStorage.getItem('token');
-    // const userData = localStorage.getItem('userData');
-
-    // if (token && userData) {
-    //     // Update UI for logged in user
-    //     const userDataObj = JSON.parse(userData);
-    //     updateAuthUI(userDataObj);
-    //
-    // }
-
+  
     if (token) {
         // Fetch user data
         try {
@@ -68,7 +60,7 @@ export async function updateAuthUI() {
     if (token) {
         userData = await fetchUserData();
         if (userData) {
-            connectWebSocket()
+            connectWebSocket(updateConnectedUsers)
             // console.log("[SUCCESS]",userData, userData.data.nickname);
             // User is logged in
             authContainer.innerHTML = `
