@@ -6,6 +6,8 @@
 //	"net/http"
 //	"real-time-forum/handler"
 //	middleware "real-time-forum/middlware"
+//	"real-time-forum/utils"
+//	"strings"
 //
 //	"github.com/gorilla/mux"
 //)
@@ -61,11 +63,23 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 	// websocket for the CHAT
 	hub := utils.NewHub()
 	mux.HandleFunc("/ws", handler.HandleWebSocket(hub))
-	mux.HandleFunc("/api/posts", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			middleware.ErrorHandler(handler.GetPostsHandler(db), errorLogger)(w, r)
-		} else if r.Method == "POST" {
-			middleware.ErrorHandler(handler.CreatePostHandler(db), errorLogger)(w, r)
+
+	// API routes
+	mux.HandleFunc("/api/user", middleware.ErrorHandler(handler.UserHandler(db), errorLogger))
+
+	// POST /api/register
+	mux.HandleFunc("/api/register", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			middleware.ErrorHandler(handler.RegisterHandler(db), errorLogger)(w, r)
+		} else {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// POST /api/login
+	mux.HandleFunc("/api/login", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			middleware.ErrorHandler(handler.LoginHandler(db), errorLogger)(w, r)
 		} else {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
