@@ -1,4 +1,5 @@
 import { api } from '../main.js';
+import { connectWebSocket } from '../websocket.js'; 
 // import classes from '../styles/Home.module.css';
 // import "../styles/Home.module.css"
 // import styles from '../styles/Home.module.css';
@@ -24,6 +25,13 @@ export async function renderHomePage(container) {
             const heading = document.createElement('h1');
             heading.textContent = 'Recent Posts';
             postsContainer.appendChild(heading);
+
+            // créer un conteneur pour la liste de users connectés
+            const userContainer = document.createElement('div');
+            userContainer.id ='connected-users';
+            postsContainer.appendChild(userContainer);
+            // mise à jour de la liste
+            updateConnectedUsers(userContainer);
 
             // Check if user is logged in to show create post button
             if (localStorage.getItem('token')) {
