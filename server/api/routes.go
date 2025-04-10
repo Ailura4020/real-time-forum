@@ -85,7 +85,36 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 		}
 	})
 
-	// GET /api/posts/{id} – manual parsing of ID
+	//// GET /api/posts/{id} – manual parsing of ID
+	//mux.HandleFunc("/api/posts/", func(w http.ResponseWriter, r *http.Request) {
+	//	if r.Method != "GET" {
+	//		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	//		return
+	//	}
+	//
+	//	path := strings.TrimPrefix(r.URL.Path, "/api/posts/")
+	//	if path == "" {
+	//		http.Error(w, "Post ID is required", http.StatusBadRequest)
+	//		return
+	//	}
+	//
+	//	// Attach ID via context or request URL
+	//	r.URL.RawQuery = "id=" + path
+	//	middleware.ErrorHandler(handler.GetPostHandler(db), errorLogger)(w, r)
+	//})
+
+	// Handle /api/posts
+	mux.HandleFunc("/api/posts", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			middleware.ErrorHandler(handler.GetPostsHandler(db), errorLogger)(w, r)
+		} else if r.Method == "POST" {
+			middleware.ErrorHandler(handler.CreatePostHandler(db), errorLogger)(w, r)
+		} else {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// Handle /api/posts/{id} for retrieving a specific post
 	mux.HandleFunc("/api/posts/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -98,8 +127,7 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 			return
 		}
 
-		// Attach ID via context or request URL
-		r.URL.RawQuery = "id=" + path
+		// Call the handler to get the specific post by ID
 		middleware.ErrorHandler(handler.GetPostHandler(db), errorLogger)(w, r)
 	})
 
