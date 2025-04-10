@@ -57,43 +57,6 @@ async function fetchUserData() {
     }
 }
 
-// Function to update UI elements based on authentication state
-// export function updateAuthUI(userData = null) {
-//     const authContainer = document.getElementById('auth-container');
-//     if (!authContainer) return;
-//
-//     if (userData) {
-//         // User is logged in
-//         authContainer.innerHTML = `
-//       <span class="welcome-message">Welcome, ${userData.nickname}</span>
-//       <button id="logout-button" class="nav-button">Logout</button>
-//     `;
-//
-//         // Add logout event listener
-//         document.getElementById('logout-button').addEventListener('click', () => {
-//             localStorage.removeItem('token');
-//             localStorage.removeItem('userData');
-//             updateAuthUI();
-//             router.navigate('/');
-//         });
-//     } else {
-//         // User is not logged in
-//         authContainer.innerHTML = `
-//       <button id="login-button" class="nav-button">Login</button>
-//       <button id="register-button" class="nav-button">Register</button>
-//     `;
-//
-//         // Add login/register event listeners
-//         document.getElementById('login-button').addEventListener('click', () => {
-//             router.navigate('/login');
-//         });
-//
-//         document.getElementById('register-button').addEventListener('click', () => {
-//             router.navigate('/register');
-//         });
-//     }
-// }
-
 // Update the UI based on authentication state
 export async function updateAuthUI() {
     const authContainer = document.getElementById('auth-container');
