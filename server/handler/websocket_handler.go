@@ -22,7 +22,7 @@ var upgrader = websocket.Upgrader{
 }
 
 // var pour la connexion la db
-var db *sql.DB
+// var db *sql.DB
 
 // function gestion des connexions WebSocket
 //
@@ -66,7 +66,7 @@ var db *sql.DB
 //		}
 //	}
 
-func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
+func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Extract user ID from JWT token
 		userID, err := utils.ExtractUserIDFromRequest(r)
@@ -84,7 +84,7 @@ func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
 			return
 		}
 		defer conn.Close()
-
+		hub := utils.NewHub()
 		UserRepo := repository.NewUserRepository(db)
 		UserService := service.NewUserService(UserRepo)
 

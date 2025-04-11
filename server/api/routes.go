@@ -21,7 +21,7 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 
 	// websocket for the CHAT
 	hub := utils.NewHub()
-	mux.HandleFunc("/ws", handler.HandleWebSocket(hub))
+	mux.HandleFunc("/ws", handler.HandleWebSocket(hub, db))
 
 	// API routes
 	mux.HandleFunc("/api/user", middleware.ErrorHandler(handler.UserHandler(db), errorLogger))
