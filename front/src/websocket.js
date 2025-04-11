@@ -2,7 +2,7 @@ export function connectWebSocket(updateUserListCallback) {
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
     // src.onmessage 
     let socket = null;
-    const wsurl = 'ws://localhost:8000/ws'; // Replace with your WebSocket URL
+    const wsurl = 'ws://localhost:8080/ws'; // Replace with your WebSocket URL
     socket = new WebSocket(wsurl);
 
     socket.onopen = () => {

@@ -51,6 +51,7 @@ func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
 		var userList models.Userlist
 		userList.UserID = userID
 		userList.Nickname = userInfo
+		fmt.Println("USERS:", userList)
 		hub.AddClient(conn, &userList)
 		hub.BroadcastUser()
 
