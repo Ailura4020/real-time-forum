@@ -1,17 +1,23 @@
-import { api } from '../main.js';
-import { connectWebSocket } from '../websocket.js'; 
-import { updateConnectedUsers } from '../websocket.js';
+import {api} from '../main.js';
+import {connectWebSocket, updateConnectedUsers} from '../websocket.js';
 // import classes from '../styles/Home.module.css';
 // import "../styles/Home.module.css"
 // import styles from '../styles/Home.module.css';
 
-
 export async function renderHomePage(container) {
     // Create a loading indicator
     container.innerHTML = '<div class="loading">Loading posts...</div>';
-console.log('je suis la ...');
     try {
+<<<<<<< HEAD
      
+=======
+        // connexion websockets pour afficher la liste des users connectés
+        connectWebSocket(usersList => {
+            updateConnectedUsers(userContainer, usersList);
+            console.log("USERSLIST: ",usersList)
+        });
+
+>>>>>>> 939baae9f85506d5691abad914dacf1c83666c91
         // Fetch posts from the API
         const postsResponse = await api.get('/posts');
         if (postsResponse.success) {
@@ -148,63 +154,9 @@ function createPostElement(post) {
     <span class="post-date">• ${formattedDate}</span>
   </div>
   <div class="post-actions">
-    <!--<button class="like-button bg-blue-500 text-white px-3 py-1 rounded" data-id="${post.id}">
-      <span class="like-icon">👍</span> <span class="like-count">${post.likes}</span>
-    </button>
-    <button class="dislike-button bg-red-500 text-white px-3 py-1 rounded" data-id="${post.id}">
-      <span class="dislike-icon">👎</span> <span class="dislike-count">${post.dislikes}</span>
-    </button>-->
-    <!--<button class="comment-button bg-gray-300 text-gray-800 px-3 py-1 rounded" data-id="${post.id}">
-      <span class="comment-icon">💬</span> Comments
-    </button>-->
   </div>
 </div>
   `;
-
-    // Add event listeners
-    // setTimeout(() => {
-        // Like button
-        // postElement.querySelector('.like-button').addEventListener('click', async () => {
-        //     if (!localStorage.getItem('token')) {
-        //         alert('Please log in to like posts');
-        //         return;
-        //     }
-        //
-        //     try {
-        //         // This is a placeholder - you would need to implement an API endpoint for this
-        //         console.log('Like post:', post.id);
-        //         // Update UI
-        //         const likeCount = postElement.querySelector('.like-count');
-        //         likeCount.textContent = parseInt(likeCount.textContent) + 1;
-        //     } catch (error) {
-        //         console.error('Error liking post:', error);
-        //     }
-        // });
-
-        // Dislike button
-        // postElement.querySelector('.dislike-button').addEventListener('click', async () => {
-        //     if (!localStorage.getItem('token')) {
-        //         alert('Please log in to dislike posts');
-        //         return;
-        //     }
-        //
-        //     try {
-        //         // This is a placeholder - you would need to implement an API endpoint for this
-        //         console.log('Dislike post:', post.id);
-        //         // Update UI
-        //         const dislikeCount = postElement.querySelector('.dislike-count');
-        //         dislikeCount.textContent = parseInt(dislikeCount.textContent) + 1;
-        //     } catch (error) {
-        //         console.error('Error disliking post:', error);
-        //     }
-        // });
-
-        // Comment button
-    //     postElement.querySelector('.comment-button').addEventListener('click', () => {
-    //         window.location.href = `/post/${post.id}`;
-    //     });
-    // }, 100);
-
     return postElement;
 }
 
@@ -231,8 +183,8 @@ async function createPost() {
     try {
         const token = localStorage.getItem('token'); // Get the JWT token from local storage
 
-        console.log("[DATA]",postData)
-        console.log("[JSON]",JSON.stringify(postData))
+        console.log("[DATA]", postData)
+        console.log("[JSON]", JSON.stringify(postData))
 
         const response = await fetch('http://localhost:8080/api/posts', {
             method: 'POST',

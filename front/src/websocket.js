@@ -8,7 +8,6 @@ export function updateConnectedUsers(userContainer, users) {
     });
   }
 
-
 export function connectWebSocket() {
   // console.log("awaa ma soeur c'est quoi ",updateUserListCallback)
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
@@ -16,7 +15,7 @@ export function connectWebSocket() {
     const socket = new WebSocket('ws://localhost:8080/ws');
 
     socket.onopen = () => {
-        console.log('[Websocket] Connected');
+        console.log('WebSocket connection established');
     };
 
     socket.onmessage = (event) => {
@@ -38,4 +37,3 @@ export function connectWebSocket() {
     })
     // createWebSocketConnection();
 }
- 

@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"net/http"
 	"real-time-forum/config"
 	"real-time-forum/models"
+	"strings"
 	"time"
 )
 
@@ -65,4 +67,31 @@ func ValidateJWT(tokenString string) (*Claims, error) {
 	}
 
 	return nil, errors.New("invalid token")
+}
+
+// ExtractUserIDFromRequest extracts the user ID from the request using the JWT token
+func ExtractUserIDFromRequest(r *http.Request) (int, error) {
+	// Get the Authorization header
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		return 0, fmt.Errorf("authorization header is required")
+	}
+
+	// Split the header to get the token
+	splitToken := strings.Split(authHeader, "Bearer ")
+	if len(splitToken) != 2 {
+		return 0, fmt.Errorf("invalid token format")
+	}
+
+	tokenString := splitToken[1]
+
+	fmt.Println("TOKEN", tokenString)
+
+	// Validate the token using the existing utils function
+	claims, err := ValidateJWT(tokenString)
+	if err != nil {
+		return 0, err
+	}
+	fmt.Println("Claims", claims.ID)
+	return claims.ID, nil
 }
