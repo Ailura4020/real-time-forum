@@ -87,6 +87,7 @@ func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
 		UserService := service.NewUserService(UserRepo)
 
 		userInfo, err := UserService.GetNickname(userID)
+
 		if err != nil {
 			fmt.Println("Erreur lors de la mise à jour du statut :", err)
 		}

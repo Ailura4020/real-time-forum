@@ -1,3 +1,4 @@
+
 export function updateConnectedUsers(userContainer, users) {
     userContainer.innerHTML = '';
     users.forEach(user => {
@@ -9,7 +10,6 @@ export function updateConnectedUsers(userContainer, users) {
   }
 
 export function connectWebSocket() {
-  // console.log("awaa ma soeur c'est quoi ",updateUserListCallback)
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
     // src.onmessage 
     const socket = new WebSocket('ws://localhost:8080/ws');
