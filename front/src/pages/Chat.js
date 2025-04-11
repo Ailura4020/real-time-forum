@@ -1,15 +1,8 @@
 import {api} from '../main.js';
-import {connectWebSocket} from '../websocket.js';
-import {updateConnectedUsers} from '../websocket.js';
 // src/pages/About.js
 // import '../styles/About.module.css';
 
 export async function renderChat(container) {
-    // connexion websockets pour afficher la liste des users connectés
-      connectWebSocket(usersList => {
-        // console.log(userContainer)
-        updateConnectedUsers(userContainer, usersList);
-      });
     // Clear the container before rendering
     container.innerHTML = `
     <div class="chat">
