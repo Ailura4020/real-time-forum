@@ -76,6 +76,8 @@ func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
 			return
 		}
 
+		fmt.Println("USER INFOR----------------------------------", userID)
+
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			fmt.Println("Erreur lors de l'upgrade :", err)
@@ -87,6 +89,7 @@ func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
 		UserService := service.NewUserService(UserRepo)
 
 		userInfo, err := UserService.GetNickname(userID)
+		fmt.Printf("-------------------------------------------------userInfo: %+v\n", userInfo)
 		if err != nil {
 			fmt.Println("Erreur lors de la mise à jour du statut :", err)
 		}
