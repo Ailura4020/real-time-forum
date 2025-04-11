@@ -11,12 +11,7 @@ export async function renderHomePage(container) {
     container.innerHTML = '<div class="loading">Loading posts...</div>';
 console.log('je suis la ...');
     try {
-      // connexion websockets pour afficher la liste des users connectés
-      connectWebSocket(usersList => {
-        // console.log(userContainer)
-        updateConnectedUsers(userContainer, usersList);
-      });
-
+     
         // Fetch posts from the API
         const postsResponse = await api.get('/posts');
         if (postsResponse.success) {

@@ -1,8 +1,15 @@
 import {api} from '../main.js';
+import {connectWebSocket} from '../websocket.js';
+import {updateConnectedUsers} from '../websocket.js';
 // src/pages/About.js
 // import '../styles/About.module.css';
 
 export async function renderChat(container) {
+    // connexion websockets pour afficher la liste des users connectés
+      connectWebSocket(usersList => {
+        // console.log(userContainer)
+        updateConnectedUsers(userContainer, usersList);
+      });
     // Clear the container before rendering
     container.innerHTML = `
     <div class="chat">
@@ -38,14 +45,4 @@ async function fetchUserData() {
         console.error('Error fetching user data:', error);
         return null;
     }
-}
-function updateConnectedUsers(userContainer, usersList){
-  userContainer.innerHTML='';
-  usersList.forEach(user => {
-    const userElement = document.createElement('div');
-    userElement.className = 'user-item';
-    userElement.textContent = user.nickname;
-    userContainer.appendChild(userElement);
-});
-console.log('Connected users:', usersList);
 }
