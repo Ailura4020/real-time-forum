@@ -9,6 +9,7 @@ import (
 	"real-time-forum/models"
 	"real-time-forum/repository"
 	"real-time-forum/service"
+	"real-time-forum/utils"
 	"strings"
 )
 
@@ -16,7 +17,7 @@ import (
 func AddCommentHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Extract user ID from JWT token
-		userID, err := ExtractUserIDFromRequest(r)
+		userID, err := utils.ExtractUserIDFromRequest(r)
 		if err != nil {
 			SendErrorResponse(w, err, http.StatusUnauthorized)
 			return

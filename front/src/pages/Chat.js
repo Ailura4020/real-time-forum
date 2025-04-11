@@ -39,3 +39,13 @@ async function fetchUserData() {
         return null;
     }
 }
+function updateConnectedUsers(userContainer, usersList){
+  userContainer.innerHTML='';
+  usersList.forEach(user => {
+    const userElement = document.createElement('div');
+    userElement.className = 'user-item';
+    userElement.textContent = user.nickname;
+    userContainer.appendChild(userElement);
+});
+console.log('Connected users:', usersList);
+}

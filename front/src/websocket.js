@@ -1,31 +1,37 @@
+export function updateConnectedUsers(userContainer, users) {
+    userContainer.innerHTML = '';
+    users.forEach(user => {
+      const userElement = document.createElement('div');
+      userElement.className = 'user-item';
+      userElement.textContent = user.nickname;
+      userContainer.appendChild(userElement);
+    });
+    console.log('Connected users:', users);
+  }
+
 export function connectWebSocket(updateUserListCallback) {
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
     // src.onmessage 
-    let socket = null;
-    const wsurl = 'ws://localhost:8080/ws'; // Replace with your WebSocket URL
-    socket = new WebSocket(wsurl);
+    const socket = new WebSocket('ws://localhost:8080/ws');
 
     socket.onopen = () => {
         console.log('WebSocket connection established');
     };
 
     socket.onmessage = (event) => {
-        try {
-            const data = JSON.parse(event.data);
-            if (Array.isArray(data)) {
-                updateUserListCallback(data);
-            } else {
-                console.log('[Websocket] Received message:', data);
-            }
-        } catch (e) {
-            console.error('[Websocket] Failed to parse message', e);
+        const data = JSON.parse(event.data);
+        if (data.type === 'users') {
+          const container = document.getElementById('connected-users');
+          if (container) {
+            updateConnectedUsers(container, data.users);
+          }
         }
-    };
+      };
     socket.onerror = (error => {
         console.log('[Websocket] Error:', error);
     });
     socket.onclose = (event => {
         console.log('[Websocket] Connection closed:', event);
     })
-    createWebSocketConnection();
+    // createWebSocketConnection();
 }
