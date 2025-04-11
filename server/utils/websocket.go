@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"real-time-forum/models"
 	"sync"
 
@@ -22,7 +23,17 @@ func NewHub() *Hub {
 func (hub *Hub) AddClient(conn *websocket.Conn, user *models.Userlist) {
 	hub.Mutex.Lock()
 	defer hub.Mutex.Unlock()
+	// Log avant d'ajouter
+	fmt.Println("Before adding new client, current clients:", len(hub.Clients))
+	for c, u := range hub.Clients {
+		fmt.Printf("  - Client %p: %s (ID: %d)\n", c, u.Nickname, u.UserID)
+	}
 	hub.Clients[conn] = user
+	// Log après avoir ajouté
+	fmt.Println("After adding new client, current clients:", len(hub.Clients))
+	for c, u := range hub.Clients {
+		fmt.Printf("  - Client %p: %s (ID: %d)\n", c, u.Nickname, u.UserID)
+	}
 }
 
 func (hub *Hub) RemoveClient(conn *websocket.Conn) {
@@ -39,10 +50,24 @@ func (hub *Hub) BroadcastUser() {
 	for _, user := range hub.Clients {
 		onlineUser = append(onlineUser, user)
 	}
-	message, err := json.Marshal(onlineUser)
+	// fmt.Println("Online users:", onlineUser)
+	for i, user := range onlineUser {
+		fmt.Printf("User %d: ID=%d, Nickname=%s\n", i, user.UserID, user.Nickname)
+	}
+
+	message, err := json.Marshal(struct {
+		Type  string             `json:"type"`
+		Users []*models.Userlist `json:"users"`
+	}{
+		Type:  "users",
+		Users: onlineUser,
+	})
 	if err != nil {
 		return
 	}
+
+	fmt.Println("Broadcasting user list:", string(message))
+
 	for conn := range hub.Clients {
 		err := conn.WriteMessage(websocket.TextMessage, message)
 		if err != nil {

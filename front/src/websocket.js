@@ -1,7 +1,9 @@
 
 export function updateConnectedUsers(userContainer, users) {
+  console.log('[updateConnectedUsers] Utilisateurs reçus :', users);
     userContainer.innerHTML = '';
     users.forEach(user => {
+      console.log('Ajout de', user);
       const userElement = document.createElement('div');
       userElement.className = 'user-item';
       userElement.textContent = user.nickname;
@@ -11,14 +13,6 @@ export function updateConnectedUsers(userContainer, users) {
 
 export function connectWebSocket(token) {
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
-    // src.onmessage
-    // const token = localStorage.getItem('token');
-    // const socket = new WebSocket('ws://localhost:8080/ws', null, {
-    //     headers: {
-    //         'Authorization': `Bearer ${token}`,
-    //         'Content-Type': 'application/json'
-    //     }
-    // });
     console.log("Token utilisé pour la connexion:", token);
     const socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
 
@@ -29,8 +23,10 @@ export function connectWebSocket(token) {
     socket.onmessage = (event) => {
       // console.log("event", event.data);    
       const data = JSON.parse(event.data);
+      console.log('[WebSocket] Message reçu :', data);
       if (data.type === 'users') {
         const container = document.getElementById('connected-users');
+        console.log('[WebSocket] Container found:', container);
         if (container) {
             // console.log("ou est la listes ",data);
             updateConnectedUsers(container, data.users);

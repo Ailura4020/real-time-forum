@@ -84,7 +84,7 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 			return
 		}
 		defer conn.Close()
-		hub := utils.NewHub()
+		// hub := utils.NewHub()
 		UserRepo := repository.NewUserRepository(db)
 		UserService := service.NewUserService(UserRepo)
 
