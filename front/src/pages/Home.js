@@ -1,28 +1,22 @@
 import { api } from '../main.js';
 import { connectWebSocket } from '../websocket.js'; 
+import { updateConnectedUsers } from '../websocket.js';
 // import classes from '../styles/Home.module.css';
 // import "../styles/Home.module.css"
 // import styles from '../styles/Home.module.css';
 
-function updateConnectedUsers(userContainer, usersList){
-  userContainer.innerHTML='';
-  usersList.forEach(user => {
-    const userElement = document.createElement('div');
-    userElement.className = 'user-item';
-    userElement.textContent = user.nickname;
-    userContainer.appendChild(userElement);
-});
-}
+
 export async function renderHomePage(container) {
     // Create a loading indicator
     container.innerHTML = '<div class="loading">Loading posts...</div>';
-
+console.log('je suis la ...');
     try {
       // connexion websockets pour afficher la liste des users connectés
       connectWebSocket(usersList => {
+        // console.log(userContainer)
         updateConnectedUsers(userContainer, usersList);
       });
-  
+
         // Fetch posts from the API
         const postsResponse = await api.get('/posts');
         if (postsResponse.success) {
