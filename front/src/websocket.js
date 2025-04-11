@@ -9,10 +9,18 @@ export function updateConnectedUsers(userContainer, users) {
     console.log('Connected users:', users);
   }
 
-export function connectWebSocket(updateUserListCallback) {
+export function connectWebSocket(token) {
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
-    // src.onmessage 
-    const socket = new WebSocket('ws://localhost:8080/ws');
+    // src.onmessage
+    // const token = localStorage.getItem('token');
+    // const socket = new WebSocket('ws://localhost:8080/ws', null, {
+    //     headers: {
+    //         'Authorization': `Bearer ${token}`,
+    //         'Content-Type': 'application/json'
+    //     }
+    // });
+
+    const socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
 
     socket.onopen = () => {
         console.log('WebSocket connection established');

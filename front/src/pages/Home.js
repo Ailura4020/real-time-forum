@@ -9,10 +9,10 @@ export async function renderHomePage(container) {
     container.innerHTML = '<div class="loading">Loading posts...</div>';
     try {
         // connexion websockets pour afficher la liste des users connectés
-        connectWebSocket(usersList => {
-            updateConnectedUsers(userContainer, usersList);
-            console.log("USERSLIST: ",usersList)
-        });
+        // connectWebSocket(usersList => {
+        //     updateConnectedUsers(userContainer, usersList);
+        //     console.log("USERSLIST: ",usersList)
+        // });
 
         // Fetch posts from the API
         const postsResponse = await api.get('/posts');
