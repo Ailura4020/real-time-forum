@@ -21,18 +21,35 @@ export function connectWebSocket(token) {
     };
 
     socket.onmessage = (event) => {
-      // console.log("event", event.data);    
       const data = JSON.parse(event.data);
       console.log('[WebSocket] Message reçu :', data);
+    
       if (data.type === 'users') {
         const container = document.getElementById('connected-users');
-        console.log('[WebSocket] Container found:', container);
+        console.log('[WebSocket] Container trouvé :', container);
         if (container) {
-            // console.log("ou est la listes ",data);
-            updateConnectedUsers(container, data.users);
-          }
+          updateConnectedUsers(container, data.users);
         }
-      };
+      }
+    
+      if (data.type === 'user_disconnect') {
+        console.log('[WebSocket] Déconnexion reçue pour l\'utilisateur:', data.userID);
+        const container = document.getElementById('connected-users');
+        if (container) {
+          removeUserFromList(data.userID);
+        }
+      }
+    
+      // Gérer les déconnexions d'utilisateur
+      if (data.type === 'user_disconnect') {
+        const container = document.getElementById('connected-users');
+        console.log('[WebSocket] Container trouvé pour la déconnexion :', container);
+        if (container) {
+          // Retirer l'utilisateur déconnecté de la liste
+          removeUserFromList(data.userID);
+        }
+      }
+    };
     socket.onerror = (error => {
         console.log('[Websocket] Error:', error);
     });
@@ -40,4 +57,12 @@ export function connectWebSocket(token) {
         console.log('[Websocket] Connection closed:', event);
     })
     // createWebSocketConnection();
+}
+
+// Fonction pour retirer un utilisateur de la liste
+function removeUserFromList(userID) {
+  const userElement = document.getElementById(userID);
+  if (userElement) {
+    userElement.remove();
+  }
 }

@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"real-time-forum/models"
 	"sync"
 
@@ -40,6 +41,27 @@ func (hub *Hub) RemoveClient(conn *websocket.Conn) {
 	hub.Mutex.Lock()
 	defer hub.Mutex.Unlock()
 	delete(hub.Clients, conn)
+	log.Printf("Suppression du client: %v", len(hub.Clients))
+	log.Printf("Suppression du client: %v", conn.RemoteAddr())
+	// Récupérer l'ID de l'utilisateur (ou un autre identifiant) associé à cette connexion
+	userID := conn.RemoteAddr().String() // ou l'identifiant spécifique de l'utilisateur
+
+	// Créer un message indiquant que l'utilisateur s'est déconnecté
+	message := map[string]interface{}{
+		"action": "user_disconnect",
+		"userID": userID,
+	}
+	log.Printf("Envoi du message de déconnexion: %v", message)
+
+	// Envoyer un message de déconnexion à tous les autres clients
+	for client := range hub.Clients {
+		if client != conn {
+			err := client.WriteJSON(message) // Envoi du message à chaque client
+			if err != nil {
+				log.Println("Erreur lors de l'envoi du message de déconnexion:", err)
+			}
+		}
+	}
 }
 
 func (hub *Hub) BroadcastUser() {

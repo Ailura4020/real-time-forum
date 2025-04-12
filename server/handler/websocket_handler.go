@@ -106,7 +106,7 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 				break
 			}
 		}
-		hub.RemoveClient(conn)
+		// hub.RemoveClient(conn)
 		hub.BroadcastUser()
 	}
 }
