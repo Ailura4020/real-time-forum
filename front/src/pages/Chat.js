@@ -1,60 +1,27 @@
 import {api} from '../main.js';
-// src/pages/About.js
-// import '../styles/About.module.css';
+import classes from '../styles/Chat.module.css';
 
 export async function renderChat(container) {
     // Clear the container before rendering
     container.innerHTML = `
-     <div class="chat">
-      <h1>Chat</h1>
-     <div class="chat-layout">
-  <div class="chat-sidebar">
-    <h3>Utilisateurs connectés</h3>
-    <div id="connected-users" class="user-list"></div>
-  </div>
-  <div class="chat-content">
-          <div class="chat-messages" id="messages"></div>
-          <div class="chat-input">
-            <input type="text" id="message-input" placeholder="Votre message...">
-            <button id="send-button">Envoyer</button>
-          </div>
-        </div>
+<div id="user-info" class="${classes.userInfo}"></div>
+ <div class="chat">
+   <h1>Chat</h1>
+   <div class="${classes.chatLayout}">
+      <div class="${classes.chatSidebar}">
+         <h3>Utilisateurs connectés</h3>
+         <div id="connected-users" class="${classes.usersList}"></div>
       </div>
-      <div id="user-info"></div>
-    </div>
+      <div class="${classes.chatContent}">
+         <div class="${classes.chatMessages}" id="messages"></div>
+         <div class="${classes.chatInput}">
+            <input type="text" id="messageInput" placeholder="Votre message...">
+            <button id="send-button" class="${classes.sendButton}">Envoyer</button>
+         </div>
+      </div>
+   </div>
+</div>
   `;
-
-    // Quelques styles inline pour que ce soit visible rapidement
-    const style = document.createElement('style');
-    style.textContent = `
-      .chat-layout {
-        display: flex;
-        border: 1px solid #ccc;
-        height: 400px;
-      }
-      .chat-sidebar {
-        width: 200px;
-        border-right: 1px solid #ccc;
-        padding: 10px;
-        overflow-y: auto;
-        background: #f0f0f0;
-      }
-      #connected-users {
-        border: 1px solid #aaa;
-        padding: 10px;
-        background: white;
-        height: 300px;
-        overflow-y: auto;
-      }
-      .user-item {
-        padding: 5px;
-        margin-bottom: 5px;
-        background: #e8e8e8;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-    `;
-    document.head.appendChild(style);
 
     // Fetch user data
     const userData = await fetchUserData();
