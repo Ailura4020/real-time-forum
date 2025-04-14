@@ -55,6 +55,7 @@ export function connectWebSocket(token) {
         console.log('[Websocket] Error:', error);
     });
     socket.onclose = (event => {
+    socket.close();
         console.log('[Websocket] Connection closed:', event);
     })
     // createWebSocketConnection();

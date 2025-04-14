@@ -38,13 +38,13 @@ type Response struct {
 	Token   string      `json:"token,omitempty"`
 }
 
-type PrivateMessage struct {
-	ID         int    `json:"id"`
-	SenderID   int    `json:"sender_id"`
-	ReceiverID int    `json:"receiver_id"`
-	Content    string `json:"content"`
-	DateSent   string `json:"date_sent"`
-}
+// type PrivateMessage struct {
+// 	ID         int    `json:"id"`
+// 	SenderID   int    `json:"sender_id"`
+// 	ReceiverID int    `json:"receiver_id"`
+// 	Content    string `json:"content"`
+// 	DateSent   string `json:"date_sent"`
+// }
 
 type Userlist struct {
 	UserID   int    `json:"id"`
