@@ -25,6 +25,7 @@ export function renderLoginPage(container) {
                 localStorage.removeItem('userData');
                 updateAuthUI();
                 renderLoginPage(container);
+                
             });
         }, 0);
 

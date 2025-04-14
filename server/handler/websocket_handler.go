@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"real-time-forum/models"
@@ -70,7 +71,6 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Extract user ID from JWT token
 		userID, err := utils.ExtractUserIDFromRequest(r)
-		fmt.Println(">>>>>>>>>", err)
 		if err != nil {
 			fmt.Println("Erreur lors de la récupération des informations utilisateur :", err)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -102,21 +102,56 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 		hub.BroadcastUser()
 
 		for {
-			_, _, err := conn.ReadMessage()
+			_, message, err := conn.ReadMessage()
 			if err != nil {
 				hub.RemoveClient(conn)
 				hub.BroadcastUser()
 				fmt.Println("laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", err)
 				break
 			}
+
+			var msg map[string]interface{}
+			if err := json.Unmarshal(message, &msg); err != nil {
+				fmt.Println("Erreur parsing JSON:", err)
+				continue
+			}
+			if msg["type"] == "private_message" {
+				fmt.Println("Message privé reçu :", msg)
+
+				senderID := userID
+				receiverID := int(msg["to"].(float64))
+				content := msg["content"].(string)
+
+				err := savePrivateMessage(db, senderID, receiverID, content)
+				if err != nil {
+					fmt.Println("erreur insertion message privé :", err)
+				}
+
+				hub.Mutex.Lock()
+				for clientConn, user := range hub.Clients {
+					if user.UserID == receiverID {
+						err := clientConn.WriteJSON(map[string]interface{}{
+							"type":     "private_message",
+							"from":     senderID,
+							"content":  content,
+							"datetime": time.Now().Format("2006-01-02 15:04:05"),
+						})
+						if err != nil {
+							fmt.Println("Erreur envoi message au destinataire :", err)
+						}
+					}
+				}
+				hub.Mutex.Unlock()
+			}
+
 		}
 	}
 }
 
-// function pour enregistrer un msg privé dans la DB
+// // function pour enregistrer un msg privé dans la DB
 func savePrivateMessage(db *sql.DB, senderID int, receiverId int, content string) error {
 	dateSent := time.Now().Format(time.RFC3339)
-	query := `INSERT INTO PRIVATEMESSAGE (TextContent, DateSent, SenderId, ReceiverId) VALUE ( ?, ?, ?, ?)`
+	query := `INSERT INTO PRIVATEMESSAGE (TextContent, DateSent, SenderId, ReceiverId) VALUES ( ?, ?, ?, ?)`
 	_, err := db.Exec(query, content, dateSent, senderID, receiverId)
 	return err
 }
