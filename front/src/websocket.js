@@ -5,6 +5,7 @@ export function updateConnectedUsers(userContainer, users) {
     users.forEach(user => {
       console.log('Ajout de', user);
       const userElement = document.createElement('div');
+      userElement.id = user.id;
       userElement.className = 'user-item';
       userElement.textContent = user.nickname;
       userContainer.appendChild(userElement);

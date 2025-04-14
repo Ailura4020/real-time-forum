@@ -103,11 +103,12 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 		for {
 			_, _, err := conn.ReadMessage()
 			if err != nil {
+				hub.RemoveClient(conn)
+				hub.BroadcastUser()
+				fmt.Println("laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", err)
 				break
 			}
 		}
-		// hub.RemoveClient(conn)
-		hub.BroadcastUser()
 	}
 }
 

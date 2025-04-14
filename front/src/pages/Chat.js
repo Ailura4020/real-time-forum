@@ -1,5 +1,5 @@
 import {api} from '../main.js';
-import classes from '../styles/Chat.module.css';
+// import classes from '../styles/Chat.module.css';
 
 export async function renderChat(container) {
     // Clear the container before rendering

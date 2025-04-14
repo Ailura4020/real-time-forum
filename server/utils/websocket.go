@@ -41,17 +41,22 @@ func (hub *Hub) RemoveClient(conn *websocket.Conn) {
 	hub.Mutex.Lock()
 	defer hub.Mutex.Unlock()
 	delete(hub.Clients, conn)
-	log.Printf("Suppression du client: %v", len(hub.Clients))
-	log.Printf("Suppression du client: %v", conn.RemoteAddr())
 	// Récupérer l'ID de l'utilisateur (ou un autre identifiant) associé à cette connexion
 	userID := conn.RemoteAddr().String() // ou l'identifiant spécifique de l'utilisateur
 
+	// Affichage de la nouvelle liste des clients restants
+	fmt.Println("Clients restants connectés :")
+	for c, u := range hub.Clients {
+		fmt.Printf("  - Client %p : %s (ID: %d)\n", c, u.Nickname, u.UserID)
+	}
+
+	fmt.Printf("Nombre total de clients connectés : %d\n", len(hub.Clients))
+
 	// Créer un message indiquant que l'utilisateur s'est déconnecté
 	message := map[string]interface{}{
-		"action": "user_disconnect",
+		"type":   "user_disconnect",
 		"userID": userID,
 	}
-	log.Printf("Envoi du message de déconnexion: %v", message)
 
 	// Envoyer un message de déconnexion à tous les autres clients
 	for client := range hub.Clients {
@@ -94,6 +99,7 @@ func (hub *Hub) BroadcastUser() {
 		err := conn.WriteMessage(websocket.TextMessage, message)
 		if err != nil {
 			conn.Close()
+			fmt.Print("Users disconnected")
 			delete(hub.Clients, conn)
 		}
 	}
