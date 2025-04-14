@@ -1,3 +1,70 @@
+export const chatTemplate = (classes) => `
+  <div id="user-info" class="${classes.userInfo}"></div>
+  <div class="chat">
+    <h1>Chat</h1>
+    <div class="${classes.chatLayout}">
+      <div class="${classes.chatSidebar}">
+        <h3>Utilisateurs connectés</h3>
+        <div id="connected-users" class="${classes.usersList}"></div>
+      </div>
+      <div class="${classes.chatContent}">
+        <div class="${classes.chatMessages}" id="messages"></div>
+        <div class="${classes.chatInput}">
+          <input type="text" id="messageInput" placeholder="Votre message...">
+          <button id="send-button" class="${classes.sendButton}">Envoyer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+export const postFormTemplate = (classes) => `
+  <h2>Create New Post</h2>
+  <form id="post-form" class="${classes.postForm}">
+    <div class="${classes.formGroup}">
+      <label for=post-title>Title</label>
+      <input type="text" id="post-title" name="title" required>
+    </div>
+    <div class="${classes.formGroup}">
+      <label for="post-category">Category</label>
+      <select id="post-category" name="category" required>
+        <option value="General">General</option>
+        <option value="Question">Question</option>
+        <option value="Discussion">Discussion</option>
+        <option value="Announcement">Announcement</option>
+      </select>
+    </div>
+    <div class="${classes.formGroup}">
+      <label for="post-content">Content</label>
+      <textarea id="post-content" name="content" rows="6" required></textarea>
+    </div>
+    <div class="${classes.formActions}">
+      <button type="button" id="cancel-post">Cancel</button>
+      <button type="submit">Submit Post</button>
+    </div>
+  </form>
+`;
+
+export const postTemplate = (classes, post, formattedDate) => `
+<div class="post-header">
+    <h2 class="${classes.postTitle}">
+        <a href="/post/${post.id}">${post.title}</a>
+    </h2>
+    <span class="post-category">${post.category}</span>
+</div>
+<div class="post-content">
+    <p class="post-content">${post.text_content}</p>
+</div>
+<div class="post-footer">
+    <div class="post-meta">
+        <span class="post-author">Posted by: ${post.user_nickname}</span>
+        <span class="post-date">• ${formattedDate}</span>
+    </div>
+</div>
+`;
+
+// ARCH
+
 // src/templates.js
 // This file contains reusable HTML templates for the application
 

@@ -81,6 +81,7 @@ export async function updateAuthUI() {
             // Add logout event listener
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.removeItem('token');
+
                 updateAuthUI();
                 router.navigate('/');
             });
@@ -133,6 +134,7 @@ export const api = {
 
     async post(endpoint, data) {
         const token = localStorage.getItem('token');
+        console.log("<<<<<TOKEN",token)
         const headers = {
             'Content-Type': 'application/json'
         };

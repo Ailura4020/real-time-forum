@@ -84,11 +84,11 @@ function displayComments(container, comments) {
 
     // Create comment elements
     comments.forEach(comment => {
-        const commentElement = document.createElement('div');
+        const commentElement = document.createElement('article');
         commentElement.className = 'comment';
 
         // Format date
-        const commentDate = new Date(comment.date_creation);
+        const commentDate = new Date(comment.create_date);
         const formattedDate = commentDate.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
@@ -136,6 +136,7 @@ function displayComments(container, comments) {
 //         alert('Failed to submit comment. Please try again.');
 //     }
 // }
+
 async function submitComment(postId, parentContainer) {
     const contentTextarea = document.getElementById('comment-content');
     const content = contentTextarea.value;

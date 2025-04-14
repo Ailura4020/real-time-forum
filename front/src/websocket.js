@@ -13,6 +13,7 @@ export function updateConnectedUsers(userContainer, users) {
   }
 
 export function connectWebSocket(token) {
+    console.log("TOKEN",token)
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
     console.log("Token utilisé pour la connexion:", token);
     const socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);

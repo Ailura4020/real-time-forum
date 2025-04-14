@@ -1,13 +1,12 @@
-import { api } from '../main.js';
-import { connectWebSocket } from '../websocket.js'; 
-// import classes from '../styles/Home.module.css';
+import {api} from '../main.js';
+import classes from '../styles/Home.module.css';
+import {postFormTemplate, postTemplate} from '../templates.js';
 // import "../styles/Home.module.css"
 // import styles from '../styles/Home.module.css';
 
-
 export async function renderHomePage(container) {
     // Create a loading indicator
-    container.innerHTML = '<div class="loading">Loading posts...</div>';
+    container.innerHTML = '<div class="${classes.loading}">Loading posts...</div>';
 
     try {
       // // connexion websockets pour afficher la liste des users connectés
@@ -45,32 +44,8 @@ export async function renderHomePage(container) {
                 const createPostForm = document.createElement('div');
                 createPostForm.className = 'create-post-form hidden';
                 createPostForm.id = 'create-post-form';
-                createPostForm.innerHTML = `
-          <h2>Create New Post</h2>
-          <form id="post-form">
-            <div class="classes.form-group">
-              <label for=classes.post-title>Title</label>
-              <input type="text" id="post-title" name="title" required>
-            </div>
-            <div class="form-group">
-              <label for="post-category">Category</label>
-              <select id="post-category" name="category" required>
-                <option value="General">General</option>
-                <option value="Question">Question</option>
-                <option value="Discussion">Discussion</option>
-                <option value="Announcement">Announcement</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="post-content">Content</label>
-              <textarea id="post-content" name="content" rows="6" required></textarea>
-            </div>
-            <div class="form-actions">
-              <button type="button" id="cancel-post">Cancel</button>
-              <button type="submit">Submit Post</button>
-            </div>
-          </form>
-        `;
+                createPostForm.innerHTML = postFormTemplate(classes);
+
                 postsContainer.appendChild(createPostForm);
 
                 // Add event listeners for post form
@@ -122,7 +97,7 @@ export async function renderHomePage(container) {
 }
 
 function createPostElement(post) {
-    const postElement = document.createElement('div');
+    const postElement = document.createElement('article');
     postElement.className = 'post-card';
     postElement.dataset.postId = post.id;
 
@@ -136,78 +111,8 @@ function createPostElement(post) {
         minute: '2-digit'
     });
 
-    postElement.innerHTML = `
-<div class="post-header">
-  <h2 class="post-title">
-    <a href="/post/${post.id}">${post.title}</a>
-  </h2>
-  <span class="post-category">${post.category}</span>
-</div>
-<div class="post-content">
-  <p class="post-content">${post.text_content}</p>
-</div>
-<div class="post-footer">
-  <div class="post-meta">
-    <span class="post-author">Posted by: ${post.user_nickname}</span>
-    <span class="post-date">• ${formattedDate}</span>
-  </div>
-  <div class="post-actions">
-    <!--<button class="like-button bg-blue-500 text-white px-3 py-1 rounded" data-id="${post.id}">
-      <span class="like-icon">👍</span> <span class="like-count">${post.likes}</span>
-    </button>
-    <button class="dislike-button bg-red-500 text-white px-3 py-1 rounded" data-id="${post.id}">
-      <span class="dislike-icon">👎</span> <span class="dislike-count">${post.dislikes}</span>
-    </button>-->
-    <!--<button class="comment-button bg-gray-300 text-gray-800 px-3 py-1 rounded" data-id="${post.id}">
-      <span class="comment-icon">💬</span> Comments
-    </button>-->
-  </div>
-</div>
-  `;
-
-    // Add event listeners
-    // setTimeout(() => {
-        // Like button
-        // postElement.querySelector('.like-button').addEventListener('click', async () => {
-        //     if (!localStorage.getItem('token')) {
-        //         alert('Please log in to like posts');
-        //         return;
-        //     }
-        //
-        //     try {
-        //         // This is a placeholder - you would need to implement an API endpoint for this
-        //         console.log('Like post:', post.id);
-        //         // Update UI
-        //         const likeCount = postElement.querySelector('.like-count');
-        //         likeCount.textContent = parseInt(likeCount.textContent) + 1;
-        //     } catch (error) {
-        //         console.error('Error liking post:', error);
-        //     }
-        // });
-
-        // Dislike button
-        // postElement.querySelector('.dislike-button').addEventListener('click', async () => {
-        //     if (!localStorage.getItem('token')) {
-        //         alert('Please log in to dislike posts');
-        //         return;
-        //     }
-        //
-        //     try {
-        //         // This is a placeholder - you would need to implement an API endpoint for this
-        //         console.log('Dislike post:', post.id);
-        //         // Update UI
-        //         const dislikeCount = postElement.querySelector('.dislike-count');
-        //         dislikeCount.textContent = parseInt(dislikeCount.textContent) + 1;
-        //     } catch (error) {
-        //         console.error('Error disliking post:', error);
-        //     }
-        // });
-
-        // Comment button
-    //     postElement.querySelector('.comment-button').addEventListener('click', () => {
-    //         window.location.href = `/post/${post.id}`;
-    //     });
-    // }, 100);
+    // template
+    postElement.innerHTML = postTemplate(classes, post, formattedDate);
 
     return postElement;
 }

@@ -70,6 +70,7 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Extract user ID from JWT token
 		userID, err := utils.ExtractUserIDFromRequest(r)
+		fmt.Println(">>>>>>>>>", err)
 		if err != nil {
 			fmt.Println("Erreur lors de la récupération des informations utilisateur :", err)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)

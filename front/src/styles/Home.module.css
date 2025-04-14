@@ -1,4 +1,4 @@
-.comment-form {
+.commentForm {
     background-color: #f9f9f9; /* Light background for the form */
     border: 1px solid #ddd; /* Light border */
     border-radius: 5px; /* Rounded corners */
@@ -8,7 +8,7 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.form-group {
+.formGroup {
     margin-bottom: 15px; /* Space between form groups */
 }
 
@@ -35,7 +35,7 @@ textarea:focus {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
 }
 
-.form-actions {
+.formActions {
     text-align: right; /* Align actions to the right */
 }
 
@@ -67,7 +67,7 @@ h2 {
     margin-bottom: 20px; /* Space below the heading */
 }
 
-#post-form {
+.postForm {
     background-color: #f9f9f9; /* Light background for the form */
     border: 1px solid #ddd; /* Light border */
     border-radius: 5px; /* Rounded corners */
@@ -77,7 +77,7 @@ h2 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.form-group {
+.formGroup {
     margin-bottom: 15px; /* Space between form groups */
 }
 
@@ -107,7 +107,7 @@ textarea:focus {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add shadow on focus */
 }
 
-.form-actions {
+.formActions {
     text-align: right; /* Align actions to the right */
 }
 
@@ -142,29 +142,29 @@ button:disabled {
 
 /*---------------------------*/
 
-.post-header {
+.postHeader {
     background-color: #f1f1f1; /* Light background for the header */
     padding: 15px; /* Padding around the header */
     border-bottom: 1px solid #ddd; /* Bottom border for separation */
 }
 
-.post-title {
+.postTitle {
     margin: 0; /* Remove default margin */
-    font-size: 4.5em !important; /* Larger font size for the title */
+    font-size: 1.5em; /* Larger font size for the title */
     color: #007bff; /* Primary color for the title */
-    color: red;
+    /*color: red;*/
 }
 
-.post-title a {
+.postTitle a {
     text-decoration: none; /* Remove underline from links */
     color: inherit; /* Inherit color from the title */
 }
 
-.post-title a:hover {
+.postTitle a:hover {
     text-decoration: underline; /* Underline on hover */
 }
 
-.post-category {
+.postCategory {
     background-color: red;
     display: block; /* Make category a block element */
     font-size: 0.9em; /* Smaller font size for category */
@@ -172,18 +172,18 @@ button:disabled {
     margin-top: 5px; /* Space above the category */
 }
 
-.post-content {
+.postContent {
     padding: 15px; /* Padding around the content */
     background-color: #fff; /* White background for content */
 }
 
-.post-content p {
+.postContent p {
     margin: 0; /* Remove default margin */
     line-height: 1.6; /* Increase line height for readability */
     color: #333; /* Darker text color */
 }
 
-.post-footer {
+.postFooter {
     padding: 10px 15px; /* Padding around the footer */
     background-color: #f9f9f9; /* Light background for the footer */
     border-top: 1px solid #ddd; /* Top border for separation */
@@ -192,12 +192,12 @@ button:disabled {
     align-items: center; /* Center items vertically */
 }
 
-.post-meta {
+.postMeta {
     font-size: 0.9em; /* Smaller font size for meta information */
     color: #777; /* Gray color for meta text */
 }
 
-.post-actions {
+.postActions {
     display: flex; /* Use flexbox for action buttons */
     gap: 10px; /* Space between buttons */
 }
@@ -217,16 +217,16 @@ button:hover {
     background-color: #0056b3; /* Darker shade on hover */
 }
 
-.like-button,
-.dislike-button,
-.comment-button {
+.likeButton,
+.dislikeButton,
+.commentButton {
     display: flex; /* Use flexbox for button content */
     align-items: center; /* Center items vertically */
 }
 
-.like-icon,
-.dislike-icon,
-.comment-icon {
+.likeIcon,
+.dislikeIcon,
+.commentIcon {
     margin-right: 5px; /* Space between icon and text */
 }
 
@@ -235,11 +235,11 @@ button:disabled {
     cursor: not-allowed; /* Not-allowed cursor for disabled button */
 }
 
-body{
-    background-color: red;
-}
+/*body{*/
+/*    background-color: red;*/
+/*}*/
 
-.post-header{
+.postHeader {
     font-size: 30px !important;
     background-color: blue;
 }

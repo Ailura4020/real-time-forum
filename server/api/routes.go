@@ -26,6 +26,8 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 	// API routes
 	mux.HandleFunc("/api/user", middleware.ErrorHandler(handler.UserHandler(db), errorLogger))
 
+	mux.HandleFunc("/api/logout", middleware.ErrorHandler(handler.LogoutHandler, errorLogger))
+
 	// POST /api/register
 	mux.HandleFunc("/api/register", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {

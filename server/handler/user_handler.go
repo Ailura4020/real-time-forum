@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"real-time-forum/repository"
@@ -142,7 +143,20 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-//
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Received %s request for %s", r.Method, r.URL.Path)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Here you can add any additional logic if needed, such as logging the logout event
+	fmt.Println("LOGOUT")
+
+	// Respond to the client
+	SendResponse(w, true, "User logged out successfully", nil, "")
+}
+
 //// SendResponse sends a JSON response
 //func SendResponse(w http.ResponseWriter, success bool, message string, data interface{}, token string) {
 //	response := models.Response{

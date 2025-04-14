@@ -1,27 +1,36 @@
 import {api} from '../main.js';
-// import classes from '../styles/Chat.module.css';
+import classes from '../styles/Chat.module.css';
+import { chatTemplate } from "../templates.js"
 
 export async function renderChat(container) {
+    // console.log("CONTAINER",container);
+    console.log("CLASSES",classes)
     // Clear the container before rendering
-    container.innerHTML = `
-<div id="user-info" class="${classes.userInfo}"></div>
- <div class="chat">
-   <h1>Chat</h1>
-   <div class="${classes.chatLayout}">
-      <div class="${classes.chatSidebar}">
-         <h3>Utilisateurs connectés</h3>
-         <div id="connected-users" class="${classes.usersList}"></div>
-      </div>
-      <div class="${classes.chatContent}">
-         <div class="${classes.chatMessages}" id="messages"></div>
-         <div class="${classes.chatInput}">
-            <input type="text" id="messageInput" placeholder="Votre message...">
-            <button id="send-button" class="${classes.sendButton}">Envoyer</button>
-         </div>
-      </div>
-   </div>
-</div>
-  `;
+    container.innerHTML = ''; // Clear the container
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = chatTemplate(classes); // Use the template with the classes
+    container.appendChild(tempDiv);
+
+    // container.appendChild(chatTemplate(classes));
+//     container.innerHTML = `
+// <div id="user-info" class="${classes.userInfo}"></div>
+//  <div class="chat">
+//    <h1>Chat</h1>
+//    <div class="${classes.chatLayout}">
+//       <div class="${classes.chatSidebar}">
+//          <h3>Utilisateurs connectés</h3>
+//          <div id="connected-users" class="${classes.usersList}"></div>
+//       </div>
+//       <div class="${classes.chatContent}">
+//          <div class="${classes.chatMessages}" id="messages"></div>
+//          <div class="${classes.chatInput}">
+//             <input type="text" id="messageInput" placeholder="Votre message...">
+//             <button id="send-button" class="${classes.sendButton}">Envoyer</button>
+//          </div>
+//       </div>
+//    </div>
+// </div>
+//   `;
 
     // Fetch user data
     const userData = await fetchUserData();
