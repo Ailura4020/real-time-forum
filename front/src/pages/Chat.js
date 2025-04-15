@@ -1,6 +1,8 @@
 import {api} from '../main.js';
 import classes from '../styles/Chat.module.css';
 import { chatTemplate } from "../templates.js"
+import { connectWebSocket } from '../websocket.js';
+
 
 export async function renderChat(container) {
     // console.log("CONTAINER",container);
@@ -11,26 +13,10 @@ export async function renderChat(container) {
     tempDiv.innerHTML = chatTemplate(classes); // Use the template with the classes
     container.appendChild(tempDiv);
 
-    // container.appendChild(chatTemplate(classes));
-//     container.innerHTML = `
-// <div id="user-info" class="${classes.userInfo}"></div>
-//  <div class="chat">
-//    <h1>Chat</h1>
-//    <div class="${classes.chatLayout}">
-//       <div class="${classes.chatSidebar}">
-//          <h3>Utilisateurs connectés</h3>
-//          <div id="connected-users" class="${classes.usersList}"></div>
-//       </div>
-//       <div class="${classes.chatContent}">
-//          <div class="${classes.chatMessages}" id="messages"></div>
-//          <div class="${classes.chatInput}">
-//             <input type="text" id="messageInput" placeholder="Votre message...">
-//             <button id="send-button" class="${classes.sendButton}">Envoyer</button>
-//          </div>
-//       </div>
-//    </div>
-// </div>
-//   `;
+    const token = localStorage.getItem('token');
+    if (token) {
+      connectWebSocket(token);
+    }
 
     // Fetch user data
     const userData = await fetchUserData();
@@ -59,4 +45,28 @@ async function fetchUserData() {
         console.error('Error fetching user data:', error);
         return null;
     }
+}
+
+let currentReceiver = null;
+
+function setCurrentReceiver(user){
+    currentReceiver = user;
+
+    const recipientElement = document.getElementById('chat-recipient');
+    if (recipientElement){
+        recipientElement.innerHTML = `Conversation avec : <strong>${user.nickname}</strong>`;
+    }
+    console.log("[Chat] conversation ouverte avec",user);
+}
+
+export function setupUserClickListener(){
+    const userElements = document.querySelectorAll('.user-item');
+    userElements.forEach(el => {
+        el.addEventListener('click',() => {
+            const userId = el.id
+            const nickname = el.textContent;
+
+            setCurrentReceiver({id: userId, nickname})
+        })
+    })
 }

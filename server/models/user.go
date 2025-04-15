@@ -48,5 +48,5 @@ type Response struct {
 
 type Userlist struct {
 	UserID   int    `json:"id"`
-	Nickname string `json:"username"`
+	Nickname string `json:"nickname"`
 }

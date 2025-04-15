@@ -8,6 +8,7 @@ export const chatTemplate = (classes) => `
         <div id="connected-users" class="${classes.usersList}"></div>
       </div>
       <div class="${classes.chatContent}">
+      <div id="chat-recipient" class="${classes.chatRecipient}">Select User to start a chat.</div>
         <div class="${classes.chatMessages}" id="messages"></div>
         <div class="${classes.chatInput}">
           <input type="text" id="messageInput" placeholder="Votre message...">

@@ -1,3 +1,4 @@
+import { setupUserClickListener } from "./pages/Chat";
 
 export function updateConnectedUsers(userContainer, users) {
   console.log('[updateConnectedUsers] Utilisateurs reçus :', users);
@@ -7,9 +8,13 @@ export function updateConnectedUsers(userContainer, users) {
       const userElement = document.createElement('div');
       userElement.id = user.id;
       userElement.className = 'user-item';
+      // userElement;addEventListener('click', () => {
+      //   openPrivateChat(user);
+      // })
       userElement.textContent = user.nickname;
       userContainer.appendChild(userElement);
     });
+    setupUserClickListener();
   }
 
 export function connectWebSocket(token) {
@@ -34,13 +39,6 @@ export function connectWebSocket(token) {
         }
       }
     
-      if (data.type === 'user_disconnect') {
-        console.log('[WebSocket] Déconnexion reçue pour l\'utilisateur:', data.userID);
-        const container = document.getElementById('connected-users');
-        if (container) {
-          removeUserFromList(data.userID);
-        }
-      }
     
       // Gérer les déconnexions d'utilisateur
       if (data.type === 'user_disconnect') {
