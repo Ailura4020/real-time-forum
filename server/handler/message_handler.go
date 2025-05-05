@@ -3,18 +3,23 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"real-time-forum/repository"
 	"real-time-forum/utils"
 	"strconv"
-	"time"
 )
 
-func savePrivateMessage(db *sql.DB, senderID int, receiverId int, content string) error {
-	dateSent := time.Now().Format(time.RFC3339)
-	query := `INSERT INTO PRIVATEMESSAGE (TextContent, DateSent, SenderId, ReceiverId) VALUES ( ?, ?, ?, ?)`
-	_, err := db.Exec(query, content, dateSent, senderID, receiverId)
-	return err
+func savePrivateMessage(db *sql.DB, senderID int, receiverID int, content string) error {
+	query := `
+        INSERT INTO private_messages (sender_id, receiver_id, content)
+        VALUES (?, ?, ?)
+    `
+	_, err := db.Exec(query, senderID, receiverID, content)
+	if err != nil {
+		return fmt.Errorf("failed to insert private message: %w", err)
+	}
+	return nil
 }
 
 func GetMessagesHandler(db *sql.DB) http.HandlerFunc {

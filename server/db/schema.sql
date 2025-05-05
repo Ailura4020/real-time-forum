@@ -43,13 +43,12 @@ CREATE TABLE "comments"
 CREATE INDEX idx_comments_user_id ON comments(user_id);
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 
-CREATE TABLE IF NOT EXISTS private_messages 
-(
-    "id"           INTEGER PRIMARY KEY AUTOINCREMENT,
-    "sender_id"    INTEGER NOT NULL,
-    "receiver_id"  INTEGER NOT NULL,
-    "content"      TEXT NOT NULL,
-    "timestamp"    DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("sender_id") REFERENCES users(user_id),
-    FOREIGN KEY ("receiver_id") REFERENCES users(user_id)
+CREATE TABLE IF NOT EXISTS private_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id)
 );
