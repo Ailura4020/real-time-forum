@@ -1,5 +1,8 @@
 import { setupUserClickListener } from "./pages/Chat";
 
+
+export let socket = null;
+
 export function updateConnectedUsers(userContainer, users) {
   console.log('[updateConnectedUsers] Utilisateurs reçus :', users);
     userContainer.innerHTML = '';
@@ -21,7 +24,7 @@ export function connectWebSocket(token) {
     console.log("TOKEN",token)
     // connection à la websocket -- > new variable qui inclus NewConnectionWebsocket
     console.log("Token utilisé pour la connexion:", token);
-    const socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
+     socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
 
     socket.onopen = () => {
         console.log('WebSocket connection established');
@@ -33,23 +36,21 @@ export function connectWebSocket(token) {
     
       if (data.type === 'users') {
         const container = document.getElementById('connected-users');
-        console.log('[WebSocket] Container trouvé :', container);
         if (container) {
           updateConnectedUsers(container, data.users);
         }
       }
     
-    
-      // Gérer les déconnexions d'utilisateur
-      if (data.type === 'user_disconnect') {
-        const container = document.getElementById('connected-users');
-        console.log('[WebSocket] Container trouvé pour la déconnexion :', container);
-        if (container) {
-          // Retirer l'utilisateur déconnecté de la liste
-          removeUserFromList(data.userID);
-        }
+      if (data.type === 'private_message') {
+        console.log('[WebSocket] Message privé reçu :', data);
+        displayPrivateMessage({
+          senderId: data.from,
+          content: data.content,
+          datetime: data.datetime,
+        });
       }
     };
+    
     socket.onerror = (error => {
         console.log('[Websocket] Error:', error);
     });
@@ -66,4 +67,24 @@ function removeUserFromList(userID) {
   if (userElement) {
     userElement.remove();
   }
+}
+
+export function displayPrivateMessage(message) {
+  const messagesContainer = document.getElementById('messages');
+  if (messagesContainer) {
+      const messageElement = document.createElement('div');
+      messageElement.className = 'message';
+      messageElement.innerHTML = `
+          <strong>${message.fromNickname}</strong> : ${message.content} <br>
+          <small>${message.datetime}</small>
+      `;
+      messagesContainer.appendChild(messageElement);
+      
+      // Scroll vers le bas à chaque nouveau message
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+}
+
+export function getSocket() {
+  return socket;
 }

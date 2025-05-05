@@ -9,6 +9,7 @@ import (
 	"real-time-forum/repository"
 	"real-time-forum/service"
 	"real-time-forum/utils"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -115,11 +116,30 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 				fmt.Println("Erreur parsing JSON:", err)
 				continue
 			}
+
 			if msg["type"] == "private_message" {
 				fmt.Println("Message privé reçu :", msg)
 
 				senderID := userID
-				receiverID := int(msg["to"].(float64))
+
+				// Récupérer 'to' et gérer les types possibles (string ou float64)
+				var receiverID int
+				switch v := msg["to"].(type) {
+				case float64:
+					receiverID = int(v) // Si "to" est un nombre
+				case string:
+					// Si "to" est une chaîne, tente de le convertir en nombre
+					id, err := strconv.Atoi(v)
+					if err != nil {
+						fmt.Println("Erreur de conversion pour 'to' :", err)
+						continue
+					}
+					receiverID = id
+				default:
+					fmt.Println("Type de 'to' inconnu :", v)
+					continue
+				}
+
 				content := msg["content"].(string)
 
 				err := savePrivateMessage(db, senderID, receiverID, content)

@@ -2,6 +2,7 @@ import {api} from '../main.js';
 import classes from '../styles/Chat.module.css';
 import { chatTemplate } from "../templates.js"
 import { connectWebSocket } from '../websocket.js';
+import { getSocket } from '../websocket.js';
 
 
 export async function renderChat(container) {
@@ -31,6 +32,35 @@ export async function renderChat(container) {
     } else {
         userInfoElement.innerHTML = '<p>User not logged in or data could not be retrieved.</p>';
     }
+
+    const sendButton = document.getElementById('send-button');
+    sendButton.addEventListener('click', () => {
+    console.log('[Chat] Tentative d\'envoi de message à', currentReceiver);
+
+    const messageContent = document.getElementById('messageInput').value;
+    if (currentReceiver && messageContent) {
+        const message = {
+            type: 'private_message',
+            to: currentReceiver.id,
+            content: messageContent
+        };
+
+        // Envoi du message via WebSocket
+        console.log('[Chat] Message envoyé :', message);
+
+        // socket.send(JSON.stringify(message));
+       const socket = getSocket();
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+        } else {
+            console.log('[Chat] WebSocket n\'est pas ouvert.');
+        }
+
+
+        // Réinitialiser l'input
+        document.getElementById('messageInput').value = '';
+    }
+});
 }
 
 // Function to fetch user data
@@ -47,10 +77,14 @@ async function fetchUserData() {
     }
 }
 
-let currentReceiver = null;
+export let currentReceiver = null;
 
-function setCurrentReceiver(user){
+export function setCurrentReceiver(user){
     currentReceiver = user;
+    if (!currentReceiver) {
+        console.warn('[Chat] Aucun destinataire sélectionné.');
+        return;
+      }
 
     const recipientElement = document.getElementById('chat-recipient');
     if (recipientElement){
@@ -59,14 +93,25 @@ function setCurrentReceiver(user){
     console.log("[Chat] conversation ouverte avec",user);
 }
 
+
 export function setupUserClickListener(){
+
     const userElements = document.querySelectorAll('.user-item');
+    if (userElements.length === 0) {
+        console.log("Aucun utilisateur trouvé.");
+        return;  // Si aucun utilisateur, on s'arrête là
+    }
+
     userElements.forEach(el => {
         el.addEventListener('click',() => {
             const userId = el.id
             const nickname = el.textContent;
-
+            console.log('[Chat] Utilisateur sélectionné :', userId, nickname);
             setCurrentReceiver({id: userId, nickname})
         })
-    })
+    });
 }
+
+
+
+
