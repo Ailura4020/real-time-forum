@@ -3,12 +3,13 @@ package utils
 import (
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"real-time-forum/config"
 	"real-time-forum/models"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // Claims defines the structure for JWT claims

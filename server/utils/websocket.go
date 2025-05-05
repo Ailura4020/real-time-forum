@@ -104,3 +104,5 @@ func (hub *Hub) BroadcastUser() {
 		}
 	}
 }
+
+// ajouter dans boadcastUser fonction d'envoyer msg

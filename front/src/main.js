@@ -71,7 +71,7 @@ export async function updateAuthUI() {
         userData = await fetchUserData();
         if (userData) {
             // console.log("[SUCCESS]",userData, userData.data.nickname);
-            connectWebSocket(token)
+            // connectWebSocket(token)
             // User is logged in
             authContainer.innerHTML = `
                 <span class="welcome-message">Welcome, ${userData.data.nickname}</span>

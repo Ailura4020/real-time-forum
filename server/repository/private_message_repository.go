@@ -63,3 +63,30 @@ func (r *PrivateMessageRepository) GetPrivateMessages(user1, user2, limit, offse
 	return messages, nil
 
 }
+
+func GetConversationMessages(db *sql.DB, userID int, receiverID int) ([]models.PrivateMessage, error) {
+	query := `
+SELECT id, sender_id, receiver_id, content, created_at
+FROM private_messages
+WHERE (sender_id = ? AND receiver_id = ?)
+   OR (sender_id = ? AND receiver_id = ?)
+ORDER BY created_at ASC
+`
+	rows, err := db.Query(query, userID, receiverID, receiverID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var messages []models.PrivateMessage
+
+	for rows.Next() {
+		var msg models.PrivateMessage
+		err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Content, &msg.Timestamp)
+		if err != nil {
+			return nil, err
+		}
+		messages = append(messages, msg)
+	}
+	return messages, nil
+}

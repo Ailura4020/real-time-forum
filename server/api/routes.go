@@ -101,6 +101,9 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 		}
 	})
 
+	// GET /api/messages/{receiverID}
+	mux.HandleFunc("/api/messages/", middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger))
+
 	// Protected route
 	mux.HandleFunc("/api/protected", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {

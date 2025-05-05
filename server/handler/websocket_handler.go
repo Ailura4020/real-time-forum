@@ -149,12 +149,6 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 }
 
 // // function pour enregistrer un msg privé dans la DB
-func savePrivateMessage(db *sql.DB, senderID int, receiverId int, content string) error {
-	dateSent := time.Now().Format(time.RFC3339)
-	query := `INSERT INTO PRIVATEMESSAGE (TextContent, DateSent, SenderId, ReceiverId) VALUES ( ?, ?, ?, ?)`
-	_, err := db.Exec(query, content, dateSent, senderID, receiverId)
-	return err
-}
 
 //func GetUserInfo(r *http.Request) (int, error) {
 //	cookie, err := r.Cookie("session_id")
