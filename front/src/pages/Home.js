@@ -1,20 +1,12 @@
 import {api} from '../main.js';
 import classes from '../styles/Home.module.css';
 import {postFormTemplate, postTemplate} from '../templates.js';
-// import "../styles/Home.module.css"
-// import styles from '../styles/Home.module.css';
 
 export async function renderHomePage(container) {
     // Create a loading indicator
-    container.innerHTML = '<div class="${classes.loading}">Loading posts...</div>';
+    container.innerHTML = `<div class="${classes.loading || 'loading'}">Loading posts...</div>`;
 
     try {
-      // // connexion websockets pour afficher la liste des users connectés
-      // connectWebSocket(usersList => {
-      //   // console.log(userContainer)
-      //   updateConnectedUsers(userContainer, usersList);
-      // });
-
         // Fetch posts from the API
         const postsResponse = await api.get('/posts');
         if (postsResponse.success) {

@@ -103,22 +103,27 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 		hub.BroadcastUser()
 
 		for {
-			_, message, err := conn.ReadMessage()
+			messageType, message, err := conn.ReadMessage()
 			if err != nil {
 				hub.RemoveClient(conn)
 				hub.BroadcastUser()
-				fmt.Println("laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", err)
+				fmt.Println("WebSocket connection error:", err)
 				break
 			}
 
+			fmt.Printf("Received message - Type: %d, Time: %s\n", messageType, time.Now().Format(time.RFC3339))
+			fmt.Printf("Raw message content: %s\n", string(message))
+
 			var msg map[string]interface{}
 			if err := json.Unmarshal(message, &msg); err != nil {
-				fmt.Println("Erreur parsing JSON:", err)
+				fmt.Println("Error parsing JSON message:", err)
 				continue
 			}
+			fmt.Printf("Parsed message content: %+v\n", msg)
 
 			if msg["type"] == "private_message" {
-				fmt.Println("Message privé reçu :", msg)
+				fmt.Printf("Private message received at %s\n", time.Now().Format(time.RFC3339))
+				fmt.Printf("Message details - From: %d, Content: %s\n", userID, msg["content"])
 
 				senderID := userID
 

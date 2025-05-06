@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     mainContent.id = 'main-content';
     appElement.appendChild(mainContent);
 
-    // Initialize routercon
+    // Initialize router
     router.init();
 
     // Check if user is already logged in
@@ -80,10 +80,22 @@ export async function updateAuthUI() {
 
             // Add logout event listener
             document.getElementById('logout-button').addEventListener('click', () => {
-                localStorage.removeItem('token');
-
-                updateAuthUI();
-                router.navigate('/');
+                // Close WebSocket connection if it exists
+                import('./websocket.js').then(module => {
+                    module.closeWebSocket();
+                    
+                    // Clear user data
+                    localStorage.removeItem('token');
+                    
+                    // Clear any chat-related state
+                    if (window.currentUser) {
+                        window.currentUser = null;
+                    }
+                    
+                    // Update UI and navigate
+                    updateAuthUI();
+                    router.navigate('/');
+                });
             });
         }
     } else {

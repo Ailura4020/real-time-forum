@@ -16,6 +16,7 @@ const routes = [
 
 export const router = {
     currentRoute: null,
+    currentComponent: null,
 
     init() {
         // Handle initial page load
@@ -29,18 +30,35 @@ export const router = {
         // Intercept link clicks for SPA navigation
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
-            if (link && link.getAttribute('href').startsWith('/')) {
+            const href = link?.getAttribute('href');
+            if (link && href && href.startsWith('/')) {
                 e.preventDefault();
-                this.navigate(link.getAttribute('href'));
+                // Basic URL sanitization
+                const sanitizedUrl = href.replace(/[^\w\s/-]/gi, '');
+                this.navigate(sanitizedUrl);
             }
         });
     },
 
     navigate(path, addToHistory = true) {
+        // Don't do anything if we're already on this route
+        if (this.currentRoute === path) {
+            console.log(`[Router] Already on route: ${path}`);
+            return;
+        }
+        
+        // Clean up previous component if needed
+        if (this.currentRoute) {
+            console.log(`[Router] Cleaning up previous component for route: ${this.currentRoute}`);
+            this.cleanupCurrentComponent();
+        }
+        
         // Update browser history if needed
         if (addToHistory) {
             window.history.pushState({}, '', path);
         }
+        
+        console.log(`[Router] Navigating to: ${path}`);
 
         // Find matching route
         let matchedRoute = null;
@@ -83,9 +101,31 @@ export const router = {
 
         if (matchedRoute) {
             this.currentRoute = path;
+            this.currentComponent = matchedRoute.component;
             matchedRoute.component(mainContent, params);
         } else {
+            this.currentComponent = null;
             mainContent.innerHTML = '<div class="error-container"><h2>404 - Page Not Found</h2><p>The page you are looking for does not exist.</p></div>';
+        }
+            },
+            
+            cleanupCurrentComponent() {
+        // Call cleanup function if the component has one
+        if (this.currentComponent) {
+            // Handle Chat component special cleanup
+            if (this.currentComponent.name === 'renderChat') {
+                        // We don't need to import cleanupChat here - it's already available globally
+                        // from the existing import in the routes list
+                        const cleanupFunction = window.chatCleanupFunction || null;
+                        if (cleanupFunction && typeof cleanupFunction === 'function') {
+                            cleanupFunction();
+                }
+            }
+            
+            // Handle other components with cleanup methods
+            if (this.currentComponent.cleanup && typeof this.currentComponent.cleanup === 'function') {
+                this.currentComponent.cleanup();
+            }
         }
     }
 };

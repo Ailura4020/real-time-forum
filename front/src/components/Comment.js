@@ -1,6 +1,5 @@
 // src/components/Comment.js
 import { api } from '../main.js';
-// import '../styles/Comment.module.css';
 
 export function renderComments(container, postId, existingComments = null) {
     // Add comment form if user is logged in
@@ -79,7 +78,10 @@ function displayComments(container, comments) {
 
     // Sort comments by date (newest first)
     comments.sort((a, b) => {
-        return new Date(b.date_creation) - new Date(a.date_creation);
+        // Use date_creation for consistency with the rest of the app
+        const dateA = new Date(b.date_creation || b.create_date);
+        const dateB = new Date(a.date_creation || a.create_date);
+        return dateA - dateB;
     });
 
     // Create comment elements
@@ -87,8 +89,8 @@ function displayComments(container, comments) {
         const commentElement = document.createElement('article');
         commentElement.className = 'comment';
 
-        // Format date
-        const commentDate = new Date(comment.create_date);
+        // Format date - handle both date property naming conventions
+        const commentDate = new Date(comment.date_creation || comment.create_date);
         const formattedDate = commentDate.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
@@ -111,32 +113,6 @@ function displayComments(container, comments) {
     });
 }
 
-// async function submitComment(postId, parentContainer) {
-//     const contentTextarea = document.getElementById('comment-content');
-//     const content = contentTextarea.value;
-//
-//     if (!content.trim()) {
-//         alert('Please enter a comment');
-//         return;
-//     }
-//
-//     try {
-//         // This is a placeholder - you would need to implement an API endpoint for this
-//         console.log('Submitting comment for post:', postId, 'content:', content);
-//         alert('Comment submission not implemented in this demo. Would send: ' + content);
-//
-//         // Reset form
-//         contentTextarea.value = '';
-//
-//         // Reload comments
-//         const commentsListContainer = document.getElementById('comments-list');
-//         loadComments(postId, commentsListContainer);
-//     } catch (error) {
-//         console.error('Error submitting comment:', error);
-//         alert('Failed to submit comment. Please try again.');
-//     }
-// }
-
 async function submitComment(postId, parentContainer) {
     const contentTextarea = document.getElementById('comment-content');
     const content = contentTextarea.value;
@@ -147,7 +123,12 @@ async function submitComment(postId, parentContainer) {
     }
 
     try {
-        const token = localStorage.getItem('token'); // Get the JWT token from local storage
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('You must be logged in to comment');
+            return;
+        }
+        
         const response = await fetch('http://localhost:8080/api/comments', {
             method: 'POST',
             headers: {
@@ -155,8 +136,7 @@ async function submitComment(postId, parentContainer) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                text_content: content, // Use the correct field name for the comment content
-                // post_id: postId // Include the post ID in the request body
+                text_content: content,
                 post_id: parseInt(postId, 10)
             })
         });
@@ -166,13 +146,10 @@ async function submitComment(postId, parentContainer) {
             post_id: postId
         });
 
-        // if (!response.ok) {
-        //     throw new Error('Network response was not ok ' + response.statusText);
-        // }
         if (!response.ok) {
             const errorResponse = await response.json();
             console.error('Error response:', errorResponse);
-            throw new Error('Network response was not ok: ' + errorResponse.message);
+            throw new Error('Network response was not ok: ' + (errorResponse.message || response.statusText));
         }
 
         const result = await response.json();

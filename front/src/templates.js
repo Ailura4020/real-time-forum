@@ -4,15 +4,23 @@ export const chatTemplate = (classes) => `
     <h1>Chat</h1>
     <div class="${classes.chatLayout}">
       <div class="${classes.chatSidebar}">
-        <h3>Utilisateurs connectés</h3>
-        <div id="connected-users" class="${classes.usersList}"></div>
+        <div class="${classes.sidebarSection}">
+          <h3>Online Users</h3>
+          <div id="connected-users" class="${classes.usersList}"></div>
+        </div>
+        <div class="${classes.sidebarSection}">
+          <h3>Recent Conversations</h3>
+          <div id="recent-conversations" class="${classes.conversationsList}"></div>
+        </div>
       </div>
       <div class="${classes.chatContent}">
-      <div id="chat-recipient" class="${classes.chatRecipient}">Select User to start a chat.</div>
+        <div id="chat-recipient" class="${classes.chatRecipient}">
+          <span class="recipient-label">Select a user to start a chat</span>
+        </div>
         <div class="${classes.chatMessages}" id="messages"></div>
         <div class="${classes.chatInput}">
-          <input type="text" id="messageInput" placeholder="Votre message...">
-          <button id="send-button" class="${classes.sendButton}">Envoyer</button>
+          <input type="text" id="messageInput" placeholder="Type your message...">
+          <button id="send-button" class="${classes.sendButton}">Send</button>
         </div>
       </div>
     </div>
