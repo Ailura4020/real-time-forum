@@ -30,21 +30,37 @@ export function connectWebSocket(token) {
         console.log('WebSocket connection established');
     };
 
+    const connectedUsersMap = {}; // { id: nickname }
+
+
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log('[WebSocket] Message reçu :', data);
     
+      // if (data.type === 'users') {
+      //   const container = document.getElementById('connected-users');
+      //   if (container) {
+      //     updateConnectedUsers(container, data.users);
+      //   }
+      // }
       if (data.type === 'users') {
         const container = document.getElementById('connected-users');
         if (container) {
           updateConnectedUsers(container, data.users);
         }
+      
+        // Construire la map { id: nickname }
+        data.users.forEach(user => {
+          connectedUsersMap[user.id] = user.nickname;
+        });
       }
+      
     
       if (data.type === 'private_message') {
         console.log('[WebSocket] Message privé reçu :', data);
         displayPrivateMessage({
           senderId: data.from,
+          senderNickname: connectedUsersMap[data.from],
           content: data.content,
           datetime: data.datetime,
         });
@@ -75,8 +91,8 @@ export function displayPrivateMessage(message) {
       const messageElement = document.createElement('div');
       messageElement.className = 'message';
       messageElement.innerHTML = `
-          <strong>${message.fromNickname}</strong> : ${message.content} <br>
-          <small>${message.datetime}</small>
+       <strong>${message.senderNickname || 'Utilisateur inconnu'}</strong> : ${message.content} <br>
+      <small>${message.datetime}</small>
       `;
       messagesContainer.appendChild(messageElement);
       
