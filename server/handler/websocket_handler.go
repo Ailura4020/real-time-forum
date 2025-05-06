@@ -23,51 +23,6 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// var pour la connexion la db
-// var db *sql.DB
-
-// function gestion des connexions WebSocket
-//
-//	func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
-//		return func(w http.ResponseWriter, r *http.Request) {
-//			conn, err := upgrader.Upgrade(w, r, nil)
-//			if err != nil {
-//				fmt.Println("Erreur lors de l'upgrade :", err)
-//				return
-//			}
-//			defer conn.Close()
-//
-//			// Read the first message to get user information
-//			UserRepo := repository.NewUserRepository(db)
-//			UserService := service.NewUserService(UserRepo)
-//			// Mise à jour de l'état de l'utilisateur dans la base de données
-//			userID, err := GetUserInfo(r)
-//			if err != nil {
-//				fmt.Println("Erreur lors de la récupération des informations utilisateur :", err)
-//			}
-//			userInfo, err := UserService.GetNickname(userID)
-//			if err != nil {
-//				fmt.Println("Erreur lors de la mise à jour du statut :", err)
-//			}
-//
-//			var userList models.Userlist
-//			userList.UserID = userID
-//			userList.Nickname = userInfo
-//			fmt.Println("USERS:", userList)
-//			hub.AddClient(conn, &userList)
-//			hub.BroadcastUser()
-//
-//			for {
-//				_, _, err := conn.ReadMessage()
-//				if err != nil {
-//					break
-//				}
-//			}
-//			hub.RemoveClient(conn)
-//			hub.BroadcastUser()
-//		}
-//	}
-
 func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Extract user ID from JWT token
@@ -149,10 +104,11 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 
 				hub.Mutex.Lock()
 				for clientConn, user := range hub.Clients {
-					if user.UserID == receiverID {
+					if user.UserID == receiverID || user.UserID == senderID {
 						err := clientConn.WriteJSON(map[string]interface{}{
 							"type":     "private_message",
 							"from":     senderID,
+							"to":       receiverID,
 							"content":  content,
 							"datetime": time.Now().Format("2006-01-02 15:04:05"),
 						})
