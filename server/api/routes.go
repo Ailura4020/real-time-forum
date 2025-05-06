@@ -102,7 +102,18 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 	})
 
 	// GET /api/messages/{receiverID}
-	mux.HandleFunc("/api/messages/", middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger))
+	//mux.HandleFunc("/api/messages/", middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger))
+
+	mux.HandleFunc("/api/messages/", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger)(w, r)
+		case "POST":
+			middleware.ErrorHandler(handler.SendMessageHandler(db), errorLogger)(w, r)
+		default:
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
+	})
 
 	// Protected route
 	mux.HandleFunc("/api/protected", func(w http.ResponseWriter, r *http.Request) {

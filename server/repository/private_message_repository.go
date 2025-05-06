@@ -64,22 +64,50 @@ func (r *PrivateMessageRepository) GetPrivateMessages(user1, user2, limit, offse
 
 }
 
-func GetConversationMessages(db *sql.DB, userID int, receiverID int) ([]models.PrivateMessage, error) {
+//func GetConversationMessages(db *sql.DB, userID int, receiverID int) ([]models.PrivateMessage, error) {
+//	query := `
+//SELECT id, sender_id, receiver_id, content, created_at
+//FROM private_messages
+//WHERE (sender_id = ? AND receiver_id = ?)
+//   OR (sender_id = ? AND receiver_id = ?)
+//ORDER BY created_at ASC
+//`
+//	rows, err := db.Query(query, userID, receiverID, receiverID, userID)
+//	if err != nil {
+//		return nil, err
+//	}
+//	defer rows.Close()
+//
+//	var messages []models.PrivateMessage
+//
+//	for rows.Next() {
+//		var msg models.PrivateMessage
+//		err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Content, &msg.Timestamp)
+//		if err != nil {
+//			return nil, err
+//		}
+//		messages = append(messages, msg)
+//	}
+//	return messages, nil
+//}
+
+// GetConversationMessages retrieves messages between two users
+func GetConversationMessages(db *sql.DB, userID, otherUserID int) ([]models.PrivateMessage, error) {
 	query := `
-SELECT id, sender_id, receiver_id, content, created_at
-FROM private_messages
-WHERE (sender_id = ? AND receiver_id = ?)
-   OR (sender_id = ? AND receiver_id = ?)
-ORDER BY created_at ASC
-`
-	rows, err := db.Query(query, userID, receiverID, receiverID, userID)
+		SELECT id, sender_id, receiver_id, content, timestamp 
+		FROM private_messages 
+		WHERE (sender_id = ? AND receiver_id = ?) 
+		   OR (sender_id = ? AND receiver_id = ?) 
+		ORDER BY timestamp ASC
+	`
+
+	rows, err := db.Query(query, userID, otherUserID, otherUserID, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	var messages []models.PrivateMessage
-
 	for rows.Next() {
 		var msg models.PrivateMessage
 		err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Content, &msg.Timestamp)
@@ -88,5 +116,13 @@ ORDER BY created_at ASC
 		}
 		messages = append(messages, msg)
 	}
+
 	return messages, nil
+}
+
+// SavePrivateMessage saves a private message to the database
+func SavePrivateMessage(db *sql.DB, senderID, receiverID int, content string) error {
+	query := `INSERT INTO private_messages (sender_id, receiver_id, content, timestamp) VALUES (?, ?, ?, ?)`
+	_, err := db.Exec(query, senderID, receiverID, content, time.Now())
+	return err
 }
