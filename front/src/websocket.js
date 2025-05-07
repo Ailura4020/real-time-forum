@@ -213,6 +213,7 @@ export function connectWebSocket(token) {
         to: data.to || 'not specified',
         content: data.content ? (data.content.length > 50 ? data.content.substring(0, 50) + '...' : data.content) : 'none'
       });
+      throttleMessage(message)
     
       if (data.type === 'user_list' || data.type === 'users') {
         const container = document.getElementById('connected-users');
@@ -464,4 +465,24 @@ function displayMessage(message) {
 
 export function getSocket() {
   return socket;
+}
+
+let lastMessageTime = 0;
+const throttleDelay = 1000;  // Délai en ms (1 seconde)
+
+function throttleMessage(message) {
+    const now = Date.now();
+
+    // Si le délai minimum est passé, on affiche le message
+    if (now - lastMessageTime > throttleDelay) {
+        lastMessageTime = now;
+
+        // Ajoute le message au chat
+        const messageDiv = document.createElement("div");
+        messageDiv.className = message.sender_id === currentUserId ? "message sent" : "message received";
+        messageDiv.textContent = message.content;
+
+        // Ajoute le message à l'élément container
+        document.getElementById("messagesContainer").appendChild(messageDiv);
+    }
 }
