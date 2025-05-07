@@ -47,43 +47,43 @@ CREATE INDEX idx_users_nickname ON users (nickname);
 CREATE TABLE IF NOT EXISTS "private_messages"
 (
     "id"
-    INTEGER
-    PRIMARY
-    KEY
-    AUTOINCREMENT,
+        INTEGER
+        PRIMARY
+            KEY
+        AUTOINCREMENT,
     "sender_id"
-    INTEGER
-    NOT
-    NULL,
+        INTEGER
+        NOT
+            NULL,
     "receiver_id"
-    INTEGER
-    NOT
-    NULL,
+        INTEGER
+        NOT
+            NULL,
     "content"
-    TEXT
-    NOT
-    NULL,
+        TEXT
+        NOT
+            NULL,
     "timestamp"
-    DATETIME
-    DEFAULT
-    CURRENT_TIMESTAMP,
+        DATETIME
+        DEFAULT
+            CURRENT_TIMESTAMP,
     FOREIGN
-    KEY
-(
-    "sender_id"
-) REFERENCES "users"
-(
-    "user_id"
-) ON DELETE CASCADE,
+        KEY
+        (
+         "sender_id"
+            ) REFERENCES "users"
+        (
+         "user_id"
+            ) ON DELETE CASCADE,
     FOREIGN KEY
-(
-    "receiver_id"
-) REFERENCES "users"
-(
-    "user_id"
-)
-  ON DELETE CASCADE
-    );
+        (
+         "receiver_id"
+            ) REFERENCES "users"
+        (
+         "user_id"
+            )
+        ON DELETE CASCADE
+);
 
 CREATE INDEX idx_messages_sender ON private_messages (sender_id);
 CREATE INDEX idx_messages_receiver ON private_messages (receiver_id);

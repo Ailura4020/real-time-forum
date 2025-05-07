@@ -8,6 +8,7 @@ import (
 	"real-time-forum/models"
 	"real-time-forum/repository"
 	"real-time-forum/utils"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -183,5 +184,37 @@ func GetUserMessagesHandler(db *sql.DB) http.HandlerFunc {
 		// Return messages as JSON
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(messages)
+	}
+}
+
+// GetAllConversationsHandler retrieves all conversations for the current user
+func GetAllConversationsHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the authenticated user ID
+		currentUserID, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		// Get all conversations for this user
+		conversations, err := repository.GetAllConversations(db, currentUserID)
+		if err != nil {
+			http.Error(w, "Failed to fetch conversations: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Sort conversations by last_updated (most recent first)
+		sort.Slice(conversations, func(i, j int) bool {
+			return conversations[i].LastUpdated.After(conversations[j].LastUpdated)
+		})
+
+		// Return the formatted response
+		response := map[string]interface{}{
+			"conversations": conversations,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
 	}
 }

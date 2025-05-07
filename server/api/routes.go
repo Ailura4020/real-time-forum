@@ -133,6 +133,14 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 		}
 	})
 
+	mux.HandleFunc("/api/messages/all", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			middleware.ErrorHandler(handler.GetAllConversationsHandler(db), errorLogger)(w, r)
+		} else {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
 	// Protected route
 	mux.HandleFunc("/api/protected", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {

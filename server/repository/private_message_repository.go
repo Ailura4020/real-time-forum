@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"real-time-forum/models"
 	"time"
 )
@@ -153,4 +154,108 @@ func GetUserMessages(db *sql.DB, userID int) ([]models.PrivateMessage, error) {
 	}
 
 	return messages, nil
+}
+
+// GetAllConversations retrieves all conversations for the current user
+func GetAllConversations(db *sql.DB, currentUserID int) ([]models.ConversationData, error) {
+	// First, find all users that the current user has messaged with
+	query := `
+		SELECT DISTINCT 
+			CASE 
+				WHEN sender_id = ? THEN receiver_id 
+				ELSE sender_id 
+			END AS other_user_id
+		FROM private_messages
+		WHERE sender_id = ? OR receiver_id = ?
+	`
+
+	rows, err := db.Query(query, currentUserID, currentUserID, currentUserID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find conversation partners: %w", err)
+	}
+	defer rows.Close()
+
+	// Collect all user IDs the current user has conversations with
+	var otherUserIDs []int
+	for rows.Next() {
+		var userID int
+		if err := rows.Scan(&userID); err != nil {
+			return nil, fmt.Errorf("failed to scan user ID: %w", err)
+		}
+		otherUserIDs = append(otherUserIDs, userID)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating through users: %w", err)
+	}
+
+	// For each user, get their nickname and all messages
+	var conversations []models.ConversationData
+	for _, otherUserID := range otherUserIDs {
+		// Get the other user's nickname
+		var nickname string
+		// Fixed: Use user_id instead of id in the query
+		nicknameQuery := "SELECT nickname FROM users WHERE user_id = ?"
+		err := db.QueryRow(nicknameQuery, otherUserID).Scan(&nickname)
+		if err != nil {
+			// If no user is found, use "Unknown User" instead of failing
+			nickname = fmt.Sprintf("User #%d", otherUserID)
+			fmt.Printf("Could not find nickname for user %d: %v\n", otherUserID, err)
+			// Continue with the conversation anyway
+		}
+
+		// Get all messages between current user and other user
+		messagesQuery := `
+			SELECT id, sender_id, content, timestamp
+			FROM private_messages
+			WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
+			ORDER BY timestamp ASC
+		`
+
+		messageRows, err := db.Query(messagesQuery, currentUserID, otherUserID, otherUserID, currentUserID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get messages for conversation with user %d: %w", otherUserID, err)
+		}
+
+		var messages []models.ConversationMessage
+		var lastUpdated time.Time
+
+		for messageRows.Next() {
+			var msg models.ConversationMessage
+			var senderID int
+
+			err := messageRows.Scan(&msg.ID, &senderID, &msg.Content, &msg.Timestamp)
+			if err != nil {
+				messageRows.Close()
+				return nil, fmt.Errorf("failed to scan message: %w", err)
+			}
+
+			// Set the flag based on whether current user sent the message
+			msg.IsFromCurrentUser = (senderID == currentUserID)
+
+			messages = append(messages, msg)
+
+			// Update the last timestamp if this message is newer
+			if msg.Timestamp.After(lastUpdated) {
+				lastUpdated = msg.Timestamp
+			}
+		}
+		messageRows.Close()
+
+		if err = messageRows.Err(); err != nil {
+			return nil, fmt.Errorf("error iterating through messages: %w", err)
+		}
+
+		// Create the conversation entry
+		conversation := models.ConversationData{
+			UserID:      otherUserID,
+			Nickname:    nickname,
+			Messages:    messages,
+			LastUpdated: lastUpdated,
+		}
+
+		conversations = append(conversations, conversation)
+	}
+
+	return conversations, nil
 }
