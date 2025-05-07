@@ -9,6 +9,7 @@ import (
 	"real-time-forum/repository"
 	"real-time-forum/utils"
 	"strconv"
+	"strings"
 )
 
 func savePrivateMessage(db *sql.DB, senderID int, receiverID int, content string) error {
@@ -143,5 +144,44 @@ func SendMessageHandler(db *sql.DB) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
+	}
+}
+
+// GetUserMessagesHandler retrieves all messages sent to a specific user
+func GetUserMessagesHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Authenticate the current user first
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		// Get the user ID from the URL path
+		path := r.URL.Path
+		parts := strings.Split(path, "/")
+		if len(parts) < 3 {
+			http.Error(w, "Invalid URL path", http.StatusBadRequest)
+			return
+		}
+
+		// Extract the user ID from the last part of the path
+		userIDStr := parts[len(parts)-1]
+		userID, err := strconv.Atoi(userIDStr)
+		if err != nil {
+			http.Error(w, "Invalid user ID", http.StatusBadRequest)
+			return
+		}
+
+		// Get all messages for this user
+		messages, err := repository.GetUserMessages(db, userID)
+		if err != nil {
+			http.Error(w, "Failed to fetch messages", http.StatusInternalServerError)
+			return
+		}
+
+		// Return messages as JSON
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(messages)
 	}
 }

@@ -104,13 +104,31 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 	// GET /api/messages/{receiverID}
 	//mux.HandleFunc("/api/messages/", middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger))
 
+	//mux.HandleFunc("/api/messages/", func(w http.ResponseWriter, r *http.Request) {
+	//	switch r.Method {
+	//	case "GET":
+	//		middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger)(w, r)
+	//	case "POST":
+	//		middleware.ErrorHandler(handler.SendMessageHandler(db), errorLogger)(w, r)
+	//	default:
+	//		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	//	}
+	//})
+
 	mux.HandleFunc("/api/messages/", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger)(w, r)
-		case "POST":
+		if r.Method == "GET" {
+			// Check if this is a request for all messages of a specific user
+			path := r.URL.Path
+			parts := strings.Split(path, "/")
+			if len(parts) >= 3 && parts[2] != "" {
+				middleware.ErrorHandler(handler.GetUserMessagesHandler(db), errorLogger)(w, r)
+				return
+			}
+			// If we reach here, it's not a valid path
+			http.Error(w, "Not Found", http.StatusNotFound)
+		} else if r.Method == "POST" {
 			middleware.ErrorHandler(handler.SendMessageHandler(db), errorLogger)(w, r)
-		default:
+		} else {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
 	})
