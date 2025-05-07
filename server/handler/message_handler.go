@@ -173,8 +173,30 @@ func GetUserMessagesHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		// Get pagination parameters
+		offsetStr := r.URL.Query().Get("offset")
+		limitStr := r.URL.Query().Get("limit")
+
+		offset := 0
+		limit := 10
+
+		if offsetStr != "" {
+			offset, err = strconv.Atoi(offsetStr)
+			if err != nil {
+				http.Error(w, "Invalid offset", http.StatusBadRequest)
+				return
+			}
+		}
+		if limitStr != "" {
+			limit, err = strconv.Atoi(limitStr)
+			if err != nil {
+				http.Error(w, "Invalid limit", http.StatusBadRequest)
+				return
+			}
+		}
+
 		// Get all messages for this user
-		messages, err := repository.GetUserMessages(db, userID)
+		messages, err := repository.GetUserMessages(db, userID, offset, limit)
 		if err != nil {
 			http.Error(w, "Failed to fetch messages", http.StatusInternalServerError)
 			return

@@ -7,6 +7,12 @@ import { getSocket } from '../websocket.js';
 
 // Store current user data
 export let currentUser = null;
+// Gestion de la pagination dans le chat
+let currentPage = 0;           // Page actuelle
+const PAGE_SIZE = 10;          // Nombre de messages par page
+let isLoadingMessages = false; // Évite les appels en double
+let hasMoreMessages = true;    // Pour arrêter le chargement quand on a tout récupéré
+
 
 // Store conversation history
 export const conversationHistory = {
@@ -677,7 +683,55 @@ function displayConversationHistory(conversation) {
     
     // Scroll to bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
 }
+function throttle(fn, delay) {
+    let lastCall = 0;
+    return function (...args) {
+        const now = Date.now();
+        if (now - lastCall >= delay) {
+            lastCall = now;
+            fn.apply(this, args);
+        }
+    };
+}
+
+// Appel à l’API paginée
+async function fetchOlderMessages(userId, page) {
+    const offset = page * PAGE_SIZE;
+
+    try {
+        const res = await api.get(`/messages/${userId}?offset=${offset}&limit=${PAGE_SIZE}`);
+        return res.data || [];
+    } catch (err) {
+        console.error("[Chat] Erreur lors du chargement des anciens messages :", err);
+        return [];
+    }
+}
+
+// Ajoute les anciens messages en haut du conteneur
+function prependMessagesToConversation(conversation, messages) {
+    const container = document.getElementById('messages');
+    const oldScrollHeight = container.scrollHeight;
+
+    messages.reverse().forEach(msg => {
+        const fromCurrentUser = msg.from_id?.toString() === currentUser.id.toString();
+        conversation.messages.unshift({
+            content: msg.content,
+            timestamp: msg.timestamp,
+            fromCurrentUser: fromCurrentUser,
+            senderId: msg.from_id
+        });
+    });
+
+    // Re-affiche les messages
+    displayConversationHistory(conversation);
+
+    // Ajuste le scroll pour rester au bon endroit
+    const newScrollHeight = container.scrollHeight;
+    container.scrollTop = newScrollHeight - oldScrollHeight;
+}
+
 
 // Helper function to group messages by date
 function groupMessagesByDate(messages) {
@@ -820,6 +874,26 @@ export function setCurrentReceiver(user){
     
     if (conversation) {
         displayConversationHistory(conversation);
+    
+             // Ajoute ici le scroll listener une seule fois
+    const messagesContainer = document.getElementById('messages');
+    messagesContainer.addEventListener('scroll', throttle(async () => {
+        if (messagesContainer.scrollTop <= 10 && !isLoadingMessages && hasMoreMessages) {
+            isLoadingMessages = true;
+            console.log("[Chat] Chargement de messages supplémentaires...");
+
+            const olderMessages = await fetchOlderMessages(conversation.userId, currentPage + 1);
+            if (olderMessages && olderMessages.length > 0) {
+                prependMessagesToConversation(conversation, olderMessages);
+                currentPage++;
+            } else {
+                hasMoreMessages = false;
+                console.log("[Chat] Plus de messages à charger.");
+            }
+
+            isLoadingMessages = false;
+        }
+    }, 400));
     } else {
         // Create a new empty conversation
         conversation = {

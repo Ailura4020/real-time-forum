@@ -128,15 +128,16 @@ func SavePrivateMessage(db *sql.DB, senderID, receiverID int, content string) er
 }
 
 // GetUserMessages retrieves all messages sent to a specific user ID
-func GetUserMessages(db *sql.DB, userID int) ([]models.PrivateMessage, error) {
+func GetUserMessages(db *sql.DB, userID int, offset int, limit int) ([]models.PrivateMessage, error) {
 	query := `
 		SELECT id, sender_id, receiver_id, content, timestamp 
 		FROM private_messages 
 		WHERE receiver_id = ? 
-		ORDER BY timestamp ASC
+		ORDER BY timestamp DESC
+		LIMIT ? OFFSET ?
 	`
 
-	rows, err := db.Query(query, userID)
+	rows, err := db.Query(query, userID, userID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -150,6 +151,10 @@ func GetUserMessages(db *sql.DB, userID int) ([]models.PrivateMessage, error) {
 			return nil, err
 		}
 		messages = append(messages, msg)
+	}
+	// Inverse l'ordre (pour affichage du plus ancien en haut)
+	for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
+		messages[i], messages[j] = messages[j], messages[i]
 	}
 
 	return messages, nil
