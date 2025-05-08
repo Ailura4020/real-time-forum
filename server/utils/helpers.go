@@ -301,6 +301,35 @@ func ExtractUserIDFromRequest(r *http.Request) (int, error) {
 	return claims.ID, nil
 }
 
+func ExtractUserIDFromToken(tokenString string) (int, error) {
+	// Parse the token
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Validate the algorithm is what you expect
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return config.GetJWTSecret(), nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	// Check if token is valid
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		// Extract user ID from claims
+		userIDFloat, ok := claims["user_id"].(float64)
+		if !ok {
+			return 0, fmt.Errorf("invalid user ID in token")
+		}
+
+		userID := int(userIDFloat)
+		return userID, nil
+	}
+
+	return 0, fmt.Errorf("invalid token")
+}
+
 // BlacklistUserTokens blacklists all tokens for a specific user ID
 func BlacklistUserTokens(userID int) {
 	// This is a simplified version - in a real implementation,

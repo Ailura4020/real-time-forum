@@ -13,31 +13,11 @@ import (
 func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 	mux := http.NewServeMux()
 
-	// Static file server (images, icons, etc.)
+	// Static file server for frontend assets - accessible to everyone
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	// Serve static landing page
-	mux.Handle("/", http.FileServer(http.Dir("./static")))
-
-	// websocket for the CHAT
-	hub := utils.NewHub()
-	mux.HandleFunc("/ws", handler.HandleWebSocket(hub, db))
-
-	// API routes
-	mux.HandleFunc("/api/user", middleware.ErrorHandler(handler.UserHandler(db), errorLogger))
-
-	mux.HandleFunc("/api/logout", middleware.ErrorHandler(handler.LogoutHandler, errorLogger))
-
-	// POST /api/register
-	mux.HandleFunc("/api/register", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "POST" {
-			middleware.ErrorHandler(handler.RegisterHandler(db), errorLogger)(w, r)
-		} else {
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		}
-	})
-
-	// POST /api/login
+	// Public API endpoints
+	// Login
 	mux.HandleFunc("/api/login", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
 			middleware.ErrorHandler(handler.LoginHandler(db), errorLogger)(w, r)
@@ -46,26 +26,88 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 		}
 	})
 
-	//// GET /api/posts/{id} – manual parsing of ID
-	//mux.HandleFunc("/api/posts/", func(w http.ResponseWriter, r *http.Request) {
-	//	if r.Method != "GET" {
-	//		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-	//		return
-	//	}
-	//
-	//	path := strings.TrimPrefix(r.URL.Path, "/api/posts/")
-	//	if path == "" {
-	//		http.Error(w, "Post ID is required", http.StatusBadRequest)
-	//		return
-	//	}
-	//
-	//	// Attach ID via context or request URL
-	//	r.URL.RawQuery = "id=" + path
-	//	middleware.ErrorHandler(handler.GetPostHandler(db), errorLogger)(w, r)
-	//})
+	// Register
+	mux.HandleFunc("/api/register", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			middleware.ErrorHandler(handler.RegisterHandler(db), errorLogger)(w, r)
+		} else {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
+	})
 
-	// Handle /api/posts
+	// Authentication check endpoint - useful for frontend to verify auth status
+	mux.HandleFunc("/api/auth/check", func(w http.ResponseWriter, r *http.Request) {
+		userID, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			// Not authenticated
+			handler.SendResponse(w, false, "Not authenticated", nil, "")
+		} else {
+			// Authenticated
+			handler.SendResponse(w, true, "Authenticated", map[string]interface{}{"user_id": userID}, "")
+		}
+	})
+
+	// Allow public access to the main app entry points for the frontend
+	// Frontend will handle redirecting unauthenticated users
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// For root path or specific routes we want to be public (login, register, about)
+		if r.URL.Path == "/" || r.URL.Path == "/login" || r.URL.Path == "/register" || r.URL.Path == "/about" {
+			http.ServeFile(w, r, "./static/index.html")
+			return
+		}
+
+		// For all other frontend routes, check authentication
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			// Return a 401 so frontend can redirect
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		// User is authenticated, serve the main app
+		http.ServeFile(w, r, "./static/index.html")
+	})
+
+	// Protected API routes
+	// User info
+	mux.HandleFunc("/api/user", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		middleware.ErrorHandler(handler.UserHandler(db), errorLogger)(w, r)
+	})
+
+	// Logout
+	mux.HandleFunc("/api/logout", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		middleware.ErrorHandler(handler.LogoutHandler, errorLogger)(w, r)
+	})
+
+	// Websocket for chat
+	hub := utils.NewHub()
+	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		handler.HandleWebSocket(hub, db)(w, r)
+	})
+
+	// Posts
 	mux.HandleFunc("/api/posts", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		if r.Method == "GET" {
 			middleware.ErrorHandler(handler.GetPostsHandler(db), errorLogger)(w, r)
 		} else if r.Method == "POST" {
@@ -75,8 +117,14 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 		}
 	})
 
-	// Handle /api/posts/{id} for retrieving a specific post
+	// Individual post
 	mux.HandleFunc("/api/posts/", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		if r.Method != "GET" {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
@@ -88,12 +136,17 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 			return
 		}
 
-		// Call the handler to get the specific post by ID
 		middleware.ErrorHandler(handler.GetPostHandler(db), errorLogger)(w, r)
 	})
 
-	// POST /api/comments
+	// Comments
 	mux.HandleFunc("/api/comments", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		if r.Method == "POST" {
 			middleware.ErrorHandler(handler.AddCommentHandler(db), errorLogger)(w, r)
 		} else {
@@ -101,30 +154,21 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 		}
 	})
 
-	// GET /api/messages/{receiverID}
-	//mux.HandleFunc("/api/messages/", middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger))
-
-	//mux.HandleFunc("/api/messages/", func(w http.ResponseWriter, r *http.Request) {
-	//	switch r.Method {
-	//	case "GET":
-	//		middleware.ErrorHandler(handler.GetMessagesHandler(db), errorLogger)(w, r)
-	//	case "POST":
-	//		middleware.ErrorHandler(handler.SendMessageHandler(db), errorLogger)(w, r)
-	//	default:
-	//		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-	//	}
-	//})
-
+	// Messages
 	mux.HandleFunc("/api/messages/", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		if r.Method == "GET" {
-			// Check if this is a request for all messages of a specific user
 			path := r.URL.Path
 			parts := strings.Split(path, "/")
 			if len(parts) >= 3 && parts[2] != "" {
 				middleware.ErrorHandler(handler.GetUserMessagesHandler(db), errorLogger)(w, r)
 				return
 			}
-			// If we reach here, it's not a valid path
 			http.Error(w, "Not Found", http.StatusNotFound)
 		} else if r.Method == "POST" {
 			middleware.ErrorHandler(handler.SendMessageHandler(db), errorLogger)(w, r)
@@ -133,25 +177,19 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 		}
 	})
 
+	// All conversations
 	mux.HandleFunc("/api/messages/all", func(w http.ResponseWriter, r *http.Request) {
+		_, err := utils.ExtractUserIDFromRequest(r)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		if r.Method == "GET" {
 			middleware.ErrorHandler(handler.GetAllConversationsHandler(db), errorLogger)(w, r)
 		} else {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
-	})
-
-	// Protected route
-	mux.HandleFunc("/api/protected", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "GET" {
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-			return
-		}
-
-		protected := middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
-			handler.SendResponse(w, true, "You accessed a protected route", nil, "")
-		})
-		middleware.ErrorHandler(protected, errorLogger)(w, r)
 	})
 
 	return mux
