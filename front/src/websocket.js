@@ -319,10 +319,10 @@ export function connectWebSocket(token) {
         });
       }else if (data.type === 'notification') {
         console.log('[WebSocket] 🔔 Notification reçue :', data);
+        updateNotificationBadge();
         if (typeof window.showNotificationBadge === 'function') {
           window.showNotificationBadge();
         }
-        
         const senderId = data.from;
         const content = data.content;
         const timestamp = data.timestamp || new Date().toISOString();
@@ -503,4 +503,11 @@ function throttleMessage(message) {
         // Ajoute le message à l'élément container
         document.getElementById("messagesContainer").appendChild(messageDiv);
     }
+}
+
+function updateNotificationBadge() {
+  const notificationBadge = document.getElementById('notification-badge');
+  if (notificationBadge) {
+    notificationBadge.style.display = 'block';  // Afficher le badge
+  }
 }
