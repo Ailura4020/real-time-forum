@@ -5,6 +5,9 @@ import { renderLoginPage } from './components/Login.js';
 import { renderRegistrationPage } from './components/Registration.js';
 import { renderPostPage } from './components/Post.js';
 
+// Define which routes should be publicly accessible
+const publicRoutes = ['/about', '/login', '/register'];
+
 const routes = [
     { path: '/', component: renderHomePage },
     { path: '/about', component: renderAboutPage },
@@ -40,7 +43,35 @@ export const router = {
         });
     },
 
+    // Check if the user is authenticated
+    isAuthenticated() {
+        return !!localStorage.getItem('token');
+    },
+
+    // Check if a route is public
+    isPublicRoute(path) {
+        return publicRoutes.some(route => {
+            // For exact matches
+            if (route === path) return true;
+            
+            // For routes that start with a public path (handles parameterized routes)
+            if (path.startsWith(route + '/')) return true;
+            
+            return false;
+        });
+    },
+
     navigate(path, addToHistory = true) {
+        // Check authentication for protected routes
+        if (!this.isPublicRoute(path) && !this.isAuthenticated()) {
+            console.log(`[Router] Redirecting to login: ${path} requires authentication`);
+            // Store the intended destination to redirect back after login
+            sessionStorage.setItem('redirectAfterLogin', path);
+            
+            // Redirect to login page
+            path = '/login';
+        }
+        
         // Don't do anything if we're already on this route
         if (this.currentRoute === path) {
             console.log(`[Router] Already on route: ${path}`);
@@ -107,18 +138,18 @@ export const router = {
             this.currentComponent = null;
             mainContent.innerHTML = '<div class="error-container"><h2>404 - Page Not Found</h2><p>The page you are looking for does not exist.</p></div>';
         }
-            },
+    },
             
-            cleanupCurrentComponent() {
+    cleanupCurrentComponent() {
         // Call cleanup function if the component has one
         if (this.currentComponent) {
             // Handle Chat component special cleanup
             if (this.currentComponent.name === 'renderChat') {
-                        // We don't need to import cleanupChat here - it's already available globally
-                        // from the existing import in the routes list
-                        const cleanupFunction = window.chatCleanupFunction || null;
-                        if (cleanupFunction && typeof cleanupFunction === 'function') {
-                            cleanupFunction();
+                // We don't need to import cleanupChat here - it's already available globally
+                // from the existing import in the routes list
+                const cleanupFunction = window.chatCleanupFunction || null;
+                if (cleanupFunction && typeof cleanupFunction === 'function') {
+                    cleanupFunction();
                 }
             }
             

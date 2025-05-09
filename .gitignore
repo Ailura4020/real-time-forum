@@ -69,3 +69,6 @@ Icon?
 # air
 /server/tmp/
 /server/docs/
+
+# temp (unused or missconfigured file)
+/front/vite.config.js

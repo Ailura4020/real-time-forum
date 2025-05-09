@@ -25,7 +25,7 @@ export function renderLoginPage(container) {
                 localStorage.removeItem('userData');
                 updateAuthUI();
                 renderLoginPage(container);
-                
+
             });
         }, 0);
 
@@ -96,7 +96,17 @@ async function handleLogin(e) {
             updateAuthUI(response.data);
 
             // Redirect to home page
-            router.navigate('/');
+            // router.navigate('/');
+            // Check if there's a redirect path stored
+            const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+            if (redirectPath) {
+                sessionStorage.removeItem('redirectAfterLogin'); // Clear it after use
+                router.navigate(redirectPath);
+            } else {
+                // Default redirect to home page
+                router.navigate('/');
+            }
+
         } else {
             // Show error message
             errorElement.textContent = response.message || 'Login failed';

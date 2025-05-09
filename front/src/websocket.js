@@ -147,7 +147,8 @@ export function connectWebSocket(token) {
   closeWebSocket();
   
   console.log("Token utilisé pour la connexion:", token);
-  socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
+  // socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
+  const socket = new WebSocket('ws://localhost:8080/ws');
 
   socket.onopen = () => {
     console.log('WebSocket connection established');
