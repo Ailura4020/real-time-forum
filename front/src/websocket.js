@@ -213,7 +213,7 @@ export function connectWebSocket(token) {
         to: data.to || 'not specified',
         content: data.content ? (data.content.length > 50 ? data.content.substring(0, 50) + '...' : data.content) : 'none'
       });
-      throttleMessage(message)
+      throttleMessage(data);
     
       if (data.type === 'user_list' || data.type === 'users') {
         const container = document.getElementById('connected-users');
