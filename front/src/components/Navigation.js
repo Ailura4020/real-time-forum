@@ -12,13 +12,38 @@ export function renderNavigation() {
         <a href="/chat" class="nav-link">Chat</a>
         <a href="/about" class="nav-link">About</a>
       </div>
-      <div id="auth-container" class="auth-container">
+     <div class="right-section">
+  <button id="notification-button" class="nav-button">
+    🔔 <span id="notification-badge" style="display: none; color: red;">●</span>
+  </button>
+  <div id="auth-container" class="auth-container">
+
         <button id="login-button" class="nav-button">Login</button>
         <button id="register-button" class="nav-button">Register</button>
       </div>
     </div>
   `;
-
+  const notificationButton = nav.querySelector('#notification-button');
+  const notificationBadge = nav.querySelector('#notification-badge');
+  
+  window.showNotificationBadge = function () {
+    if (notificationBadge) {
+      notificationBadge.style.display = 'inline';
+    }
+  };
+  
+  window.hideNotificationBadge = function () {
+    if (notificationBadge) {
+      notificationBadge.style.display = 'none';
+    }
+  };
+  
+  notificationButton.addEventListener('click', () => {
+    console.log('[Notification] Cloche cliquée');
+    window.hideNotificationBadge();
+    window.history.pushState({}, '', '/chat');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
     // Add event listeners
     const loginButton = nav.querySelector('#login-button');
     const registerButton = nav.querySelector('#register-button');
@@ -37,3 +62,4 @@ export function renderNavigation() {
 
     return nav;
 }
+
