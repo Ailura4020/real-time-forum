@@ -244,6 +244,10 @@ export function connectWebSocket(token) {
       else if (data.type === 'private_message') {
         console.log('[WebSocket] Private message received:', data);
         
+        if (window.addNotificationToConversation) {
+          window.addNotificationToConversation(senderId);
+        }
+
         // Get sender ID from different possible properties
         const senderId = data.from_id || data.from || null;
         if (!senderId) {
@@ -317,7 +321,8 @@ export function connectWebSocket(token) {
             timestamp: data.timestamp || new Date().toISOString()
           });
         });
-      }else if (data.type === 'notification') {
+      }
+      else if (data.type === 'notification') {
         console.log('[WebSocket] 🔔 Notification reçue :', data);
         updateNotificationBadge();
         if (typeof window.showNotificationBadge === 'function') {
@@ -328,7 +333,8 @@ export function connectWebSocket(token) {
         const timestamp = data.timestamp || new Date().toISOString();
       
         // Récupère le pseudo si possible
-        let senderNickname = userNicknameCache.get(senderId.toString()) || `User ${senderId}`;
+        let senderNickname = data.from_nickname || userNicknameCache.get(senderId.toString()) || `User ${senderId}`;
+
       
         // Affiche temporairement une alerte
         alert(`📨 Nouveau message privé de ${senderNickname} : ${content}`);
