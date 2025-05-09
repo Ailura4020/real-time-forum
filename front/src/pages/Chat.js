@@ -802,6 +802,11 @@ export function setCurrentReceiver(user){
     }
     
     console.log("[Chat] Setting current receiver:", user);
+
+    if (typeof window.hideNotificationBadge === 'function') {
+        window.hideNotificationBadge();
+      }
+     
     
     currentReceiver = user;
     // Also set in window scope for access from other modules
@@ -874,7 +879,6 @@ export function setCurrentReceiver(user){
     
     if (conversation) {
         displayConversationHistory(conversation);
-    
              // Ajoute ici le scroll listener une seule fois
     const messagesContainer = document.getElementById('messages');
     messagesContainer.addEventListener('scroll', throttle(async () => {

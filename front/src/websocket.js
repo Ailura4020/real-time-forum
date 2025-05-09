@@ -317,7 +317,25 @@ export function connectWebSocket(token) {
             timestamp: data.timestamp || new Date().toISOString()
           });
         });
+      }else if (data.type === 'notification') {
+        console.log('[WebSocket] 🔔 Notification reçue :', data);
+        if (typeof window.showNotificationBadge === 'function') {
+          window.showNotificationBadge();
+        }
+        
+        const senderId = data.from;
+        const content = data.content;
+        const timestamp = data.timestamp || new Date().toISOString();
+      
+        // Récupère le pseudo si possible
+        let senderNickname = userNicknameCache.get(senderId.toString()) || `User ${senderId}`;
+      
+        // Affiche temporairement une alerte
+        alert(`📨 Nouveau message privé de ${senderNickname} : ${content}`);
+      
+        // TODO : remplacer alert() par un toast/badge plus tard
       }
+      
       else {
         console.log('[WebSocket] Unknown message type:', data.type);
       }

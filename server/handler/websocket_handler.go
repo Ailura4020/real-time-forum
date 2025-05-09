@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"net/http"
 	"real-time-forum/models"
 	"real-time-forum/repository"
@@ -12,6 +11,8 @@ import (
 	"real-time-forum/utils"
 	"strconv"
 	"time"
+
+	"github.com/gorilla/websocket"
 	//"github.com/gorilla/websocket"
 )
 
@@ -318,6 +319,18 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 						if err != nil {
 							fmt.Println("Erreur envoi message au destinataire :", err)
 						}
+						notification := map[string]interface{}{
+							"type":      "notification",
+							"from":      senderID,
+							"content":   "Vous avez reçu un nouveau message privé.",
+							"timestamp": time.Now().Format("2006-01-02 15:04:05"),
+						}
+
+						err = clientConn.WriteJSON(notification)
+						if err != nil {
+							fmt.Println("Erreur lors de l'envoi de la notification :", err)
+						}
+
 					}
 				}
 				hub.Mutex.Unlock()
