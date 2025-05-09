@@ -365,3 +365,12 @@ func SplitPath(path string) []string {
 	}
 	return strings.Split(path, "/")
 }
+
+// ExtractTokenFromRequest extracts the Bearer token from the Authorization header of the given HTTP request.
+func ExtractTokenFromRequest(r *http.Request) (string, error) {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" || len(authHeader) < 7 || authHeader[:7] != "Bearer " {
+		return "", fmt.Errorf("invalid authorization header")
+	}
+	return authHeader[7:], nil
+}

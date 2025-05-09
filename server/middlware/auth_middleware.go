@@ -1,14 +1,10 @@
 package middleware
 
 import (
-	"context"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"real-time-forum/config"
-	"real-time-forum/utils"
-	"strings"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 // AuthMiddleware checks if the request has a valid JWT
@@ -38,54 +34,54 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func AuthMiddlewareWithRedirectFunc(next http.HandlerFunc, redirectPath string) http.HandlerFunc {
-	// Convert the HandlerFunc to a Handler by using http.HandlerFunc adapter
-	return AuthMiddlewareWithRedirect(http.HandlerFunc(next), redirectPath)
-}
+//func AuthMiddlewareWithRedirectFunc(next http.HandlerFunc, redirectPath string) http.HandlerFunc {
+//	// Convert the HandlerFunc to a Handler by using http.HandlerFunc adapter
+//	return AuthMiddlewareWithRedirect(http.HandlerFunc(next), redirectPath)
+//}
 
-func AuthMiddlewareWithRedirect(next http.Handler, redirectPath string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Try to get token from cookies
-		cookie, err := r.Cookie("jwt_token")
-		tokenString := ""
-
-		if err == nil && cookie.Value != "" {
-			tokenString = cookie.Value
-		} else {
-			// No token in cookie, check Authorization header
-			authHeader := r.Header.Get("Authorization")
-			if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
-				tokenString = strings.TrimPrefix(authHeader, "Bearer ")
-			} else {
-				// No token found, redirect to login page
-				http.Redirect(w, r, redirectPath, http.StatusFound)
-				return
-			}
-		}
-
-		// Use your existing function to validate token and extract user ID
-		userID, err := utils.ExtractUserIDFromToken(tokenString)
-		if err != nil {
-			// Invalid token, redirect to login page
-			http.Redirect(w, r, redirectPath, http.StatusFound)
-			return
-		}
-
-		// Check for blacklisted tokens
-		if utils.IsTokenBlacklisted(tokenString) {
-			// Token is blacklisted, redirect to login
-			http.Redirect(w, r, redirectPath, http.StatusFound)
-			return
-		}
-
-		// Token is valid, add user ID to request context
-		ctx := context.WithValue(r.Context(), "user_id", userID)
-		ctx = context.WithValue(ctx, "token", tokenString)
-
-		// Serve the protected content
-		next.ServeHTTP(w, r.WithContext(ctx))
-	}
-}
+//func AuthMiddlewareWithRedirect(next http.Handler, redirectPath string) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		// Try to get token from cookies
+//		cookie, err := r.Cookie("jwt_token")
+//		tokenString := ""
+//
+//		if err == nil && cookie.Value != "" {
+//			tokenString = cookie.Value
+//		} else {
+//			// No token in cookie, check Authorization header
+//			authHeader := r.Header.Get("Authorization")
+//			if authHeader != "" && strings.HasPrefix(authHeader, "Bearer ") {
+//				tokenString = strings.TrimPrefix(authHeader, "Bearer ")
+//			} else {
+//				// No token found, redirect to login page
+//				http.Redirect(w, r, redirectPath, http.StatusFound)
+//				return
+//			}
+//		}
+//
+//		// Use your existing function to validate token and extract user ID
+//		userID, err := utils.ExtractUserIDFromToken(tokenString)
+//		if err != nil {
+//			// Invalid token, redirect to login page
+//			http.Redirect(w, r, redirectPath, http.StatusFound)
+//			return
+//		}
+//
+//		// Check for blacklisted tokens
+//		if utils.IsTokenBlacklisted(tokenString) {
+//			// Token is blacklisted, redirect to login
+//			http.Redirect(w, r, redirectPath, http.StatusFound)
+//			return
+//		}
+//
+//		// Token is valid, add user ID to request context
+//		ctx := context.WithValue(r.Context(), "user_id", userID)
+//		ctx = context.WithValue(ctx, "token", tokenString)
+//
+//		// Serve the protected content
+//		next.ServeHTTP(w, r.WithContext(ctx))
+//	}
+//}
 
 // ValidateJWT verifies a JWT token
 func ValidateJWT(tokenString string) (*jwt.Token, error) {

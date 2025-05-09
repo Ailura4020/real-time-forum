@@ -47,7 +47,7 @@ func (r *PrivateMessageRepository) GetPrivateMessages(user1, user2, limit, offse
 		var msg models.PrivateMessage
 		var timestampStr string
 
-		err := rows.Scan(&msg.ID, &msg.SenderID, msg.ReceiverID, &msg.Content, &msg.Timestamp)
+		err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Content, &msg.Timestamp)
 		if err != nil {
 			return nil, err
 		}
@@ -146,6 +146,8 @@ func GetUserMessages(db *sql.DB, userID int) ([]models.PrivateMessage, error) {
 	var messages []models.PrivateMessage
 	for rows.Next() {
 		var msg models.PrivateMessage
+		//err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Content, &msg.Timestamp)
+		//err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Content, &msg.Timestamp)
 		err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Content, &msg.Timestamp)
 		if err != nil {
 			return nil, err

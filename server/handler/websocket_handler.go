@@ -182,10 +182,16 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Get the token from the request context
-		tokenString, ok := r.Context().Value("token").(string)
-		if !ok {
-			http.Error(w, "Token not found in context", http.StatusInternalServerError)
+		//// Get the token from the request context
+		//tokenString, ok := r.Context().Value("token").(string)
+		//if !ok {
+		//	http.Error(w, "Token not found in context", http.StatusInternalServerError)
+		//	return
+		//}
+
+		tokenString, err := utils.ExtractTokenFromRequest(r)
+		if err != nil {
+			http.Error(w, "Invalid or missing token", http.StatusUnauthorized)
 			return
 		}
 
@@ -301,7 +307,7 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 
 				content := msg["content"].(string)
 
-				err := savePrivateMessage(db, senderID, receiverID, content)
+				err := repository.SavePrivateMessage(db, senderID, receiverID, content)
 				if err != nil {
 					fmt.Println("erreur insertion message privé :", err)
 				}
