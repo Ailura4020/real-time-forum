@@ -8,9 +8,16 @@ export const chatTemplate = (classes) => `
           <h3>Online Users</h3>
           <div id="connected-users" class="${classes.usersList}"></div>
         </div>
-        <div class="${classes.sidebarSection}">
+         <div class="${classes.sidebarSection}">
           <h3>Recent Conversations</h3>
-          <div id="recent-conversations" class="${classes.conversationsList}"></div>
+          <div id="recent-conversations" class="${classes.conversationsList}">
+            <!-- Les conversations seront ajoutées dynamiquement ici -->
+            <!-- Exemple de conversation -->
+            <div id="conversation-1" class="conversationItem user-notification">
+              <span class="nickname">User Nickname</span>
+              <span class="lastMessagePreview">Last message preview...</span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="${classes.chatContent}">

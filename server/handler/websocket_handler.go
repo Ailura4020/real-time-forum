@@ -326,10 +326,11 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 							fmt.Println("Erreur envoi message au destinataire :", err)
 						}
 						notification := map[string]interface{}{
-							"type":      "notification",
-							"from":      senderID,
-							"content":   "Vous avez reçu un nouveau message privé.",
-							"timestamp": time.Now().Format("2006-01-02 15:04:05"),
+							"type":          "notification",
+							"from":          senderID,
+							"from_nickname": userInfo,
+							"content":       "Vous avez reçu un nouveau message privé.",
+							"timestamp":     time.Now().Format("2006-01-02 15:04:05"),
 						}
 
 						err = clientConn.WriteJSON(notification)

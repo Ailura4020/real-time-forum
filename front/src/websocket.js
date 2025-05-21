@@ -214,7 +214,7 @@ export function connectWebSocket(token) {
         to: data.to || 'not specified',
         content: data.content ? (data.content.length > 50 ? data.content.substring(0, 50) + '...' : data.content) : 'none'
       });
-      throttleMessage(message)
+      // throttleMessage(data);
     
       if (data.type === 'user_list' || data.type === 'users') {
         const container = document.getElementById('connected-users');
@@ -245,6 +245,10 @@ export function connectWebSocket(token) {
       else if (data.type === 'private_message') {
         console.log('[WebSocket] Private message received:', data);
         
+        if (window.addNotificationToConversation) {
+          window.addNotificationToConversation(senderId);
+        }
+
         // Get sender ID from different possible properties
         const senderId = data.from_id || data.from || null;
         if (!senderId) {
@@ -318,18 +322,20 @@ export function connectWebSocket(token) {
             timestamp: data.timestamp || new Date().toISOString()
           });
         });
-      }else if (data.type === 'notification') {
+      }
+      else if (data.type === 'notification') {
         console.log('[WebSocket] 🔔 Notification reçue :', data);
+        updateNotificationBadge();
         if (typeof window.showNotificationBadge === 'function') {
           window.showNotificationBadge();
         }
-        
         const senderId = data.from;
         const content = data.content;
         const timestamp = data.timestamp || new Date().toISOString();
       
         // Récupère le pseudo si possible
-        let senderNickname = userNicknameCache.get(senderId.toString()) || `User ${senderId}`;
+        let senderNickname = data.from_nickname || userNicknameCache.get(senderId.toString()) || `User ${senderId}`;
+
       
         // Affiche temporairement une alerte
         alert(`📨 Nouveau message privé de ${senderNickname} : ${content}`);
@@ -504,4 +510,11 @@ function throttleMessage(message) {
         // Ajoute le message à l'élément container
         document.getElementById("messagesContainer").appendChild(messageDiv);
     }
+}
+
+function updateNotificationBadge() {
+  const notificationBadge = document.getElementById('notification-badge');
+  if (notificationBadge) {
+    notificationBadge.style.display = 'block';  // Afficher le badge
+  }
 }
