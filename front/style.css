@@ -2,6 +2,37 @@
 
 /*@import "tailwindcss";*/
 
+/* Import des polices Star Wars */
+@font-face {
+    font-family: 'StarJedi';
+    src: url('/static/font/starjedi/Starjedi.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'StarJediHollow';
+    src: url('/static/font/starjedi/Starjhol.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'StarJediLogo';
+    src: url('/static/font/stjedise/STJEDISE.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Starjout';
+    src: url('/static/font/starjout/Starjout.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Import des polices */
+@import url('https://fonts.googleapis.com/css2?family=Matterhorn:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DINNext:wght@400;500;700&display=swap');
+
 /* CSS Reset */
 * {
     margin: 0;
@@ -11,23 +42,143 @@
     color: unset;
 }
 
+/* Variables de couleurs Star Wars */
+:root {
+    --sw-yellow: #FFE81F;  /* Jaune Star Wars */
+    --sw-blue: #00BFFF;    /* Bleu Jedi */
+    --sw-red: #FF0000;     /* Rouge Sith */
+    --sw-dark: #000000;    /* Noir de l'espace */
+    --sw-gray: #333333;    /* Gris métallique */
+    --sw-light: #FFFFFF;   /* Blanc */
+    --sw-holo: rgba(0, 191, 255, 0.2); /* Bleu holographique */
+}
+
 /* style.css */
 
 /* Body Styles */
 body {
-    background-color: black;
-    background-image: url('http://localhost:8080/static/background.png');
-    background-size: 110%;
-    background-position: top center;
-    font-family: 'Arial', sans-serif;
-    color: #ffffff;
+    background-color: var(--sw-dark);
+    background-image: url('/static/images/rebelsST.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: var(--sw-light);
     margin: 0;
     padding: 0;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Styles pour les titres principaux uniquement */
+h1, h2, h3 {
+    font-family: 'StarJediLogo', 'StarJedi', sans-serif;
+    color: var(--sw-yellow);
+    text-transform: capitalize;
+    letter-spacing: 1px;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 36px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Styles pour les éléments spéciaux */
+.logo {
+    font-family: 'StarJedi', 'StarJediLogo', sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--sw-yellow);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.post-title {
+    font-family: 'StarJediLogo', 'StarJedi', sans-serif;
+    font-size: 24px;
+    color: var(--sw-yellow);
+    text-transform: capitalize;
+    letter-spacing: 1px;
+    text-shadow: none;
+    font-weight: normal;
+}
+
+.post-title a {
+    font-family: 'StarJediLogo', 'StarJedi', sans-serif;
+    text-transform: capitalize;
+    color: var(--sw-yellow);
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.post-category {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--sw-blue);
+    color: var(--sw-dark);
+    padding: 5px 15px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+/* Styles pour les boutons */
+.nav-button, .btn, .like-button, .dislike-button, .comment-button {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Styles pour les formulaires */
+label {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: var(--sw-yellow);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Texte et paragraphes */
+p, span, div, input, textarea, select, button, label {
+    font-family: 'DINNext', sans-serif;
+}
+
+/* Ajout d'un overlay pour améliorer la lisibilité */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: -1;
 }
 
 /* Navigation Styles */
 .main-nav {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.9);
     padding: 15px;
     position: fixed;
     width: 100%;
@@ -35,245 +186,231 @@ body {
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    border-bottom: 2px solid var(--sw-yellow);
+    box-shadow: 0 0 20px var(--sw-holo);
 }
 
 .nav-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: #FFD700; /* Gold color */
-    text-decoration: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .nav-links {
     display: flex;
-    gap: 20px;
+    gap: 30px;
 }
 
 .nav-link {
-    color: #ffffff;
+    color: var(--sw-light);
     text-decoration: none;
     font-size: 18px;
-    transition: color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .nav-link:hover {
-    color: #FFD700; /* Gold color on hover */
+    color: var(--sw-yellow);
+    text-shadow: 0 0 10px var(--sw-yellow);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--sw-yellow);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
 }
 
 .auth-container {
     display: flex;
-    gap: 10px;
+    gap: 15px;
 }
 
 .nav-button {
-    background-color: #1E1E1E;
-    color: #FFD700; /* Gold color */
-    border: none;
-    padding: 10px 15px;
+    background-color: transparent;
+    color: var(--sw-yellow);
+    border: 2px solid var(--sw-yellow);
+    padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px var(--sw-holo);
 }
 
 .nav-button:hover {
-    background-color: #FFD700; /* Gold color on hover */
-    color: #1E1E1E; /* Dark background */
+    background-color: var(--sw-yellow);
+    color: var(--sw-dark);
+    box-shadow: 0 0 20px var(--sw-yellow);
 }
 
 /* Main Content Styles */
 #main-content {
-    margin-top: 70px; /* Space for fixed nav */
+    margin-top: 100px;
     padding: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .posts-container {
-    /*background-color: rgba(0, 0, 0, 0.7);*/
-    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 30px;
     border-radius: 10px;
-}
-
-h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #FFD700; /* Gold color */
+    border: 1px solid var(--sw-yellow);
+    box-shadow: 0 0 20px var(--sw-holo);
 }
 
 .posts-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
 .post-card {
     background-color: rgba(0, 0, 0, 0.7);
-    /*border: 1px solid rgba(255, 255, 255, 0.3);*/
+    border: 1px solid var(--sw-blue);
     border-radius: 10px;
-    padding: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--sw-holo);
+}
+
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px var(--sw-blue);
 }
 
 .post-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.post-title {
-    font-size: 20px;
-    color: #FFD700; /* Gold color */
-}
-
-.post-category {
-    background-color: #FFD700; /* Gold color */
-    color: #1E1E1E; /* Dark background */
-    padding: 5px 10px;
-    border-radius: 5px;
+    margin-bottom: 15px;
 }
 
 .post-content {
-    margin: 10px 0;
+    margin: 15px 0;
+    color: var(--sw-light);
+    line-height: 1.8;
 }
 
 .post-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--sw-gray);
 }
 
 .post-meta {
     font-size: 14px;
-    color: #cccccc; /* Light gray */
+    color: var(--sw-blue);
 }
 
 .post-actions {
     display: flex;
-    gap: 10px;
+    gap: 15px;
 }
 
-/* Button Styles for Post Actions (if uncommented) */
+/* Button Styles */
 .like-button, .dislike-button, .comment-button {
-    background-color: #1E1E1E;
-    color: #FFD700; /* Gold color */
-    border: none;
-    padding: 5px 10px;
+    background-color: transparent;
+    color: var(--sw-yellow);
+    border: 1px solid var(--sw-yellow);
+    padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
 }
 
 .like-button:hover, .dislike-button:hover, .comment-button:hover {
-    background-color: #FFD700; /* Gold color on hover */
-    color: #1E1E1E; /* Dark background */
+    background-color: var(--sw-yellow);
+    color: var(--sw-dark);
+    box-shadow: 0 0 15px var(--sw-yellow);
 }
 
-/*---------------------------------------------FORM*/
+/* Form Styles */
 .auth-form-container {
-    max-width: 400px; /* Limit the width of the form */
-    margin: 50px auto; /* Center the form on the page */
-    padding: 20px;
-    background-color: #1a1a1a; /* Dark gray background for the form */
-    border: 2px solid #ffcc00; /* Gold border for a touch of elegance */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5); /* Glow effect */
-}
-
-h1 {
-    text-align: center; /* Center the heading */
-    color: #ffcc00; /* Gold color for the heading */
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 2px solid var(--sw-yellow);
+    border-radius: 10px;
+    box-shadow: 0 0 30px var(--sw-holo);
 }
 
 .auth-form {
     display: flex;
-    flex-direction: column; /* Stack form elements vertically */
-}
-
-.form-row {
-    display: flex;
-    justify-content: space-between; /* Space out form groups */
-    margin-bottom: 15px; /* Space between rows */
+    flex-direction: column;
+    gap: 20px;
 }
 
 .form-group {
-    flex: 1; /* Allow form groups to grow equally */
-    margin-right: 10px; /* Space between form groups */
-}
-
-.form-group:last-child {
-    margin-right: 0; /* Remove margin for the last group */
-}
-
-label {
-    display: block; /* Make labels block elements */
-    margin-bottom: 5px; /* Space between label and input */
-    color: #ccc; /* Light gray for labels */
-}
-
-input[type="text"],
-input[type="number"],
-input[type="email"],
-input[type="password"],
-select {
-    width: 100%; /* Full width inputs */
-    padding: 10px; /* Padding for inputs */
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #2a2a2a; /* Slightly lighter gray for inputs */
-    color: #fff; /* White text for inputs */
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-select:focus {
-    border-color: #ffcc00; /* Gold border on focus */
-    outline: none; /* Remove default outline */
-}
-
-.error-message {
-    color: red; /* Red color for error messages */
-    margin-bottom: 15px; /* Space below error message */
-}
-
-.form-actions {
-    text-align: center; /* Center the button */
+    margin-bottom: 20px;
 }
 
 .btn {
-    background-color: #ffcc00; /* Gold background for button */
-    color: #000; /* Black text for button */
-    border: none; /* Remove default border */
-    padding: 10px 15px; /* Padding for button */
-    cursor: pointer; /* Pointer cursor on hover */
-    border-radius: 5px; /* Rounded corners */
-    transition: background-color 0.3s; /* Smooth transition */
+    background-color: transparent;
+    color: var(--sw-yellow);
+    border: 2px solid var(--sw-yellow);
+    padding: 12px 25px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .btn:hover {
-    background-color: #e6b800; /* Darker gold on hover */
+    background-color: var(--sw-yellow);
+    color: var(--sw-dark);
+    box-shadow: 0 0 20px var(--sw-yellow);
 }
 
-.auth-link {
-    text-align: center; /* Center the link */
-    margin-top: 15px; /* Space above the link */
-    color: #ccc; /* Light gray for the link */
+.error-message {
+    color: var(--sw-red);
+    background-color: rgba(255, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--sw-red);
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-.auth-link a {
-    color: #ffcc00; /* Gold color for the link */
-    text-decoration: none; /* Remove underline */
+/* Animations */
+@keyframes glow {
+    0% { box-shadow: 0 0 5px var(--sw-yellow); }
+    50% { box-shadow: 0 0 20px var(--sw-yellow); }
+    100% { box-shadow: 0 0 5px var(--sw-yellow); }
 }
 
-.auth-link a:hover {
-    text-decoration: underline; /* Underline on hover */
+.logo {
+    animation: glow 2s infinite;
 }
-
 
 /*-----------------------------------------------------------BACKUP*/
 
@@ -627,3 +764,22 @@ select:focus {
 /*    bottom: 0;*/
 /*    width: 100%;*/
 /*}*/
+
+.welcome-user-starwars {
+    font-family: 'Starjout', Arial, sans-serif;
+    color: #e0e0e0;
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-transform: none;
+    margin: 0 16px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Glow rouge pour la cloche de notification */
+.notification-bell.glow-red {
+    box-shadow: 0 0 12px 4px #ff0000, 0 0 24px 8px #ff0000;
+    border-radius: 50%;
+    background: rgba(255,0,0,0.08);
+    transition: box-shadow 0.3s;
+}
