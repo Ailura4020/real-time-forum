@@ -1,78 +1,313 @@
 /* Chat.module.css */
 .chat {
-    font-family: Arial, sans-serif;
-    background-color: #1e1e1e;
-    color: #ffffff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--sw-dark);
+    color: var(--sw-light);
     height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 20px;
+    background-image: url('/static/images/blackST.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    position: relative;
 }
 
-h1 {
+/* Ajout d'un overlay pour le chat */
+.chat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 0;
+}
+
+/* Styles pour les titres principaux du chat uniquement */
+.chat h1 {
+    font-family: 'StarJediLogo', 'StarJedi', sans-serif;
+    color: var(--sw-yellow);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--sw-yellow);
     text-align: center;
-    color: #ffffff;
+    margin-bottom: 30px;
 }
 
 .chatLayout {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex: 1;
     margin-top: 20px;
     max-width: 100%;
     min-height: 20vh;
+    gap: 20px;
 }
 
 .chatSidebar {
-    width: 250px;
-    background-color: #2c2c2c; /* Dark sidebar background */
-    border-right: 1px solid #444; /* Darker border */
-    padding: 10px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    width: 300px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 2px solid var(--sw-blue);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px var(--sw-holo);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
 }
 
 .chatSidebar h3 {
-    margin-bottom: 10px;
-    color: #ffffff; /* Light sidebar title color */
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin-bottom: 20px;
+    color: var(--sw-yellow);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .usersList {
     max-height: 400px;
     overflow-y: auto;
-    color: #ffffff; /* Light text for user list */
+    color: var(--sw-light);
+    border: 1px solid var(--sw-blue);
+    border-radius: 5px;
+    padding: 10px;
 }
 
 .chatContent {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 2px solid var(--sw-blue);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px var(--sw-holo);
 }
 
 .chatMessages {
     flex: 1;
-    background-color: #2c2c2c; /* Dark background for messages */
-    border: 1px solid #444; /* Darker border */
-    border-radius: 5px;
-    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--sw-blue);
+    border-radius: 10px;
+    padding: 20px;
     overflow-y: auto;
-    margin-bottom: 10px;
-    color: #ffffff; /* Light text for messages */
+    margin-bottom: 20px;
+    color: var(--sw-light);
+}
+
+.message {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+    position: relative;
+    animation: messageAppear 0.3s ease-out;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.sent {
+    background-color: rgba(0, 191, 255, 0.2);
+    border: 1px solid var(--sw-blue);
+    margin-left: auto;
+    border-radius: 15px 5px 15px 15px;
+}
+
+.message.received {
+    background-color: rgba(255, 232, 31, 0.1);
+    border: 1px solid var(--sw-yellow);
+    margin-right: auto;
+    border-radius: 5px 15px 15px 15px;
+}
+
+.message small {
+    display: block;
+    margin-top: 5px;
+    color: var(--sw-blue);
+    font-size: 12px;
+    text-align: right;
 }
 
 .chatInput {
     display: flex;
+    gap: 10px;
+    margin-top: 20px;
 }
+
+.chatInput input {
+    flex: 1;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--sw-blue);
+    border-radius: 10px;
+    color: var(--sw-light);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.chatInput input:focus {
+    border-color: var(--sw-yellow);
+    box-shadow: 0 0 15px var(--sw-holo);
+    outline: none;
+}
+
+.sendButton {
+    padding: 15px 30px;
+    background-color: transparent;
+    color: var(--sw-yellow);
+    border: 2px solid var(--sw-yellow);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.sendButton:hover {
+    background-color: var(--sw-yellow);
+    color: var(--sw-dark);
+    box-shadow: 0 0 20px var(--sw-yellow);
+}
+
+.userItem {
+    padding: 12px;
+    margin: 5px 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--sw-blue);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.userItem:hover {
+    background-color: rgba(0, 191, 255, 0.1);
+    transform: translateX(5px);
+    border-color: var(--sw-yellow);
+}
+
+.userOnline {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--sw-blue);
+    box-shadow: 0 0 10px var(--sw-blue);
+}
+
+.conversationItem {
+    padding: 12px;
+    margin: 5px 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--sw-blue);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.conversationItem:hover {
+    background-color: rgba(0, 191, 255, 0.1);
+    transform: translateX(5px);
+    border-color: var(--sw-yellow);
+}
+
+.conversationItem.active {
+    background-color: rgba(255, 232, 31, 0.1);
+    border-color: var(--sw-yellow);
+    box-shadow: 0 0 15px var(--sw-yellow);
+}
+
+.ws-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.ws-status.connecting {
+    background-color: rgba(255, 232, 31, 0.2);
+    border: 2px solid var(--sw-yellow);
+    color: var(--sw-yellow);
+}
+
+.ws-status.connected {
+    background-color: rgba(0, 191, 255, 0.2);
+    border: 2px solid var(--sw-blue);
+    color: var(--sw-blue);
+}
+
+.ws-status.disconnected {
+    background-color: rgba(255, 0, 0, 0.2);
+    border: 2px solid var(--sw-red);
+    color: var(--sw-red);
+}
+
+.ws-status.reconnecting {
+    background-color: rgba(255, 232, 31, 0.2);
+    border: 2px solid var(--sw-yellow);
+    color: var(--sw-yellow);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
 .sidebarSection {
     margin-bottom: 20px;
 }
 
+/* Online Users section en haut, hauteur fixe */
+.sidebarSection:first-child {
+    flex: 0 0 auto;
+    min-height: unset;
+    max-height: unset;
+    overflow-y: unset;
+}
+
+/* Recent Conversations prend tout l'espace restant */
+.sidebarSection:last-child {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .conversationsList {
-    max-height: 200px;
+    flex: 1 1 auto;
+    max-height: 100%;
     overflow-y: auto;
-    border: 1px solid #444; /* Darker border to match theme */
+    border: 1px solid #444;
     border-radius: 4px;
     padding: 5px 0;
-    background-color: #2c2c2c; /* Dark background to match theme */
+    background-color: #2c2c2c;
 }
 
 .conversationItem {
@@ -224,49 +459,9 @@ h1 {
     font-size: 0.75em;
     color: #888;
 }
-.chatInput input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #444; /* Darker border */
-    border-radius: 5px;
-    margin-right: 10px;
-    background-color: #3c3c3c; /* Dark input background */
-    color: #ffffff; /* Light text for input */
-    font-size: 14px;
-    outline: none;
-}
 
 .chatInput input::placeholder {
     color: #aaaaaa; /* Light gray placeholder text for better visibility */
-}
-
-.chatInput input:focus {
-    border-color: #007bff; /* Highlight border when focused */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.sendButton {
-    padding: 10px 15px;
-    background-color: #007bff; /* Button color */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-weight: bold;
-}
-
-.sendButton:hover {
-    background-color: #0056b3; /* Darker button on hover */
-}
-
-.userInfo {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #2c2c2c; /* Dark background for user info */
-    border: 1px solid #444; /* Darker border */
-    border-radius: 5px;
-    color: #ffffff; /* Light text for user info */
 }
 
 .chatRecipient {
@@ -296,7 +491,6 @@ h1 {
 .message {
     animation: newMessage 0.3s ease-out;
 }
-
 
 /* NOTIFICATIONS */
 /* Style pour la pastille rouge de notification */
@@ -348,3 +542,60 @@ h1 {
 /*    border-radius: 4px;*/
 /*    cursor: pointer;*/
 /*}*/
+
+/* WebSocket Status Indicator */
+.ws-status {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.ws-status.connecting {
+    background-color: #ffd700;
+    color: #000;
+}
+
+.ws-status.connected {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.ws-status.disconnected {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.ws-status.reconnecting {
+    background-color: #ff9800;
+    color: #fff;
+    animation: pulse 1.5s infinite;
+}
+
+.ws-status.error {
+    background-color: #f44336;
+    color: #fff;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.unread {
+    font-weight: bold;
+    color: var(--sw-yellow);
+}

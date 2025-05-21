@@ -20,67 +20,53 @@ export const conversationHistory = {
 
     // Add a message to history
     addMessage(userId, nickname, message, timestamp) {
-        // Find existing conversation or create new one
         let conversation = this.getConversation(userId);
         if (!conversation) {
             conversation = {
                 userId,
                 nickname,
                 messages: [],
-                lastUpdated: timestamp
+                lastUpdated: timestamp,
+                unread: false
             };
             this.conversations.push(conversation);
         } else {
             conversation.lastUpdated = timestamp;
         }
-
-        // Add message to conversation
+        conversation.unread = false;
         conversation.messages.push({
             content: message,
             timestamp,
             fromCurrentUser: true
         });
-
-        // Sort conversations by last updated (most recent first)
         this.sortConversations();
-
-        // Save to localStorage
         this.saveToStorage();
-
-        // Update UI
         renderRecentConversations();
     },
 
     // Add a received message
     addReceivedMessage(userId, nickname, message, timestamp) {
-        // Find existing conversation or create new one
         let conversation = this.getConversation(userId);
         if (!conversation) {
             conversation = {
                 userId,
                 nickname,
                 messages: [],
-                lastUpdated: timestamp
+                lastUpdated: timestamp,
+                unread: true
             };
             this.conversations.push(conversation);
         } else {
             conversation.lastUpdated = timestamp;
         }
-
-        // Add message to conversation
+        conversation.unread = true;
         conversation.messages.push({
             content: message,
             timestamp,
             fromCurrentUser: false
         });
-
-        // Sort conversations by last updated (most recent first)
         this.sortConversations();
-
-        // Save to localStorage
         this.saveToStorage();
-
-        // Update UI
         renderRecentConversations();
     },
 
@@ -549,6 +535,8 @@ function renderRecentConversations() {
             }
         }
 
+        // Affichage du pseudo en gras si unread
+        const nicknameClass = conv.unread ? 'unread' : '';
         // Get last message preview
         const lastMessage = conv.messages[conv.messages.length - 1];
         const lastMessageTime = new Date(lastMessage.timestamp);
@@ -561,7 +549,7 @@ function renderRecentConversations() {
         const previewPrefix = isFromCurrentUser ? 'You: ' : '';
 
         convElement.innerHTML = `
-            <div><strong>${conv.nickname}</strong></div>
+            <div><span class="${nicknameClass}">${conv.nickname}</span></div>
             <div class="${classes.lastMessagePreview}">${previewPrefix}${lastMessage.content}</div>
             <div class="${classes.conversationTime}">${formattedTime}</div>
         `;
@@ -696,7 +684,7 @@ function throttle(fn, delay) {
     };
 }
 
-// Appel à l’API paginée
+// Appel à l'API paginée
 async function fetchOlderMessages(userId, page) {
     const offset = page * PAGE_SIZE;
 
@@ -923,6 +911,13 @@ export function setCurrentReceiver(user) {
         if (messagesContainer) {
             messagesContainer.innerHTML = '<div class="empty-conversation">No previous messages. Start a new conversation!</div>';
         }
+    }
+
+    // Marquer la conversation comme lue
+    if (conversation) {
+        conversation.unread = false;
+        conversationHistory.saveToStorage();
+        renderRecentConversations();
     }
 }
 

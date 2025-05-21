@@ -10,6 +10,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     const navElement = renderNavigation();
     appElement.appendChild(navElement);
 
+    // Ajoute le conteneur de toast notifications
+    if (!document.getElementById('toast-container')) {
+        const toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.style.position = 'fixed';
+        toastContainer.style.top = '2rem';
+        toastContainer.style.right = '2rem';
+        toastContainer.style.zIndex = '2000';
+        appElement.appendChild(toastContainer);
+    }
+
+    // Fonction globale pour afficher un toast
+    window.showToast = function(message) {
+        const toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast-notif-red';
+        toast.innerHTML = `<span style="font-weight:bold;">${message}</span>`;
+        toast.style.background = 'rgba(255,0,0,0.95)';
+        toast.style.color = '#fff';
+        toast.style.padding = '1rem 2rem';
+        toast.style.marginBottom = '1rem';
+        toast.style.borderRadius = '8px';
+        toast.style.boxShadow = '0 0 16px 4px #ff0000, 0 0 32px 8px #ff0000';
+        toast.style.fontSize = '1.1rem';
+        toast.style.letterSpacing = '1px';
+        toast.style.display = 'flex';
+        toast.style.alignItems = 'center';
+        toast.style.animation = 'toastFadeIn 0.3s';
+        toastContainer.appendChild(toast);
+        // Lecture du son
+        const audio = new Audio('/static/sounds/lightsaber3.mp3');
+        audio.play();
+        // Disparition auto
+        setTimeout(() => {
+            toast.style.animation = 'toastFadeOut 0.5s';
+            setTimeout(() => toast.remove(), 500);
+        }, 3500);
+    };
+
     // Create main content container
     const mainContent = document.createElement('main');
     mainContent.id = 'main-content';
@@ -63,53 +103,62 @@ export async function updateAuthUI() {
     if (!authContainer) return;
 
     const token = localStorage.getItem('token');
-    console.log(token);
-    
     let userData = null;
 
     if (token) {
         userData = await fetchUserData();
         if (userData) {
-            // console.log("[SUCCESS]",userData, userData.data.nickname);
-            // connectWebSocket(token)
             // User is logged in
+            // On prépare le HTML avec Welcome, cloche, logout
             authContainer.innerHTML = `
-                <span class="welcome-message">Welcome, ${userData.data.nickname}</span>
-                <button id="logout-button" class="nav-button">Logout</button>
+                <span class="welcome-user-starwars">Welcome, ${userData.data.nickname}</span>
+                <button id="notification-button" class="nav-button notification-bell">🔔</button>
+                <button id="logout-button" class="nav-button">Logout <img src="/static/images/star-wars-rebels.svg" alt="logout" style="height:1.2em;width:1.2em;margin-left:8px;vertical-align:middle;filter:invert(1) brightness(2);"></button>
             `;
 
-            // Add logout event listener
+            // Glow rouge si notification non lue
+            if (window.hasNotification) {
+                document.getElementById('notification-button').classList.add('glow-red');
+            }
+
+            // Ajout du listener logout
             document.getElementById('logout-button').addEventListener('click', () => {
-                // Close WebSocket connection if it exists
                 import('./websocket.js').then(module => {
                     module.closeWebSocket();
-                    
-                    // Clear user data
                     localStorage.removeItem('token');
-                    
-                    // Clear any chat-related state
-                    if (window.currentUser) {
-                        window.currentUser = null;
-                    }
-                    
-                    // Update UI and navigate
+                    if (window.currentUser) window.currentUser = null;
                     updateAuthUI();
                     router.navigate('/');
                 });
             });
+
+            // Listener notification (redirige vers chat)
+            document.getElementById('notification-button').addEventListener('click', () => {
+                window.hasNotification = false;
+                document.getElementById('notification-button').classList.remove('glow-red');
+                window.hideNotificationBadge && window.hideNotificationBadge();
+                router.navigate('/chat');
+            });
+
+            // Méthode globale pour activer le glow
+            window.showNotificationGlow = function () {
+                window.hasNotification = true;
+                document.getElementById('notification-button')?.classList.add('glow-red');
+            };
+            window.hideNotificationGlow = function () {
+                window.hasNotification = false;
+                document.getElementById('notification-button')?.classList.remove('glow-red');
+            };
         }
     } else {
         // User is not logged in
         authContainer.innerHTML = `
-            <button id="login-button" class="nav-button">Login</button>
+            <button id="login-button" class="nav-button">Login <img src="/static/images/star-wars-rebels.svg" alt="login" style="height:1.2em;width:1.2em;margin-left:8px;vertical-align:middle;filter:invert(1) brightness(2);"></button>
             <button id="register-button" class="nav-button">Register</button>
         `;
-
-        // Add login/register event listeners
         document.getElementById('login-button').addEventListener('click', () => {
             router.navigate('/login');
         });
-
         document.getElementById('register-button').addEventListener('click', () => {
             router.navigate('/register');
         });
@@ -169,4 +218,12 @@ export const api = {
         }
     }
 };
+
+// Ajoute l'animation CSS pour le toast
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes toastFadeIn { from { opacity: 0; transform: translateY(-20px);} to { opacity: 1; transform: translateY(0);} }
+@keyframes toastFadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px);} }
+`;
+document.head.appendChild(style);
 

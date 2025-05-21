@@ -328,6 +328,9 @@ export function connectWebSocket(token) {
         if (typeof window.showNotificationBadge === 'function') {
           window.showNotificationBadge();
         }
+        if (typeof window.showNotificationGlow === 'function') {
+          window.showNotificationGlow();
+        }
         const senderId = data.from;
         const content = data.content;
         const timestamp = data.timestamp || new Date().toISOString();
@@ -335,10 +338,10 @@ export function connectWebSocket(token) {
         // Récupère le pseudo si possible
         let senderNickname = data.from_nickname || userNicknameCache.get(senderId.toString()) || `User ${senderId}`;
 
-      
-        // Affiche temporairement une alerte
-        alert(`📨 Nouveau message privé de ${senderNickname} : ${content}`);
-      
+        // Affiche une notification toast visuelle + son
+        if (typeof window.showToast === 'function') {
+          window.showToast(`📨 Nouveau message privé de ${senderNickname} : ${content}`);
+        }
         // TODO : remplacer alert() par un toast/badge plus tard
       }
       
