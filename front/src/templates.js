@@ -45,9 +45,14 @@ export const postFormTemplate = (classes) => `
       <label for="post-category">Category</label>
       <select id="post-category" name="category" required>
         <option value="General">General</option>
-        <option value="Question">Question</option>
-        <option value="Discussion">Discussion</option>
-        <option value="Announcement">Announcement</option>
+        <option value="Droid-Care">Droid Care</option>
+        <option value="Droid-Life">Droid Life</option>
+        <option value="Jedi-Teachings">Jedi Teachings</option>
+        <option value="Jedi-Training">Jedi Training</option>
+        <option value="Politics">Politics</option>
+        <option value="Rebellion">Rebellion</option>
+        <option value="Smuggling">Smuggling</option>
+        <option value="Wookiee-Life">Wookiee Life</option>
       </select>
     </div>
     <div class="${classes.formGroup}">
@@ -62,19 +67,19 @@ export const postFormTemplate = (classes) => `
 `;
 
 export const postTemplate = (classes, post, formattedDate) => `
-<div class="post-header">
+<div class="${classes.postHeader}">
     <h2 class="${classes.postTitle}">
         <a href="/post/${post.id}">${post.title}</a>
     </h2>
-    <span class="post-category">${post.category}</span>
+    <span class="${classes.postCategory}">${post.category}</span>
 </div>
-<div class="post-content">
-    <p class="post-content">${post.text_content}</p>
+<div class="${classes.postContent}">
+    <p class="${classes.postContent}">${post.text_content}</p>
 </div>
-<div class="post-footer">
-    <div class="post-meta">
-        <span class="post-author">Posted by: ${post.user_nickname}</span>
-        <span class="post-date">• ${formattedDate}</span>
+<div class="${classes.postFooter}">
+    <div class="${classes.postMeta}">
+        <span class="${classes.postAuthor}">Posted by: ${post.user_nickname}</span>
+        <span class="${classes.postDate}">• ${formattedDate}</span>
     </div>
 </div>
 `;

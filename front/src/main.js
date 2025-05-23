@@ -3,46 +3,6 @@ import { renderNavigation } from './components/Navigation.js';
 import { connectWebSocket } from './websocket.js';
 // import './styles/Main.module.css';
 
-// document.addEventListener('DOMContentLoaded', async () => {
-//     const appElement = document.getElementById('app');
-//
-//     // Render navigation bar
-//     const navElement = renderNavigation();
-//     appElement.appendChild(navElement);
-//
-//     // Create main content container
-//     const mainContent = document.createElement('main');
-//     mainContent.id = 'main-content';
-//     appElement.appendChild(mainContent);
-//
-//     // Initialize router
-//     router.init();
-//
-//     // Check if user is already logged in
-//     const token = localStorage.getItem('token');
-//     // const userData = localStorage.getItem('userData');
-//
-//     // if (token && userData) {
-//     //     // Update UI for logged in user
-//     //     const userDataObj = JSON.parse(userData);
-//     //     updateAuthUI(userDataObj);
-//     //
-//     // }
-//
-//     if (token) {
-//         // Fetch user data
-//         try {
-//             const userData = await api.get('/user'); // Assuming you have an endpoint to get user data
-//             updateAuthUI(userData);
-//         } catch (error) {
-//             console.error('Failed to fetch user data:', error);
-//         }
-//
-//     }
-//
-// });
-
-
 document.addEventListener('DOMContentLoaded', async () => {
     const appElement = document.getElementById('app');
 
@@ -62,33 +22,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Fonction globale pour afficher un toast
-    window.showToast = function(message) {
-        const toastContainer = document.getElementById('toast-container');
-        if (!toastContainer) return;
-        const toast = document.createElement('div');
-        toast.className = 'toast-notif-red';
-        toast.innerHTML = `<span style="font-weight:bold;">${message}</span>`;
-        toast.style.background = 'rgba(255,0,0,0.95)';
-        toast.style.color = '#fff';
-        toast.style.padding = '1rem 2rem';
-        toast.style.marginBottom = '1rem';
-        toast.style.borderRadius = '8px';
-        toast.style.boxShadow = '0 0 16px 4px #ff0000, 0 0 32px 8px #ff0000';
-        toast.style.fontSize = '1.1rem';
-        toast.style.letterSpacing = '1px';
-        toast.style.display = 'flex';
-        toast.style.alignItems = 'center';
-        toast.style.animation = 'toastFadeIn 0.3s';
-        toastContainer.appendChild(toast);
-        // Lecture du son
-        const audio = new Audio('/static/sounds/lightsaber3.mp3');
-        audio.play();
-        // Disparition auto
-        setTimeout(() => {
-            toast.style.animation = 'toastFadeOut 0.5s';
-            setTimeout(() => toast.remove(), 500);
-        }, 3500);
-    };
+    // unused (for alert boxes)
+    // window.showToast = function(message) {
+    //     const toastContainer = document.getElementById('toast-container');
+    //     if (!toastContainer) return;
+    //     const toast = document.createElement('div');
+    //     toast.className = 'toast-notif-red';
+    //     toast.innerHTML = `<span style="font-weight:bold;">${message}</span>`;
+    //     toast.style.background = 'rgba(255,0,0,0.95)';
+    //     toast.style.color = '#fff';
+    //     toast.style.padding = '1rem 2rem';
+    //     toast.style.marginBottom = '1rem';
+    //     toast.style.borderRadius = '8px';
+    //     toast.style.boxShadow = '0 0 16px 4px #ff0000, 0 0 32px 8px #ff0000';
+    //     toast.style.fontSize = '1.1rem';
+    //     toast.style.letterSpacing = '1px';
+    //     toast.style.display = 'flex';
+    //     toast.style.alignItems = 'center';
+    //     toast.style.animation = 'toastFadeIn 0.3s';
+    //     toastContainer.appendChild(toast);
+    //     // Lecture du son
+    //     const audio = new Audio('/static/sounds/lightsaber3.mp3');
+    //     audio.play();
+    //     // Disparition auto
+    //     setTimeout(() => {
+    //         toast.style.animation = 'toastFadeOut 0.5s';
+    //         setTimeout(() => toast.remove(), 500);
+    //     }, 3500);
+    // };
 
     // Create main content container
     const mainContent = document.createElement('main');
@@ -241,11 +202,31 @@ export async function updateAuthUI() {
     }
 }
 
-
-// Create a simple API client
+/**
+ * API module for making HTTP requests.
+ * @module api
+ */
 export const api = {
+    /**
+     * The base URL for the API.
+     * @type {string}
+     */
     baseUrl: 'http://localhost:8080/api',
 
+    /**
+     * Makes a GET request to the specified endpoint.
+     *
+     * @async
+     * @function get
+     * @param {string} endpoint - The API endpoint to send the GET request to.
+     * @returns {Promise<Object>} - A promise that resolves to the JSON response from the API.
+     * @throws {Error} - Throws an error if the request fails.
+     *
+     * @example
+     * api.get('/users')
+     *   .then(data => console.log(data))
+     *   .catch(error => console.error(error));
+     */
     async get(endpoint) {
         const token = localStorage.getItem('token');
         const headers = {
@@ -265,13 +246,29 @@ export const api = {
             return await response.json();
         } catch (error) {
             console.error('API Error:', error);
+            console.log("RESPONSE: ", response);
             throw error;
         }
     },
 
+    /**
+     * Makes a POST request to the specified endpoint with the provided data.
+     *
+     * @async
+     * @function post
+     * @param {string} endpoint - The API endpoint to send the POST request to.
+     * @param {Object} data - The data to be sent in the body of the POST request.
+     * @returns {Promise<Object>} - A promise that resolves to the JSON response from the API.
+     * @throws {Error} - Throws an error if the request fails.
+     *
+     * @example
+     * api.post('/users', { name: 'John Doe' })
+     *   .then(data => console.log(data))
+     *   .catch(error => console.error(error));
+     */
     async post(endpoint, data) {
         const token = localStorage.getItem('token');
-        console.log("<<<<<TOKEN",token)
+        // console.log("<<<<<TOKEN", token);
         const headers = {
             'Content-Type': 'application/json'
         };
@@ -296,10 +293,9 @@ export const api = {
 };
 
 // Ajoute l'animation CSS pour le toast
-const style = document.createElement('style');
-style.innerHTML = `
-@keyframes toastFadeIn { from { opacity: 0; transform: translateY(-20px);} to { opacity: 1; transform: translateY(0);} }
-@keyframes toastFadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px);} }
-`;
-document.head.appendChild(style);
-
+// const style = document.createElement('style');
+// style.innerHTML = `
+// @keyframes toastFadeIn { from { opacity: 0; transform: translateY(-20px);} to { opacity: 1; transform: translateY(0);} }
+// @keyframes toastFadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px);} }
+// `;
+// document.head.appendChild(style);

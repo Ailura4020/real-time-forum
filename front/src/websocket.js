@@ -141,12 +141,13 @@ export function connectWebSocket(token) {
   if (!token) {
     console.error('[WebSocket] No token provided for connection');
     return;
+  } else {
+    console.log('[WebSocket] Token provided for connection:', token);
   }
 
   // Close existing connection if one exists
   closeWebSocket();
-  
-  console.log("Token utilisé pour la connexion:", token);
+
   // socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
   const socket = new WebSocket('ws://localhost:8080/ws');
 
@@ -355,11 +356,38 @@ export function connectWebSocket(token) {
   };
   
   socket.onerror = (error) => {
+    // console.error('[Websocket] Error:', error);
     console.error('[Websocket] Error:', error);
+    console.error('[Websocket] Ready State:', getReadyState(socket.readyState));
+
+    // Log additional error details if available
+    if (error.message) {
+      console.error('[Websocket] Error Message:', error.message);
+    }
+
+    if (error.stack) {
+      console.error('[Websocket] Stack Trace:', error.stack);
+    }
   };
+
+  function getReadyState(state) {
+    switch (state) {
+      case WebSocket.CONNECTING:
+        return 'CONNECTING';
+      case WebSocket.OPEN:
+        return 'OPEN';
+      case WebSocket.CLOSING:
+        return 'CLOSING';
+      case WebSocket.CLOSED:
+        return 'CLOSED';
+      default:
+        return 'UNKNOWN';
+    }
+  }
 
   socket.onclose = (event) => {
     console.log('[Websocket] Connection closed:', event);
+    console.error('[Websocket] Ready State:', getReadyState(socket.readyState));
   };
 }
 
@@ -492,6 +520,7 @@ function displayMessage(message) {
 }
 
 export function getSocket() {
+  console.log('getSocket', socket);
   return socket;
 }
 

@@ -9,7 +9,7 @@ import (
 	"real-time-forum/api"
 	"real-time-forum/demo"
 	"time"
-	
+
 	"real-time-forum/config"
 	"real-time-forum/db"
 	middleware "real-time-forum/middlware"
@@ -82,7 +82,7 @@ func main() {
 
 	// DEMO
 	if first {
-		fmt.Println("LOL")
+		fmt.Println("DEMO MODE: Registering users and posts in the database...")
 		csvFilePathUsers := "./demo/users.csv"
 		demo.RegisterUsers(initDB, csvFilePathUsers)
 		csvFilePathPosts := "./demo/posts.csv"

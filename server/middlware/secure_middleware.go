@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -10,6 +11,7 @@ var (
 
 // SecurityHeaders is a middleware to set security headers
 func SecurityHeaders(next http.Handler) http.Handler {
+	fmt.Println("SecurityHeaders")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("X-Frame-Options", "DENY")

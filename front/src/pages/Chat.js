@@ -4,152 +4,18 @@ import { chatTemplate } from "../templates.js"
 import { connectWebSocket } from '../websocket.js';
 import { getSocket } from '../websocket.js';
 
-
 // Store current user data
 export let currentUser = null;
+export let currentReceiver = null;
+
 // Gestion de la pagination dans le chat
 let currentPage = 0;           // Page actuelle
 const PAGE_SIZE = 10;          // Nombre de messages par page
 let isLoadingMessages = false; // Évite les appels en double
 let hasMoreMessages = true;    // Pour arrêter le chargement quand on a tout récupéré
 
-
-// Store conversation history
-export const conversationHistory = {
-    conversations: [],
-
-    // Add a message to history
-    addMessage(userId, nickname, message, timestamp) {
-        let conversation = this.getConversation(userId);
-        if (!conversation) {
-            conversation = {
-                userId,
-                nickname,
-                messages: [],
-                lastUpdated: timestamp,
-                unread: false
-            };
-            this.conversations.push(conversation);
-        } else {
-            conversation.lastUpdated = timestamp;
-        }
-        conversation.unread = false;
-        conversation.messages.push({
-            content: message,
-            timestamp,
-            fromCurrentUser: true
-        });
-        this.sortConversations();
-        this.saveToStorage();
-        renderRecentConversations();
-    },
-
-    // Add a received message
-    addReceivedMessage(userId, nickname, message, timestamp) {
-        let conversation = this.getConversation(userId);
-        if (!conversation) {
-            conversation = {
-                userId,
-                nickname,
-                messages: [],
-                lastUpdated: timestamp,
-                unread: true
-            };
-            this.conversations.push(conversation);
-        } else {
-            conversation.lastUpdated = timestamp;
-        }
-        conversation.unread = true;
-        conversation.messages.push({
-            content: message,
-            timestamp,
-            fromCurrentUser: false
-        });
-        this.sortConversations();
-        this.saveToStorage();
-        renderRecentConversations();
-    },
-
-    // Get a conversation by user ID
-    getConversation(userId) {
-        // Ensure userId is a string for consistent comparison
-        if (userId === null || userId === undefined) {
-            console.warn('[Chat] getConversation called with invalid userId', userId);
-            return null;
-        }
-
-        const userIdStr = userId.toString();
-        console.log(`[Chat] Looking for conversation with userId: ${userIdStr}`);
-
-        const conversation = this.conversations.find(c => {
-            if (!c.userId) {
-                return false;
-            }
-            return c.userId.toString() === userIdStr;
-        });
-
-        if (conversation) {
-            console.log(`[Chat] Found conversation with ${conversation.nickname}`);
-        } else {
-            console.log(`[Chat] No conversation found for userId: ${userIdStr}`);
-        }
-
-        return conversation;
-    },
-
-    // Sort conversations by last updated time
-    sortConversations() {
-        this.conversations.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
-    },
-
-    // Load conversations from localStorage
-    loadFromStorage() {
-        if (!currentUser) return;
-
-        const stored = localStorage.getItem(`chat_history_${currentUser.id}`);
-        if (stored) {
-            try {
-                this.conversations = JSON.parse(stored);
-                console.log('[Chat] Loaded conversation history:', this.conversations.length, 'conversations');
-            } catch (e) {
-                console.error('[Chat] Failed to load conversation history:', e);
-                this.conversations = [];
-            }
-        }
-    },
-
-    // Save conversations to localStorage
-    saveToStorage() {
-        if (!currentUser) return;
-
-        try {
-            localStorage.setItem(`chat_history_${currentUser.id}`, JSON.stringify(this.conversations));
-        } catch (e) {
-            console.error('[Chat] Failed to save conversation history:', e);
-        }
-    }
-};
-
-// Function to clean up chat resources
-export function cleanupChat() {
-    // Reset chat state
-    currentUser = null;
-    currentReceiver = null;
-
-    // Close WebSocket connection - we'll use the global instance
-    // that's already imported at the top of the file
-    if (typeof closeWebSocket === 'function') {
-        closeWebSocket();
-    }
-
-    console.log('[Chat] Chat component cleaned up');
-}
-
-// Make the cleanup function globally available for the router
-window.chatCleanupFunction = cleanupChat;
-
 export async function renderChat(container) {
-    console.log("CLASSES", classes)
+    // console.log("CLASSES", classes) // CSS modules
     // Make classes available globally for other modules
     window.chatClasses = classes;
 
@@ -193,7 +59,7 @@ export async function renderChat(container) {
 
             // Load conversation history from local storage and from server
             await loadConversationsFromDatabase();
-            conversationHistory.loadFromStorage();
+            // conversationHistory.loadFromStorage();
             renderRecentConversations();
         }
 
@@ -303,6 +169,142 @@ export async function renderChat(container) {
     });
 }
 
+
+// Store conversation history
+export const conversationHistory = {
+    conversations: [],
+
+    // Add a message to history
+    addMessage(userId, nickname, message, timestamp) {
+        let conversation = this.getConversation(userId);
+        if (!conversation) {
+            conversation = {
+                userId,
+                nickname,
+                messages: [],
+                lastUpdated: timestamp,
+                unread: false
+            };
+            this.conversations.push(conversation);
+        } else {
+            conversation.lastUpdated = timestamp;
+        }
+        conversation.unread = false;
+        conversation.messages.push({
+            content: message,
+            timestamp,
+            fromCurrentUser: true
+        });
+        this.sortConversations();
+        // this.saveToStorage();
+        renderRecentConversations();
+    },
+
+    // Add a received message
+    addReceivedMessage(userId, nickname, message, timestamp) {
+        let conversation = this.getConversation(userId);
+        if (!conversation) {
+            conversation = {
+                userId,
+                nickname,
+                messages: [],
+                lastUpdated: timestamp,
+                unread: true
+            };
+            this.conversations.push(conversation);
+        } else {
+            conversation.lastUpdated = timestamp;
+        }
+        conversation.unread = true;
+        conversation.messages.push({
+            content: message,
+            timestamp,
+            fromCurrentUser: false
+        });
+        this.sortConversations();
+        // this.saveToStorage();
+        renderRecentConversations();
+    },
+
+    // Get a conversation by user ID
+    getConversation(userId) {
+        // Ensure userId is a string for consistent comparison
+        if (userId === null || userId === undefined) {
+            console.warn('[Chat] getConversation called with invalid userId', userId);
+            return null;
+        }
+
+        const userIdStr = userId.toString();
+        console.log(`[Chat] Looking for conversation with userId: ${userIdStr}`);
+
+        const conversation = this.conversations.find(c => {
+            if (!c.userId) {
+                return false;
+            }
+            return c.userId.toString() === userIdStr;
+        });
+
+        if (conversation) {
+            console.log(`[Chat] Found conversation with ${conversation.nickname}`);
+        } else {
+            console.log(`[Chat] No conversation found for userId: ${userIdStr}`);
+        }
+
+        return conversation;
+    },
+
+    // Sort conversations by last updated time
+    sortConversations() {
+        this.conversations.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+    },
+
+    // Load conversations from localStorage
+    // loadFromStorage() {
+    //     if (!currentUser) return;
+    //
+    //     const stored = localStorage.getItem(`chat_history_${currentUser.id}`);
+    //     if (stored) {
+    //         try {
+    //             this.conversations = JSON.parse(stored);
+    //             console.log('[Chat] Loaded conversation history:', this.conversations.length, 'conversations');
+    //         } catch (e) {
+    //             console.error('[Chat] Failed to load conversation history:', e);
+    //             this.conversations = [];
+    //         }
+    //     }
+    // },
+
+    // Save conversations to localStorage
+    // saveToStorage() {
+    //     if (!currentUser) return;
+    //
+    //     try {
+    //         localStorage.setItem(`chat_history_${currentUser.id}`, JSON.stringify(this.conversations));
+    //     } catch (e) {
+    //         console.error('[Chat] Failed to save conversation history:', e);
+    //     }
+    // }
+};
+
+// Function to clean up chat resources
+export function cleanupChat() {
+    // Reset chat state
+    currentUser = null;
+    currentReceiver = null;
+
+    // Close WebSocket connection - we'll use the global instance
+    // that's already imported at the top of the file
+    if (typeof closeWebSocket === 'function') {
+        closeWebSocket();
+    }
+
+    console.log('[Chat] Chat component cleaned up');
+}
+
+// Make the cleanup function globally available for the router
+window.chatCleanupFunction = cleanupChat;
+
+
 // Function to fetch user data
 async function fetchUserData() {
     const token = localStorage.getItem('token');
@@ -321,14 +323,14 @@ async function fetchUserData() {
 async function loadConversationsFromDatabase() {
     if (!currentUser) return;
 
-    console.log('[Chat] Loading conversation history from database');
+    console.log('[Chat] Loading conversation history from database for current user:', currentUser.id, '/' ,currentUser.nickname);
 
     try {
         // Clear existing conversations to avoid duplicates
         conversationHistory.conversations = [];
 
         // Fetch previous conversations from server
-        const response = await api.get('/conversations');
+        const response = await api.get('/messages/all');
         console.log('[Chat] Conversation response:', response);
 
         if (response && response.data && Array.isArray(response.data)) {
@@ -471,7 +473,7 @@ async function loadConversationsFromDatabase() {
             conversationHistory.sortConversations();
 
             // Save to localStorage
-            conversationHistory.saveToStorage();
+            // conversationHistory.saveToStorage();
 
             console.log('[Chat] Loaded', conversationHistory.conversations.length, 'conversations from database');
         }
@@ -479,8 +481,6 @@ async function loadConversationsFromDatabase() {
         console.error('[Chat] Error loading conversations from database:', error);
     }
 }
-
-export let currentReceiver = null;
 
 // Function to render recent conversations list
 function renderRecentConversations() {
@@ -673,6 +673,7 @@ function displayConversationHistory(conversation) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
 }
+
 function throttle(fn, delay) {
     let lastCall = 0;
     return function (...args) {
@@ -869,7 +870,7 @@ export function setCurrentReceiver(user) {
     if (conversation && (!conversation.nickname || conversation.nickname === 'undefined')) {
         conversation.nickname = user.nickname;
         // Save to storage with the updated nickname
-        conversationHistory.saveToStorage();
+        // conversationHistory.saveToStorage();
     }
 
     if (conversation) {
@@ -944,7 +945,6 @@ function openConversation(conversationId) {
 export function getCurrentReceiver() {
     return currentReceiver;
 }
-
 
 
 export function setupUserClickListener() {

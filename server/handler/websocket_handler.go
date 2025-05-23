@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"real-time-forum/models"
 	"real-time-forum/repository"
@@ -13,7 +14,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	//"github.com/gorilla/websocket"
 )
 
 // Config de l'upgrader WebSocket pour accepter toutes les origines
@@ -23,157 +23,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// var pour la connexion la db
-// var db *sql.DB
-
-// function gestion des connexions WebSocket
-//
-//	func HandleWebSocket(hub *utils.Hub) http.HandlerFunc {
-//		return func(w http.ResponseWriter, r *http.Request) {
-//			conn, err := upgrader.Upgrade(w, r, nil)
-//			if err != nil {
-//				fmt.Println("Erreur lors de l'upgrade :", err)
-//				return
-//			}
-//			defer conn.Close()
-//
-//			// Read the first message to get user information
-//			UserRepo := repository.NewUserRepository(db)
-//			UserService := service.NewUserService(UserRepo)
-//			// Mise à jour de l'état de l'utilisateur dans la base de données
-//			userID, err := GetUserInfo(r)
-//			if err != nil {
-//				fmt.Println("Erreur lors de la récupération des informations utilisateur :", err)
-//			}
-//			userInfo, err := UserService.GetNickname(userID)
-//			if err != nil {
-//				fmt.Println("Erreur lors de la mise à jour du statut :", err)
-//			}
-//
-//			var userList models.Userlist
-//			userList.UserID = userID
-//			userList.Nickname = userInfo
-//			fmt.Println("USERS:", userList)
-//			hub.AddClient(conn, &userList)
-//			hub.BroadcastUser()
-//
-//			for {
-//				_, _, err := conn.ReadMessage()
-//				if err != nil {
-//					break
-//				}
-//			}
-//			hub.RemoveClient(conn)
-//			hub.BroadcastUser()
-//		}
-//	}
-
-//func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		// Extract user ID from JWT token
-//		userID, err := utils.ExtractUserIDFromRequest(r)
-//		if err != nil {
-//			fmt.Println("Erreur lors de la récupération des informations utilisateur :", err)
-//			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-//			return
-//		}
-//
-//		fmt.Println("USER INFOR----------------------------------", userID)
-//
-//		conn, err := upgrader.Upgrade(w, r, nil)
-//		if err != nil {
-//			fmt.Println("Erreur lors de l'upgrade :", err)
-//			return
-//		}
-//		defer conn.Close()
-//		// hub := utils.NewHub()
-//		UserRepo := repository.NewUserRepository(db)
-//		UserService := service.NewUserService(UserRepo)
-//
-//		userInfo, err := UserService.GetNickname(userID)
-//		if err != nil {
-//			fmt.Println("Erreur lors de la mise à jour du statut :", err)
-//		}
-//
-//		var userList models.Userlist
-//		userList.UserID = userID
-//		userList.Nickname = userInfo
-//		fmt.Println("USERS:", userList)
-//		hub.AddClient(conn, &userList)
-//		hub.BroadcastUser()
-//
-//		for {
-//			messageType, message, err := conn.ReadMessage()
-//			if err != nil {
-//				hub.RemoveClient(conn)
-//				hub.BroadcastUser()
-//				fmt.Println("WebSocket connection error:", err)
-//				break
-//			}
-//
-//			fmt.Printf("Received message - Type: %d, Time: %s\n", messageType, time.Now().Format(time.RFC3339))
-//			fmt.Printf("Raw message content: %s\n", string(message))
-//
-//			var msg map[string]interface{}
-//			if err := json.Unmarshal(message, &msg); err != nil {
-//				fmt.Println("Error parsing JSON message:", err)
-//				continue
-//			}
-//			fmt.Printf("Parsed message content: %+v\n", msg)
-//
-//			if msg["type"] == "private_message" {
-//				fmt.Printf("Private message received at %s\n", time.Now().Format(time.RFC3339))
-//				fmt.Printf("Message details - From: %d, Content: %s\n", userID, msg["content"])
-//
-//				senderID := userID
-//
-//				// Récupérer 'to' et gérer les types possibles (string ou float64)
-//				var receiverID int
-//				switch v := msg["to"].(type) {
-//				case float64:
-//					receiverID = int(v) // Si "to" est un nombre
-//				case string:
-//					// Si "to" est une chaîne, tente de le convertir en nombre
-//					id, err := strconv.Atoi(v)
-//					if err != nil {
-//						fmt.Println("Erreur de conversion pour 'to' :", err)
-//						continue
-//					}
-//					receiverID = id
-//				default:
-//					fmt.Println("Type de 'to' inconnu :", v)
-//					continue
-//				}
-//
-//				content := msg["content"].(string)
-//
-//				err := savePrivateMessage(db, senderID, receiverID, content)
-//				if err != nil {
-//					fmt.Println("erreur insertion message privé :", err)
-//				}
-//
-//				hub.Mutex.Lock()
-//				for clientConn, user := range hub.Clients {
-//					if user.UserID == receiverID {
-//						err := clientConn.WriteJSON(map[string]interface{}{
-//							"type":     "private_message",
-//							"from":     senderID,
-//							"content":  content,
-//							"datetime": time.Now().Format("2006-01-02 15:04:05"),
-//						})
-//						if err != nil {
-//							fmt.Println("Erreur envoi message au destinataire :", err)
-//						}
-//					}
-//				}
-//				hub.Mutex.Unlock()
-//			}
-//
-//		}
-//	}
-//}
-
 func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
+	log.Println("HandleWebSocket")
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Extract user ID from JWT token
 		userID, err := utils.ExtractUserIDFromRequest(r)
@@ -182,13 +33,6 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-
-		//// Get the token from the request context
-		//tokenString, ok := r.Context().Value("token").(string)
-		//if !ok {
-		//	http.Error(w, "Token not found in context", http.StatusInternalServerError)
-		//	return
-		//}
 
 		tokenString, err := utils.ExtractTokenFromRequest(r)
 		if err != nil {
@@ -221,7 +65,6 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 		hub.Mutex.Unlock()
 
 		// If there was an existing connection, blacklist the previous token
-		// In a real implementation, you would blacklist the specific token used by the previous session
 		if existingConnection {
 			claims, _ := utils.ValidateJWT(tokenString)
 			if claims != nil {
@@ -233,8 +76,13 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 		}
 
 		conn, err := upgrader.Upgrade(w, r, nil)
+		//if err != nil {
+		//	fmt.Println("Erreur lors de l'upgrade :", err)
+		//	return
+		//}
 		if err != nil {
-			fmt.Println("Erreur lors de l'upgrade :", err)
+			fmt.Println("Error during WebSocket upgrade:", err)
+			http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
 			return
 		}
 		defer conn.Close()
@@ -262,6 +110,8 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 				utils.CleanupBlacklist()
 			}
 		}()
+
+		// todo, add more messageType (keyboard_in, keyboard_out for )
 
 		for {
 			messageType, message, err := conn.ReadMessage()
@@ -345,17 +195,3 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 		}
 	}
 }
-
-// // function pour enregistrer un msg privé dans la DB
-
-//func GetUserInfo(r *http.Request) (int, error) {
-//	cookie, err := r.Cookie("session_id")
-//	if err != nil {
-//		return 0, err
-//	}
-//	userID, err := strconv.Atoi(cookie.Value)
-//	if err != nil {
-//		return 0, err
-//	}
-//	return userID, nil
-//}

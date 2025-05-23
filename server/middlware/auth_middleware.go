@@ -9,6 +9,7 @@ import (
 
 // AuthMiddleware checks if the request has a valid JWT
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	fmt.Println("AuthMiddleware")
 	return func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
