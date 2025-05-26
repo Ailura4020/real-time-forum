@@ -106,11 +106,34 @@ h3 {
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 2px;
+    /* animation: glow 2s infinite; */
 }
+
+.logo {
+            display: inline-block;
+            animation: letterGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes letterGlow {
+            0%, 100% {
+                text-shadow: 
+                    0 0 5px var(--sw-blue),
+                    0 0 10px var(--sw-blue);
+            }
+            50% {
+                text-shadow: 
+                    0 0 15px var(--sw-yellow),
+                    0 0 25px var(--sw-yellow),
+                    0 0 35px var(--sw-yellow);
+            }
+        }
+
+
+
 
 .post-title {
     font-family: 'StarJediLogo', 'StarJedi', sans-serif;
-    font-size: 24px;
+    font-size: 40px;
     color: var(--sw-yellow);
     text-transform: capitalize;
     letter-spacing: 1px;
@@ -305,7 +328,7 @@ body::before {
 }
 
 .post-content {
-    margin: 15px 0;
+    margin: 20px 0;
     color: var(--sw-light);
     line-height: 1.8;
 }
@@ -409,9 +432,226 @@ body::before {
     100% { box-shadow: 0 0 5px var(--sw-yellow); }
 }
 
-.logo {
+/* .logo {
     animation: glow 2s infinite;
+} */
+
+/* Styles pour les commentaires */
+
+/* Container principal des commentaires */
+.comments-section {
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--sw-blue);
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 0 0 15px var(--sw-holo);
 }
+
+.comments-title {
+    font-family: 'StarJediLogo', 'StarJedi', sans-serif;
+    color: var(--sw-yellow);
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-transform: capitalize;
+    letter-spacing: 1px;
+    text-align: center;
+    border-bottom: 2px solid var(--sw-yellow);
+    padding-bottom: 10px;
+}
+
+/* Liste des commentaires */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Commentaire individuel */
+.comment-item {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--sw-gray);
+    border-left: 4px solid var(--sw-blue);
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.comment-item:hover {
+    border-left-color: var(--sw-yellow);
+    box-shadow: 0 0 12px var(--sw-holo);
+    transform: translateX(5px);
+}
+
+/* En-tête du commentaire */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--sw-gray);
+}
+
+.comment-author {
+    font-family: 'DINNext', sans-serif;
+    color: var(--sw-yellow);
+    font-weight: 600;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.comment-date {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: var(--sw-blue);
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* Contenu du commentaire */
+.comment-content {
+    font-family: 'DINNext', sans-serif;
+    color: var(--sw-light);
+    line-height: 1.6;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+}
+
+/* Séparateur entre commentaires */
+.comment-separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--sw-blue), transparent);
+    margin: 20px 0;
+    opacity: 0.5;
+}
+
+/* Compteur de commentaires */
+.comment-count {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: var(--sw-blue);
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 8px;
+    background-color: rgba(0, 191, 255, 0.1);
+    border-radius: 5px;
+    border: 1px solid var(--sw-blue);
+}
+
+/* Message quand aucun commentaire */
+.no-comments {
+    text-align: center;
+    color: var(--sw-gray);
+    font-style: italic;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px dashed var(--sw-gray);
+}
+
+/* Actions sur les commentaires */
+.comment-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comment-action-btn {
+    background-color: transparent;
+    color: var(--sw-blue);
+    border: 1px solid var(--sw-blue);
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.comment-action-btn:hover {
+    background-color: var(--sw-blue);
+    color: var(--sw-dark);
+    box-shadow: 0 0 8px var(--sw-blue);
+}
+
+/* Commentaires imbriqués (réponses) */
+.comment-reply {
+    margin-left: 30px;
+    margin-top: 15px;
+    border-left: 2px solid var(--sw-yellow);
+    padding-left: 15px;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.comment-reply .comment-item {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-left-color: var(--sw-yellow);
+}
+
+/* Animation d'apparition pour nouveaux commentaires */
+@keyframes commentAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.comment-item.new-comment {
+    animation: commentAppear 0.5s ease-out;
+}
+
+/* Effet holographique pour les commentaires récents */
+.comment-item.recent {
+    border-left-color: var(--sw-yellow);
+    background-color: rgba(255, 232, 31, 0.05);
+}
+
+.comment-item.recent::before {
+    content: 'NOUVEAU';
+    position: absolute;
+    top: -8px;
+    right: 15px;
+    background-color: var(--sw-yellow);
+    color: var(--sw-dark);
+    padding: 2px 8px;
+    font-size: 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .comment-reply {
+        margin-left: 15px;
+    }
+    
+    .comment-actions {
+        justify-content: center;
+    }
+}
+
+
 
 /*-----------------------------------------------------------BACKUP*/
 

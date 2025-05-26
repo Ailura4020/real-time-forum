@@ -1,9 +1,252 @@
+/* Container pour un commentaire individuel */
 .comment {
-
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
 }
-.comment-form-container{
 
+.comment:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-.comment-form{
+
+/* En-tête du commentaire */
+.commentHeader {
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 8px 8px 0 0;
+}
+
+.commentAuthor {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.commentDate {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Contenu du commentaire */
+.commentContent {
+    padding: 15px;
+    line-height: 1.6;
+    color: #333;
+    font-size: 14px;
+}
+
+.commentContent p {
+    margin: 0;
+}
+
+/* Footer du commentaire avec actions */
+.commentFooter {
+    padding: 10px 15px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.commentActions {
+    display: flex;
+    gap: 8px;
+}
+
+.commentActions button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.commentActions button:hover {
+    background-color: #545b62;
+}
+
+.likeButton {
+    background-color: #28a745 !important;
+}
+
+.likeButton:hover {
+    background-color: #218838 !important;
+}
+
+.dislikeButton {
+    background-color: #dc3545 !important;
+}
+
+.dislikeButton:hover {
+    background-color: #c82333 !important;
+}
+
+.replyButton {
+    background-color: #007bff !important;
+}
+
+.replyButton:hover {
+    background-color: #0056b3 !important;
+}
+
+/* Container pour le formulaire de commentaire */
+.commentFormContainer {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.commentFormContainer h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 18px;
+}
+
+/* Formulaire de commentaire */
+.commentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+}
+
+.formGroup input,
+.formGroup textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Actions du formulaire */
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.formActions button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.formActions button:hover {
+    background-color: #0056b3;
+}
+
+.formActions button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    background-color: #6c757d !important;
+}
+
+.cancelButton:hover {
+    background-color: #545b62 !important;
+}
+
+/* Commentaires imbriqués/réponses */
+.commentReplies {
+    margin-left: 30px;
+    margin-top: 15px;
+    padding-left: 15px;
+    border-left: 3px solid #e0e0e0;
+}
+
+.commentReplies .comment {
+    background-color: #fafafa;
+}
+
+/* États spéciaux */
+.comment.highlighted {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+.comment.deleted {
+    opacity: 0.6;
+    background-color: #f8f8f8;
+}
+
+.comment.deleted .commentContent {
+    font-style: italic;
+    color: #999;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .commentReplies {
+        margin-left: 15px;
+        padding-left: 10px;
+    }
     
+    .commentActions {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .commentActions button {
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+    
+    .formActions {
+        flex-direction: column;
+    }
+    
+    .formActions button {
+        width: 100%;
+    }
 }

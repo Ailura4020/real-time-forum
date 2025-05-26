@@ -151,7 +151,7 @@ button:disabled {
 .postTitle {
     margin: 0; /* Remove default margin */
     font-size: 1.5em; /* Larger font size for the title */
-    color: #007bff; /* Primary color for the title */
+    color: #FFE81F; /* Primary color for the title */
     /*color: red;*/
 }
 
@@ -165,10 +165,11 @@ button:disabled {
 }
 
 .postCategory {
-    background-color: red;
+    /* background-color: red; */
     display: block; /* Make category a block element */
+    font-family: 'StarJediLogo', 'StarJedi', sans-serif;
     font-size: 0.9em; /* Smaller font size for category */
-    color: #555; /* Darker gray for category text */
+    color: #00BFFF; /* Darker gray for category text */
     margin-top: 5px; /* Space above the category */
 }
 
@@ -181,6 +182,7 @@ button:disabled {
     margin: 0; /* Remove default margin */
     line-height: 1.6; /* Increase line height for readability */
     color: #333; /* Darker text color */
+    /* border: 1px solid #00BFFF */
 }
 
 .postFooter {
@@ -235,11 +237,209 @@ button:disabled {
     cursor: not-allowed; /* Not-allowed cursor for disabled button */
 }
 
+
+
+
 /*body{*/
 /*    background-color: red;*/
 /*}*/
 
 .postHeader {
     font-size: 30px !important;
-    background-color: blue;
+    background-color: #000000;
+}
+
+/*---------- SECTION COMMENTAIRES ----------*/
+
+/* Container principal pour toute la section commentaires */
+.commentsSection {
+    background-color: #f8f9fa;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 25px;
+    margin: 30px auto;
+    max-width: 800px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.commentsSection h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 20px;
+    text-align: center;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+/* Container pour un commentaire individuel */
+.comment {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.comment:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* En-tête du commentaire */
+.commentHeader {
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 8px 8px 0 0;
+}
+
+.commentAuthor {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.commentDate {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Contenu du commentaire */
+.commentContent {
+    padding: 15px;
+    line-height: 1.6;
+    color: #333;
+    font-size: 14px;
+}
+
+.commentContent p {
+    margin: 0;
+}
+
+/* Footer du commentaire avec actions */
+.commentFooter {
+    padding: 10px 15px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.commentActions {
+    display: flex;
+    gap: 8px;
+}
+
+.commentActions button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.commentActions button:hover {
+    background-color: #545b62;
+}
+
+.commentLikeButton {
+    background-color: #28a745 !important;
+}
+
+.commentLikeButton:hover {
+    background-color: #218838 !important;
+}
+
+.commentDislikeButton {
+    background-color: #dc3545 !important;
+}
+
+.commentDislikeButton:hover {
+    background-color: #c82333 !important;
+}
+
+.commentReplyButton {
+    background-color: #007bff !important;
+}
+
+.commentReplyButton:hover {
+    background-color: #0056b3 !important;
+}
+
+/* Container pour le formulaire de commentaire */
+.commentFormContainer {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.commentFormContainer h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Commentaires imbriqués/réponses */
+.commentReplies {
+    margin-left: 30px;
+    margin-top: 15px;
+    padding-left: 15px;
+    border-left: 3px solid #e0e0e0;
+}
+
+.commentReplies .comment {
+    background-color: #fafafa;
+}
+
+/* États spéciaux */
+.comment.highlighted {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+.comment.deleted {
+    opacity: 0.6;
+    background-color: #f8f8f8;
+}
+
+.comment.deleted .commentContent {
+    font-style: italic;
+    color: #999;
+}
+
+/* Responsive design pour les commentaires */
+@media (max-width: 768px) {
+    .commentsSection {
+        margin: 20px 10px;
+        padding: 15px;
+    }
+    
+    .commentReplies {
+        margin-left: 15px;
+        padding-left: 10px;
+    }
+    
+    .commentActions {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .commentActions button {
+        font-size: 11px;
+        padding: 5px 8px;
+    }
 }
