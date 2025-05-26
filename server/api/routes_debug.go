@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"real-time-forum/handler"
-	middleware "real-time-forum/middlware"
+	middleware "real-time-forum/middleware"
 )
 
 //func DevRoutes(router *mux.Router, errorLogger *log.Logger) {

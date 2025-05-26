@@ -12,7 +12,7 @@ import (
 
 	"real-time-forum/config"
 	"real-time-forum/db"
-	middleware "real-time-forum/middlware"
+	middleware "real-time-forum/middleware"
 )
 
 // AppConfig holds the application configuration

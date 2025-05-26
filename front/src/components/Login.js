@@ -1,5 +1,6 @@
-import { api, updateAuthUI } from '../main.js';
+import { api, updateAuthUI, setCookie, deleteCookie } from '../main.js';
 import { router } from '../router.js';
+import { connectWebSocket } from '../websocket.js';
 import '../styles/Login.module.css';
 
 export function renderLoginPage(container) {
@@ -23,9 +24,9 @@ export function renderLoginPage(container) {
             document.getElementById('logout').addEventListener('click', () => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('userData');
+                deleteCookie('jwt_token');
                 updateAuthUI();
                 renderLoginPage(container);
-
             });
         }, 0);
 
@@ -90,7 +91,11 @@ async function handleLogin(e) {
         if (response.success) {
             // Store token and user data
             localStorage.setItem('token', response.token);
+            setCookie('jwt_token', response.token, 7); // Store JWT in cookie for 7 days
             // localStorage.setItem('userData', JSON.stringify(response.data)); // no need
+
+            // Initiate WebSocket connection
+            connectWebSocket(response.token);
 
             // Update UI
             updateAuthUI(response.data);

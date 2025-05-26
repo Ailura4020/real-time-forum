@@ -5,9 +5,10 @@ import (
 	"log"
 	"net/http"
 	"real-time-forum/handler"
-	middleware "real-time-forum/middlware"
+	middleware "real-time-forum/middleware"
 	"real-time-forum/utils"
 	"strings"
+	"fmt"
 )
 
 func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
@@ -41,7 +42,8 @@ func RegisterRoutes(db *sql.DB, errorLogger *log.Logger) http.Handler {
 
 	// Websocket for chat
 	hub := utils.NewHub()
-	mux.HandleFunc("/ws", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/ws", middleware.WebSocketAuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("WebSocketAuthMiddleware: route")
 		handler.HandleWebSocket(hub, db)(w, r)
 	}))
 	

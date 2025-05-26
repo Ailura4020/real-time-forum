@@ -1,5 +1,6 @@
-import { api, updateAuthUI } from '../main.js';
+import { api, updateAuthUI, setCookie, deleteCookie } from '../main.js';
 import { router } from '../router.js';
+import { connectWebSocket } from '../websocket.js';
 import '../styles/Registration.module.css';
 
 export function renderRegistrationPage(container) {
@@ -23,6 +24,7 @@ export function renderRegistrationPage(container) {
             document.getElementById('logout').addEventListener('click', () => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('userData');
+                deleteCookie('jwt_token');
                 updateAuthUI();
                 renderRegistrationPage(container);
             });
@@ -151,6 +153,10 @@ async function handleRegistration(e) {
             // Store token and user data
             localStorage.setItem('token', response.token);
             localStorage.setItem('userData', JSON.stringify(response.data));
+            setCookie('jwt_token', response.token, 7); // Store JWT in cookie for 7 days
+
+            // Initiate WebSocket connection
+            connectWebSocket(response.token);
 
             // Update UI
             updateAuthUI(response.data);

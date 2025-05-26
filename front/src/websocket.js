@@ -1,6 +1,8 @@
 import { setupUserClickListener } from "./pages/Chat";
+import { deleteCookie } from "./main.js";
 
-export let socket = null;
+// Singleton WebSocket instance
+let socket = null;
 
 // Cache for user nicknames to ensure we always have a valid nickname
 const userNicknameCache = new Map();
@@ -148,8 +150,8 @@ export function connectWebSocket(token) {
   // Close existing connection if one exists
   closeWebSocket();
 
-  // socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
-  const socket = new WebSocket('ws://localhost:8080/ws');
+  // Create new WebSocket with token as query parameter
+  socket = new WebSocket(`ws://localhost:8080/ws?token=${encodeURIComponent(token)}`);
 
   socket.onopen = () => {
     console.log('WebSocket connection established');
@@ -346,6 +348,13 @@ export function connectWebSocket(token) {
         }
         // TODO : remplacer alert() par un toast/badge plus tard
       }
+      else if (data.type === 'system_message' && data.action === 'force_logout') {
+        alert('You have been logged out because your account was accessed from another location.');
+        localStorage.removeItem('token');
+        deleteCookie('jwt_token');
+        window.location.reload();
+        return;
+      }
       
       else {
         console.log('[WebSocket] Unknown message type:', data.type);
@@ -520,9 +529,9 @@ function displayMessage(message) {
 }
 
 export function getSocket() {
-  console.log('getSocket', socket);
   return socket;
 }
+window.getSocket = getSocket;
 
 let lastMessageTime = 0;
 const throttleDelay = 1000;  // Délai en ms (1 seconde)

@@ -63,7 +63,7 @@ export async function renderChat(container) {
             renderRecentConversations();
         }
 
-        connectWebSocket(token);
+        // connectWebSocket(token); // REMOVED: now handled globally
     }
 
     // Display user ID and nickname if available
@@ -940,7 +940,6 @@ function openConversation(conversationId) {
     // Ici, ajoute le code pour charger et afficher les messages
     loadConversationMessages(conversationId); // à adapter selon ton code
 }
-
 
 export function getCurrentReceiver() {
     return currentReceiver;

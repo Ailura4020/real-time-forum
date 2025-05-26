@@ -1,10 +1,13 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"real-time-forum/config"
+	"real-time-forum/utils"
+	// "strings"
 )
 
 // AuthMiddleware checks if the request has a valid JWT
@@ -94,4 +97,45 @@ func ValidateJWT(tokenString string) (*jwt.Token, error) {
 	})
 
 	return token, err
+}
+
+// ContextKey is a type for context keys used in middleware
+// This prevents collisions with other context keys
+// You may want to move this to a shared package if used elsewhere
+
+type ContextKey string
+
+const (
+	ContextUserID ContextKey = "user_id"
+	ContextToken  ContextKey = "token"
+)
+
+// WebSocketAuthMiddleware checks JWT, extracts user info, and adds it to context for WebSocket handlers
+func WebSocketAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	fmt.Println("WebSocketAuthMiddleware")
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Extract token from query parameter
+		tokenString := r.URL.Query().Get("token")
+		if tokenString == "" {
+			http.Error(w, "Unauthorized: No token provided in query", http.StatusUnauthorized)
+			return
+		}
+
+		fmt.Println("WebSocketAuthMiddleware: token from query =", tokenString)
+
+		// Validate token and extract user ID
+		claims, err := utils.ValidateJWT(tokenString)
+		if err != nil || claims == nil || claims.ID == 0 {
+			fmt.Println("WebSocketAuthMiddleware: token validation failed:", err)
+			http.Error(w, "Unauthorized: Invalid or expired token", http.StatusUnauthorized)
+			return
+		}
+
+		// Add user ID and token to context
+		ctx := context.WithValue(r.Context(), ContextUserID, claims.ID)
+		ctx = context.WithValue(ctx, ContextToken, tokenString)
+
+		// Call the next handler with the new context
+		next(w, r.WithContext(ctx))
+	}
 }

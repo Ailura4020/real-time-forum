@@ -10,6 +10,7 @@ import (
 	"real-time-forum/repository"
 	"real-time-forum/service"
 	"real-time-forum/utils"
+	"real-time-forum/middleware"
 	"strconv"
 	"time"
 
@@ -26,21 +27,19 @@ var upgrader = websocket.Upgrader{
 func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 	log.Println("HandleWebSocket")
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Extract user ID from JWT token
-		userID, err := utils.ExtractUserIDFromRequest(r)
-		if err != nil {
-			fmt.Println("Erreur lors de la récupération des informations utilisateur :", err)
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		// Get user ID and token from context (set by middleware)
+		ctx := r.Context()
+		userIDValue := ctx.Value(middleware.ContextUserID)
+		tokenValue := ctx.Value(middleware.ContextToken)
+
+		userID, ok := userIDValue.(int)
+		tokenString, okToken := tokenValue.(string)
+		if !ok || !okToken || userID == 0 || tokenString == "" {
+			http.Error(w, "Unauthorized: No user info in context", http.StatusUnauthorized)
 			return
 		}
 
-		tokenString, err := utils.ExtractTokenFromRequest(r)
-		if err != nil {
-			http.Error(w, "Invalid or missing token", http.StatusUnauthorized)
-			return
-		}
-
-		fmt.Println("USER INFO----------------------------------", userID)
+		fmt.Println("[HandleWebSocket] USER INFO", userID)
 
 		// Check if user already has an active connection and disconnect it
 		existingConnection := false
@@ -76,10 +75,6 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 		}
 
 		conn, err := upgrader.Upgrade(w, r, nil)
-		//if err != nil {
-		//	fmt.Println("Erreur lors de l'upgrade :", err)
-		//	return
-		//}
 		if err != nil {
 			fmt.Println("Error during WebSocket upgrade:", err)
 			http.Error(w, "Could not open websocket connection", http.StatusBadRequest)

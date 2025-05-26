@@ -148,12 +148,14 @@ npm serve
 - **Message broadcasting**: To broadcast messages to all connected clients, you'll need to maintain a list of active connections and send messages to each client. You can use a map to store active connections and iterate over it to send messages.
 - **Message queue**: To handle messages efficiently, you can use a message queue to store incoming messages and process them in a separate goroutine.
 
+- **singleton**: a singleton variable refers to a design pattern that restricts the instantiation of a class to a single instance. This is useful when exactly one object is needed to coordinate actions across the system.
+
 - JWT token
   - **Bearer** prefix indicates the type of authentication being used and is part of the standard way to send access tokens in HTTP requests. Bearer Token: A Bearer token is a type of access token that is used to authenticate requests to a server. The term "Bearer" indicates that the token is a bearer token, meaning that whoever possesses the token (the "bearer") can access the associated resources without needing to provide additional credentials.
 
 ### Front
 
-- **Tree-shaking**: is a term used in the context of JavaScript module bundlers (like Webpack and Rollup) to describe the process of eliminating unused code from the final bundle. It helps reduce the size of the output files by removing code that is not actually used in the application.
+- ~~**Tree-shaking**: is a term used in the context of JavaScript module bundlers (like Webpack and Rollup) to describe the process of eliminating unused code from the final bundle. It helps reduce the size of the output files by removing code that is not actually used in the application.~~
 - **Bundling**: is the process of combining multiple files (such as JavaScript, CSS, and images) into a single file or a few files. This is typically done to reduce the number of HTTP requests made by the browser when loading a web application.
 - **Pre-processors**: are tools that extend the capabilities of standard CSS (or other languages) by adding features such as variables, nesting, mixins, and functions. Examples of CSS pre-processors include Sass, Less, and Stylus.
 - **Post-processors**: are tools that modify CSS after it has been written, typically to add vendor prefixes, optimize the code, or apply other transformations. A common post-processor is PostCSS.
@@ -171,7 +173,75 @@ In Go (Golang), structuring your application using a handler, service, and repos
 **Service** | The service layer contains the business logic of your application. It acts as an intermediary between the handler and the repository. The responsibilities of a service include: Business Logic, Coordination, Transaction Management
 **Repository** | The repository layer is responsible for data access. It abstracts the data storage and retrieval logic, allowing you to interact with your data source (e.g., a database) without exposing the details to the service layer. The responsibilities of a repository include: Data Access, Data Mapping, Encapsulation
 
-### Benefits of Using This Structure
+### Benefits of Using This Structure (Clean Architecture or Onion Architecture)
 
 Separation of Concerns (Testability, Flexibility, Reusability, Scalability)
 
+Separates concerns into distinct layers such as handlers, services, and repositories.
+
+
+## websocket security
+
+### 1. **Token-Based Authentication (JWT) with WebSocket Handshake**
+   - **Description**: Use JWT tokens to authenticate users during the WebSocket handshake.
+   - **Pros**:
+     - Stateless: No need to store session data on the server.
+     - Easy to implement with existing JWT infrastructure.
+   - **Cons**:
+     - Security risk if the token is intercepted during the handshake.
+     - Tokens can be large, affecting the initial connection time.
+     - Requires additional validation logic on the server.
+
+### 2. **Session ID with In-Memory Store**
+   - **Description**: Use a session ID stored in an in-memory store (like Redis) to authenticate WebSocket connections.
+   - **Pros**:
+     - Fast access to session data.
+     - Can easily scale horizontally by using a shared in-memory store.
+   - **Cons**:
+     - Requires additional infrastructure (e.g., Redis).
+     - In-memory stores can be volatile unless configured for persistence.
+
+### 3. **OAuth 2.0 with WebSocket**
+   - **Description**: Use OAuth 2.0 for user authentication and obtain an access token for WebSocket connections.
+   - **Pros**:
+     - Well-established standard with support for various providers.
+     - Can provide fine-grained access control.
+   - **Cons**:
+     - More complex to implement than JWT.
+     - Requires managing token expiration and refresh logic.
+
+### 4. **Cookie-Based Authentication**
+   - **Description**: Use HTTP-only cookies to manage user sessions and authenticate WebSocket connections.
+   - **Pros**:
+     - Secure against XSS attacks if cookies are HTTP-only.
+     - Simplifies the authentication process as cookies are sent automatically with requests.
+   - **Cons**:
+     - Requires CORS configuration for cross-origin requests.
+     - Can be less flexible than token-based methods for mobile or third-party clients.
+
+### 5. **WebSocket Subprotocols**
+   - **Description**: Use subprotocols to negotiate authentication methods during the WebSocket handshake.
+   - **Pros**:
+     - Allows for custom authentication mechanisms.
+     - Can support multiple authentication methods in a single application.
+   - **Cons**:
+     - Adds complexity to the WebSocket implementation.
+     - Requires careful design to ensure security.
+
+### 6. **IP Whitelisting**
+   - **Description**: Restrict WebSocket connections to known IP addresses.
+   - **Pros**:
+     - Simple to implement for small applications or internal tools.
+     - Provides a layer of security by limiting access.
+   - **Cons**:
+     - Not scalable for public applications.
+     - Users with dynamic IPs may face connectivity issues.
+
+### 7. **Rate Limiting and Connection Throttling**
+   - **Description**: Implement rate limiting on WebSocket connections to prevent abuse.
+   - **Pros**:
+     - Protects the server from overload and denial-of-service attacks.
+     - Can improve overall application performance.
+   - **Cons**:
+     - Requires additional logic to track connection rates.
+     - May impact legitimate users if not configured properly.

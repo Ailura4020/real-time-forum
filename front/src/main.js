@@ -3,6 +3,32 @@ import { renderNavigation } from './components/Navigation.js';
 import { connectWebSocket } from './websocket.js';
 // import './styles/Main.module.css';
 
+// Cookie utility functions
+export function setCookie(name, value, days) {
+  let expires = '';
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = '; expires=' + date.toUTCString();
+  }
+  document.cookie = name + '=' + (value || '') + expires + '; path=/';
+}
+
+export function getCookie(name) {
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+export function deleteCookie(name) {
+  document.cookie = name + '=; Max-Age=-99999999; path=/';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const appElement = document.getElementById('app');
 
@@ -21,36 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         appElement.appendChild(toastContainer);
     }
 
-    // Fonction globale pour afficher un toast
-    // unused (for alert boxes)
-    // window.showToast = function(message) {
-    //     const toastContainer = document.getElementById('toast-container');
-    //     if (!toastContainer) return;
-    //     const toast = document.createElement('div');
-    //     toast.className = 'toast-notif-red';
-    //     toast.innerHTML = `<span style="font-weight:bold;">${message}</span>`;
-    //     toast.style.background = 'rgba(255,0,0,0.95)';
-    //     toast.style.color = '#fff';
-    //     toast.style.padding = '1rem 2rem';
-    //     toast.style.marginBottom = '1rem';
-    //     toast.style.borderRadius = '8px';
-    //     toast.style.boxShadow = '0 0 16px 4px #ff0000, 0 0 32px 8px #ff0000';
-    //     toast.style.fontSize = '1.1rem';
-    //     toast.style.letterSpacing = '1px';
-    //     toast.style.display = 'flex';
-    //     toast.style.alignItems = 'center';
-    //     toast.style.animation = 'toastFadeIn 0.3s';
-    //     toastContainer.appendChild(toast);
-    //     // Lecture du son
-    //     const audio = new Audio('/static/sounds/lightsaber3.mp3');
-    //     audio.play();
-    //     // Disparition auto
-    //     setTimeout(() => {
-    //         toast.style.animation = 'toastFadeOut 0.5s';
-    //         setTimeout(() => toast.remove(), 500);
-    //     }, 3500);
-    // };
-
     // Create main content container
     const mainContent = document.createElement('main');
     mainContent.id = 'main-content';
@@ -65,6 +61,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Token is valid, update UI with user data
             const userData = await api.get('/user');
             updateAuthUI(userData);
+            // Reconnect WebSocket on page load
+            connectWebSocket(token);
         } else {
             // Token was invalid and has been cleared
             updateAuthUI();
