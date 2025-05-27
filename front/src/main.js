@@ -36,16 +36,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const navElement = renderNavigation();
     appElement.appendChild(navElement);
 
-    // Ajoute le conteneur de toast notifications
-    if (!document.getElementById('toast-container')) {
-        const toastContainer = document.createElement('div');
-        toastContainer.id = 'toast-container';
-        toastContainer.style.position = 'fixed';
-        toastContainer.style.top = '2rem';
-        toastContainer.style.right = '2rem';
-        toastContainer.style.zIndex = '2000';
-        appElement.appendChild(toastContainer);
-    }
+    // // Ajoute le conteneur de toast notifications
+    // if (!document.getElementById('toast-container')) {
+    //     const toastContainer = document.createElement('div');
+    //     toastContainer.id = 'toast-container';
+    //     toastContainer.style.position = 'fixed';
+    //     toastContainer.style.top = '2rem';
+    //     toastContainer.style.right = '2rem';
+    //     toastContainer.style.zIndex = '2000';
+    //     appElement.appendChild(toastContainer);
+    // }
 
     // Create main content container
     const mainContent = document.createElement('main');

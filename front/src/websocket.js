@@ -139,9 +139,19 @@ function getCurrentUserId() {
   return null;
 }
 
+let reconnectAttempts = 0;
+let reconnectTimeout = null;
+
+function showWsStatus(status, text) {
+  if (typeof window.updateWsStatus === 'function') {
+    window.updateWsStatus(status, text);
+  }
+}
+
 export function connectWebSocket(token) {
   if (!token) {
     console.error('[WebSocket] No token provided for connection');
+    showWsStatus('disconnected', 'Disconnected');
     return;
   } else {
     console.log('[WebSocket] Token provided for connection:', token);
@@ -150,11 +160,20 @@ export function connectWebSocket(token) {
   // Close existing connection if one exists
   closeWebSocket();
 
+  // Show connecting status
+  showWsStatus('connecting', 'Connecting...');
+
   // Create new WebSocket with token as query parameter
   socket = new WebSocket(`ws://localhost:8080/ws?token=${encodeURIComponent(token)}`);
 
   socket.onopen = () => {
     console.log('WebSocket connection established');
+    reconnectAttempts = 0;
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
+      reconnectTimeout = null;
+    }
+    showWsStatus('connected', 'Connected');
       
       // Make sure current user is properly loaded
       if (!window.currentUser) {
@@ -372,12 +391,13 @@ export function connectWebSocket(token) {
     } else {
       console.error('[Websocket] Ready State: socket is null');
     }
-
+    showWsStatus('error', 'Connection error');
+    // Attempt to reconnect after a delay
+    attemptReconnect(token);
     // Log additional error details if available
     if (error.message) {
       console.error('[Websocket] Error Message:', error.message);
     }
-
     if (error.stack) {
       console.error('[Websocket] Stack Trace:', error.stack);
     }
@@ -400,12 +420,26 @@ export function connectWebSocket(token) {
 
   socket.onclose = (event) => {
     console.log('[Websocket] Connection closed:', event);
+    showWsStatus('disconnected', 'Disconnected');
     if (socket) {
       console.error('[Websocket] Ready State:', getReadyState(socket.readyState));
     } else {
       console.error('[Websocket] Ready State: socket is null');
     }
+    // Attempt to reconnect after a delay
+    attemptReconnect(token);
   };
+}
+
+function attemptReconnect(token) {
+  reconnectAttempts++;
+  const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // Exponential backoff, max 30s
+  showWsStatus('reconnecting', `Reconnecting in ${Math.round(delay / 1000)}s...`);
+  if (reconnectTimeout) clearTimeout(reconnectTimeout);
+  reconnectTimeout = setTimeout(() => {
+    showWsStatus('reconnecting', 'Reconnecting...');
+    connectWebSocket(token);
+  }, delay);
 }
 
 // Fonction pour retirer un utilisateur de la liste

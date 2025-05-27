@@ -31,15 +31,25 @@ export async function renderChat(container) {
     };
 
     // Clear the container before rendering
-    container.innerHTML = ''; // Clear the container
+    container.innerHTML = '';
 
     // Set up a cleanup function for when the component is unmounted
-    // This is crucial for clean state management
     window.addEventListener('beforeunload', cleanupChat);
 
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = chatTemplate(classes); // Use the template with the classes
     container.appendChild(tempDiv);
+
+    // Add WebSocket status indicator
+    let wsStatus = document.createElement('div');
+    wsStatus.id = 'ws-status';
+    wsStatus.className = `${classes['ws-status']} ws-status connecting`;
+    wsStatus.textContent = 'Connecting...';
+    container.prepend(wsStatus);
+    window.updateWsStatus = function(status, text) {
+        wsStatus.className = `${classes['ws-status']} ws-status ${status}`;
+        wsStatus.textContent = text;
+    };
 
     const token = localStorage.getItem('token');
     if (token) {
@@ -62,7 +72,8 @@ export async function renderChat(container) {
             renderRecentConversations();
         }
 
-        // connectWebSocket(token); // REMOVED: now handled globally
+        // Ensure WebSocket is connected after status indicator is set
+        connectWebSocket(token);
     }
 
     // Display user ID and nickname if available
