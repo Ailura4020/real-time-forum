@@ -599,3 +599,8 @@
     font-weight: bold;
     color: var(--sw-yellow);
 }
+
+#messages {
+    height: 400px; /* or whatever fits your layout */
+    overflow-y: auto;
+}

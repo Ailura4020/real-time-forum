@@ -467,17 +467,25 @@ function displayConversationHistory(conversation) {
     const messagesContainer = document.getElementById('messages');
     if (!messagesContainer) return;
 
+    // Initialize displayedCount if not set
+    if (typeof conversation.displayedCount !== 'number') {
+        conversation.displayedCount = Math.min(10, conversation.messages.length);
+    }
+
+    // Only show the latest displayedCount messages
+    const messagesToShow = conversation.messages.slice(-conversation.displayedCount);
+
     // Clear current messages
     messagesContainer.innerHTML = '';
 
     // If no messages, show empty state
-    if (!conversation.messages || conversation.messages.length === 0) {
+    if (!messagesToShow || messagesToShow.length === 0) {
         messagesContainer.innerHTML = '<div class="empty-conversation">No messages yet. Start typing to begin conversation.</div>';
         return;
     }
 
     // Group messages by date for better organization
-    const messagesByDate = groupMessagesByDate(conversation.messages);
+    const messagesByDate = groupMessagesByDate(messagesToShow);
 
     // Display grouped messages with date separators
     Object.keys(messagesByDate).forEach(date => {
@@ -536,9 +544,17 @@ function displayConversationHistory(conversation) {
         });
     });
 
-    // Scroll to bottom
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
+    // Scroll to bottom (unless loading more)
+    if (!conversation._loadingMore) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    } else {
+        // Restore scroll position after prepending
+        if (conversation._oldScrollHeight) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight - conversation._oldScrollHeight;
+            conversation._oldScrollHeight = null;
+        }
+        conversation._loadingMore = false;
+    }
 }
 
 function throttle(fn, delay) {
@@ -553,17 +569,17 @@ function throttle(fn, delay) {
 }
 
 // Appel à l'API paginée
-async function fetchOlderMessages(userId, page) {
-    const offset = page * PAGE_SIZE;
+// async function fetchOlderMessages(userId, page) {
+//     const offset = page * PAGE_SIZE;
 
-    try {
-        const res = await api.get(`/messages/${userId}?offset=${offset}&limit=${PAGE_SIZE}`);
-        return res.data || [];
-    } catch (err) {
-        console.error("[Chat] Erreur lors du chargement des anciens messages :", err);
-        return [];
-    }
-}
+//     try {
+//         const res = await api.get(`/messages/${userId}?offset=${offset}&limit=${PAGE_SIZE}`);
+//         return res.data || [];
+//     } catch (err) {
+//         console.error("[Chat] Erreur lors du chargement des anciens messages :", err);
+//         return [];
+//     }
+// }
 
 // Ajoute les anciens messages en haut du conteneur
 function prependMessagesToConversation(conversation, messages) {
@@ -747,10 +763,12 @@ export function setCurrentReceiver(user) {
                 isLoadingMessages = true;
                 console.log("[Chat] Chargement de messages supplémentaires...");
 
-                const olderMessages = await fetchOlderMessages(conversation.userId, currentPage + 1);
-                if (olderMessages && olderMessages.length > 0) {
-                    prependMessagesToConversation(conversation, olderMessages);
-                    currentPage++;
+                // Infinite scroll: show 10 more messages if available
+                if (conversation.displayedCount < conversation.messages.length) {
+                    conversation._oldScrollHeight = messagesContainer.scrollHeight;
+                    conversation._loadingMore = true;
+                    conversation.displayedCount = Math.min(conversation.displayedCount + 10, conversation.messages.length);
+                    displayConversationHistory(conversation);
                 } else {
                     hasMoreMessages = false;
                     console.log("[Chat] Plus de messages à charger.");
