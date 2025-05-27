@@ -61,8 +61,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Token is valid, update UI with user data
             const userData = await api.get('/user');
             updateAuthUI(userData);
-            // Reconnect WebSocket on page load
-            connectWebSocket(token);
+            // Ensure WebSocket is connected for all logged-in users, on every page
+            if (window.getSocket && window.getSocket() && window.getSocket().readyState === WebSocket.OPEN) {
+                // Already connected, do nothing
+            } else {
+                connectWebSocket(token);
+            }
         } else {
             // Token was invalid and has been cleared
             updateAuthUI();

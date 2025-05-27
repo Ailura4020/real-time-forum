@@ -367,7 +367,11 @@ export function connectWebSocket(token) {
   socket.onerror = (error) => {
     // console.error('[Websocket] Error:', error);
     console.error('[Websocket] Error:', error);
-    console.error('[Websocket] Ready State:', getReadyState(socket.readyState));
+    if (socket) {
+      console.error('[Websocket] Ready State:', getReadyState(socket.readyState));
+    } else {
+      console.error('[Websocket] Ready State: socket is null');
+    }
 
     // Log additional error details if available
     if (error.message) {
@@ -396,7 +400,11 @@ export function connectWebSocket(token) {
 
   socket.onclose = (event) => {
     console.log('[Websocket] Connection closed:', event);
-    console.error('[Websocket] Ready State:', getReadyState(socket.readyState));
+    if (socket) {
+      console.error('[Websocket] Ready State:', getReadyState(socket.readyState));
+    } else {
+      console.error('[Websocket] Ready State: socket is null');
+    }
   };
 }
 
