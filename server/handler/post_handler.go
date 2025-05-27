@@ -108,28 +108,3 @@ func CreatePostHandler(db *sql.DB) http.HandlerFunc {
 		SendResponse(w, true, "Post created successfully", post, "")
 	}
 }
-
-//// ExtractUserIDFromRequest extracts the user ID from the request using the JWT token
-//func ExtractUserIDFromRequest(r *http.Request) (int, error) {
-//	// Get the Authorization header
-//	authHeader := r.Header.Get("Authorization")
-//	if authHeader == "" {
-//		return 0, fmt.Errorf("authorization header is required")
-//	}
-//
-//	// Split the header to get the token
-//	splitToken := strings.Split(authHeader, "Bearer ")
-//	if len(splitToken) != 2 {
-//		return 0, fmt.Errorf("invalid token format")
-//	}
-//
-//	tokenString := splitToken[1]
-//
-//	// Validate the token using the existing utils function
-//	claims, err := utils.ValidateJWT(tokenString)
-//	if err != nil {
-//		return 0, err
-//	}
-//
-//	return claims.ID, nil
-//}

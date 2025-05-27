@@ -59,7 +59,6 @@ export async function renderChat(container) {
 
             // Load conversation history from local storage and from server
             await loadConversationsFromDatabase();
-            // conversationHistory.loadFromStorage();
             renderRecentConversations();
         }
 
@@ -196,7 +195,6 @@ export const conversationHistory = {
             fromCurrentUser: true
         });
         this.sortConversations();
-        // this.saveToStorage();
         renderRecentConversations();
     },
 
@@ -222,68 +220,23 @@ export const conversationHistory = {
             fromCurrentUser: false
         });
         this.sortConversations();
-        // this.saveToStorage();
         renderRecentConversations();
     },
 
     // Get a conversation by user ID
     getConversation(userId) {
-        // Ensure userId is a string for consistent comparison
         if (userId === null || userId === undefined) {
             console.warn('[Chat] getConversation called with invalid userId', userId);
             return null;
         }
-
         const userIdStr = userId.toString();
-        console.log(`[Chat] Looking for conversation with userId: ${userIdStr}`);
-
-        const conversation = this.conversations.find(c => {
-            if (!c.userId) {
-                return false;
-            }
-            return c.userId.toString() === userIdStr;
-        });
-
-        if (conversation) {
-            console.log(`[Chat] Found conversation with ${conversation.nickname}`);
-        } else {
-            console.log(`[Chat] No conversation found for userId: ${userIdStr}`);
-        }
-
-        return conversation;
+        return this.conversations.find(c => c.userId && c.userId.toString() === userIdStr) || null;
     },
 
     // Sort conversations by last updated time
     sortConversations() {
         this.conversations.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
-    },
-
-    // Load conversations from localStorage
-    // loadFromStorage() {
-    //     if (!currentUser) return;
-    //
-    //     const stored = localStorage.getItem(`chat_history_${currentUser.id}`);
-    //     if (stored) {
-    //         try {
-    //             this.conversations = JSON.parse(stored);
-    //             console.log('[Chat] Loaded conversation history:', this.conversations.length, 'conversations');
-    //         } catch (e) {
-    //             console.error('[Chat] Failed to load conversation history:', e);
-    //             this.conversations = [];
-    //         }
-    //     }
-    // },
-
-    // Save conversations to localStorage
-    // saveToStorage() {
-    //     if (!currentUser) return;
-    //
-    //     try {
-    //         localStorage.setItem(`chat_history_${currentUser.id}`, JSON.stringify(this.conversations));
-    //     } catch (e) {
-    //         console.error('[Chat] Failed to save conversation history:', e);
-    //     }
-    // }
+    }
 };
 
 // Function to clean up chat resources
@@ -323,162 +276,65 @@ async function fetchUserData() {
 async function loadConversationsFromDatabase() {
     if (!currentUser) return;
 
-    console.log('[Chat] Loading conversation history from database for current user:', currentUser.id, '/' ,currentUser.nickname);
+    console.log('[Chat] Loading conversation history from database for current user:', currentUser.id, '/', currentUser.nickname);
 
     try {
         // Clear existing conversations to avoid duplicates
         conversationHistory.conversations = [];
 
         // Fetch previous conversations from server
-        const response = await api.get('/messages/all');
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No auth token found');
+        const response = await api.get('/messages/all', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
         console.log('[Chat] Conversation response:', response);
 
-        if (response && response.data && Array.isArray(response.data)) {
-            const conversations = response.data;
+        // Use response.conversations directly (not response.data.conversations)
+        if (response && Array.isArray(response.conversations)) {
+            const conversations = response.conversations;
 
-            // First, create a map of user IDs to nicknames
-            const nicknameMap = new Map();
-
-            // Fill the nickname map from conversations
             conversations.forEach(conversation => {
-                if (conversation.user_id && conversation.nickname) {
-                    nicknameMap.set(conversation.user_id.toString(), conversation.nickname);
-                }
-            });
-
-            console.log('[Chat] Nickname map:', Array.from(nicknameMap.entries()));
-
-            // Process each conversation
-            conversations.forEach(conversation => {
-                // Skip if no user_id or no messages
                 if (!conversation.user_id || !conversation.messages || !Array.isArray(conversation.messages) || conversation.messages.length === 0) {
                     console.log('[Chat] Skipping invalid conversation:', conversation);
                     return;
                 }
-
                 const userId = conversation.user_id.toString();
-                let nickname = conversation.nickname;
+                let nickname = conversation.nickname || `User ${userId}`;
+                let lastUpdated = conversation.last_updated || new Date().toISOString();
 
-                // If nickname is undefined or empty, try alternative sources
-                if (!nickname || nickname === 'undefined') {
-                    console.log(`[Chat] Missing nickname for user ID ${userId}, attempting to find it`);
+                // Map messages to expected format
+                const messages = conversation.messages.map(msg => ({
+                    content: msg.content,
+                    timestamp: msg.timestamp,
+                    fromCurrentUser: !!msg.is_from_current_user
+                }));
 
-                    // Try to get it from the nickname map
-                    nickname = nicknameMap.get(userId);
+                // Sort messages by timestamp (oldest first)
+                messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-                    // If still not found, try to find it in the DOM
-                    if (!nickname) {
-                        const userElement = document.getElementById(userId);
-                        if (userElement) {
-                            // Try data attribute first
-                            nickname = userElement.getAttribute('data-nickname');
-                            if (!nickname) {
-                                // Then try nickname span
-                                const nicknameSpan = userElement.querySelector('.user-nickname');
-                                if (nicknameSpan) {
-                                    nickname = nicknameSpan.textContent;
-                                }
-                            }
-                        }
-                    }
-
-                    // Still no nickname? Use a fallback
-                    if (!nickname) {
-                        nickname = `User ${userId}`;
-                    }
-
-                    console.log(`[Chat] Using nickname "${nickname}" for user ID ${userId}`);
-                }
-
-                console.log(`[Chat] Processing conversation with ${nickname} (${userId})`);
-
-                // Create the conversation object if it doesn't exist
-                let conv = conversationHistory.getConversation(userId);
-                if (!conv) {
-                    conv = {
-                        userId,
-                        nickname,
-                        messages: [],
-                        lastUpdated: new Date().toISOString()
-                    };
-                    conversationHistory.conversations.push(conv);
-                } else if (!conv.nickname || conv.nickname === 'undefined') {
-                    // Update nickname if the conversation exists but has a missing nickname
-                    conv.nickname = nickname;
-                    console.log(`[Chat] Updated existing conversation with nickname "${nickname}"`);
-                }
-
-                // Process messages in this conversation
-                conversation.messages.forEach(msg => {
-                    // Skip invalid messages
-                    if (!msg.content) {
-                        return;
-                    }
-
-                    // Make sure we have a valid from_id field
-                    const msgFromId = msg.from_id || msg.from || null;
-
-                    if (!msgFromId) {
-                        console.warn('[Chat] Message missing sender ID, skipping:', msg);
-                        return;
-                    }
-
-                    // Convert IDs to strings for reliable comparison
-                    const senderIdStr = msgFromId.toString();
-                    const currentUserId = currentUser.id ? currentUser.id.toString() : null;
-
-                    // Debug logging to trace issues
-                    console.log(`[Chat] Message from=${senderIdStr}, currentUser=${currentUserId}, comparing: ${senderIdStr === currentUserId}`);
-
-                    // Determine if the message is from current user
-                    const fromCurrentUser = senderIdStr === currentUserId;
-                    const timestamp = msg.timestamp || new Date().toISOString();
-
-                    // Check for timestamp validity
-                    let validTimestamp = timestamp;
-                    try {
-                        // Verify the timestamp is valid by creating a date
-                        new Date(timestamp);
-                    } catch (e) {
-                        console.warn('[Chat] Invalid timestamp in message:', timestamp);
-                        validTimestamp = new Date().toISOString();
-                    }
-
-                    // Add message directly to the conversation object
-                    conv.messages.push({
-                        content: msg.content,
-                        timestamp: validTimestamp,
-                        fromCurrentUser,
-                        senderId: senderIdStr // Store the sender ID for future reference
-                    });
-
-                    // Update the conversation's lastUpdated timestamp
-                    const msgTime = new Date(validTimestamp);
-                    const convTime = new Date(conv.lastUpdated);
-                    if (msgTime > convTime) {
-                        conv.lastUpdated = validTimestamp;
-                    }
+                conversationHistory.conversations.push({
+                    userId,
+                    nickname,
+                    messages,
+                    lastUpdated
                 });
-            });
-
-            // Sort conversations and messages
-            conversationHistory.conversations.forEach(conv => {
-                if (conv.messages && Array.isArray(conv.messages)) {
-                    // Sort messages by timestamp (oldest first)
-                    conv.messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-                }
             });
 
             // Sort conversations by last updated time
             conversationHistory.sortConversations();
 
-            // Save to localStorage
-            // conversationHistory.saveToStorage();
-
             console.log('[Chat] Loaded', conversationHistory.conversations.length, 'conversations from database');
+        } else {
+            throw new Error('Invalid response format from server');
         }
     } catch (error) {
         console.error('[Chat] Error loading conversations from database:', error);
+        // Show error to user
+        const container = document.getElementById('recent-conversations');
+        if (container) {
+            container.innerHTML = '<div class="error">Failed to load conversations. Please try again later.</div>';
+        }
     }
 }
 
@@ -869,8 +725,6 @@ export function setCurrentReceiver(user) {
     // If conversation exists but has no nickname, update it
     if (conversation && (!conversation.nickname || conversation.nickname === 'undefined')) {
         conversation.nickname = user.nickname;
-        // Save to storage with the updated nickname
-        // conversationHistory.saveToStorage();
     }
 
     if (conversation) {
@@ -905,19 +759,11 @@ export function setCurrentReceiver(user) {
 
         // Add to history
         conversationHistory.conversations.push(conversation);
-        conversationHistory.saveToStorage();
-
-        // Clear messages for new conversation
-        const messagesContainer = document.getElementById('messages');
-        if (messagesContainer) {
-            messagesContainer.innerHTML = '<div class="empty-conversation">No previous messages. Start a new conversation!</div>';
-        }
     }
 
     // Marquer la conversation comme lue
     if (conversation) {
         conversation.unread = false;
-        conversationHistory.saveToStorage();
         renderRecentConversations();
     }
 }
