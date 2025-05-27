@@ -427,6 +427,7 @@ export function connectWebSocket(token) {
       console.error('[Websocket] Ready State: socket is null');
     }
     // Attempt to reconnect after a delay
+    updateConnectedUsers()
     attemptReconnect(token);
   };
 }
