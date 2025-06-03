@@ -1,6 +1,8 @@
 package service
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"real-time-forum/models"
 	"real-time-forum/repository"
@@ -55,6 +57,10 @@ func (s *UserService) RegisterUser(req models.RegisterRequest) (models.User, err
 func (s *UserService) LoginUser(req models.LoginRequest) (models.User, error) {
 	user, err := s.UserRepo.GetUserByEmail(req.Email)
 	if err != nil {
+		// Check if it's a "no rows" error and return a more user-friendly message
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.User{}, fmt.Errorf("invalid credentials")
+		}
 		return models.User{}, err
 	}
 	if !CheckPasswordHash(req.Password, user.Password) {
