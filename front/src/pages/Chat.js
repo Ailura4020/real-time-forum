@@ -559,11 +559,29 @@ function displayConversationHistory(conversation) {
 
 function throttle(fn, delay) {
     let lastCall = 0;
+    let timeoutId = null;
+    
     return function (...args) {
         const now = Date.now();
-        if (now - lastCall >= delay) {
+        const remaining = delay - (now - lastCall);
+        
+        // Clear any existing timeout
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
+        
+        // If we can execute immediately
+        if (remaining <= 0) {
             lastCall = now;
             fn.apply(this, args);
+        } else {
+            // Otherwise, schedule for the remaining time
+            timeoutId = setTimeout(() => {
+                lastCall = Date.now();
+                timeoutId = null;
+                fn.apply(this, args);
+            }, remaining);
         }
     };
 }
@@ -841,7 +859,3 @@ export function setupUserClickListener() {
         });
     });
 }
-
-
-
-
