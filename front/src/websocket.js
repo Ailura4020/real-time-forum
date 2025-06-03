@@ -196,6 +196,7 @@ export function connectWebSocket(token) {
           }
         }
       }
+      updateConnectedUsers()
     
     // Clear any existing user list when establishing a new connection
     const userContainer = document.getElementById('connected-users');
@@ -245,6 +246,10 @@ export function connectWebSocket(token) {
           
           // Ensure users is an array
           const usersList = Array.isArray(data.users) ? data.users : [];
+
+          const sortedUsers = usersList.sort((a, b) =>
+  a.nickname.localeCompare(b.nickname)
+);
           
           // Check if container is empty
           if (container.children.length === 0 || 
@@ -252,7 +257,7 @@ export function connectWebSocket(token) {
             console.log('[WebSocket] Container was empty, populating from scratch');
           }
           
-          updateConnectedUsers(container, usersList);
+          updateConnectedUsers(container, sortedUsers);
           
           // Update nickname cache with connected users
           usersList.forEach(user => {
