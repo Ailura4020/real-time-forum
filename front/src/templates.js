@@ -1,5 +1,4 @@
 export const chatTemplate = (classes) => `
-  <div id="user-info" class="${classes.userInfo}"></div>
   <div class="chat">
     <h1>Chat</h1>
     <div class="${classes.chatLayout}">
