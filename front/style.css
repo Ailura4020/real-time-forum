@@ -198,6 +198,7 @@ body::before {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     z-index: -1;
+    pointer-events: none;
 }
 
 /* Navigation Styles */
@@ -719,9 +720,9 @@ body::before {
 /*}*/
 
 /*!* Common utility classes *!*/
-/*.hidden {*/
-/*    display: none !important;*/
-/*}*/
+.hidden {
+    display: none !important;
+}
 
 /*.error-message {*/
 /*    color: #dc3545;*/

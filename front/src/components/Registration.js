@@ -1,17 +1,17 @@
 import { api, updateAuthUI, setCookie, deleteCookie } from '../main.js';
 import { router } from '../router.js';
 import { connectWebSocket } from '../websocket.js';
-import '../styles/Registration.module.css';
+import classes from '../styles/Registration.module.css';
 
 export function renderRegistrationPage(container) {
     // Check if user is already logged in
     if (localStorage.getItem('token')) {
         container.innerHTML = `
-      <div class="auth-container">
+      <div class="${classes.auth-container}">
         <h1>Already Logged In</h1>
         <p>You are already registered and logged in.</p>
-        <button id="go-home" class="btn btn-primary">Go to Home</button>
-        <button id="logout" class="btn btn-secondary">Logout</button>
+        <button id="go-home" class="btn ${classes.btnPrimary}">Go to Home</button>
+        <button id="logout" class="btn ${classes.btnSecondary}">Logout</button>
       </div>
     `;
 
@@ -35,29 +35,29 @@ export function renderRegistrationPage(container) {
 
     // Render registration form
     container.innerHTML = `
-    <div class="auth-form-container">
+    <div class="${classes.authFormContainer}">
       <h1>Register</h1>
-      <form id="register-form" class="auth-form">
-        <div class="form-row">
-          <div class="form-group">
+      <form id="register-form" class="${classes.authForm}">
+        <div class="${classes.formRow}">
+          <div class="${classes.formGroup}">
             <label for="first-name">First Name</label>
             <input type="text" id="first-name" name="first_name" required>
           </div>
-          <div class="form-group">
+          <div class="${classes.formGroup}">
             <label for="last-name">Last Name</label>
             <input type="text" id="last-name" name="last_name" required>
           </div>
         </div>
-        <div class="form-group">
+        <div class="${classes.formGroup}">
           <label for="nickname">Nickname</label>
           <input type="text" id="nickname" name="nickname" required>
         </div>
-        <div class="form-row">
-          <div class="form-group">
+        <div class="${classes.formRow}">
+          <div class="${classes.formGroup}">
             <label for="age">Age</label>
             <input type="number" id="age" name="age" min="13" max="120" required>
           </div>
-          <div class="form-group">
+          <div class="${classes.formGroup}">
             <label for="gender">Gender</label>
             <select id="gender" name="gender" required>
               <option value="">Select...</option>
@@ -68,24 +68,24 @@ export function renderRegistrationPage(container) {
             </select>
           </div>
         </div>
-        <div class="form-group">
+        <div class="${classes.formGroup}">
           <label for="email">Email</label>
           <input type="email" id="email" name="email" required>
         </div>
-        <div class="form-group">
+        <div class="${classes.formGroup}">
           <label for="password">Password</label>
           <input type="password" id="password" name="password" minlength="8" required>
         </div>
-        <div class="form-group">
+        <div class="${classes.formGroup}">
           <label for="confirm-password">Confirm Password</label>
           <input type="password" id="confirm-password" name="confirm_password" minlength="8" required>
         </div>
-        <div id="register-error" class="error-message hidden"></div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Register</button>
+        <div id="register-error" class="${classes.errorMessage} hidden"></div>
+        <div class="${classes.formActions}">
+          <button type="submit" class="btn ${classes.btnPrimary}">Register</button>
         </div>
       </form>
-      <p class="auth-link">Already have an account? <a href="/login" id="login-link">Login</a></p>
+      <p class="${classes.authLink}">Already have an account? <a href="/login" id="login-link">Login</a></p>
     </div>
   `;
 

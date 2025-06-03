@@ -154,7 +154,7 @@ async function submitComment(postId, parentContainer) {
 
         const result = await response.json();
         console.log('Comment submitted successfully:', result);
-        alert('Comment submitted successfully!');
+        // alert('Comment submitted successfully!');
 
         // Reset form
         contentTextarea.value = '';

@@ -1,6 +1,6 @@
 /* src/styles/Login.module.css */
 
-.auth-form-container {
+.authFormContainer {
     max-width: 400px;
     margin: 50px auto;
     padding: 40px;
@@ -16,7 +16,7 @@
     align-items: center;
 }
 
-.auth-form-container::before {
+.authFormContainer::before {
     content: '';
     position: absolute;
     top: 0;
@@ -25,9 +25,10 @@
     bottom: 0;
     background: linear-gradient(45deg, rgba(0, 191, 255, 0.1), rgba(255, 232, 31, 0.1));
     z-index: 0;
+    pointer-events: none;
 }
 
-.auth-form-container h1 {
+.authFormContainer h1 {
     font-family: 'Segoe UI', Arial, sans-serif;
     color: var(--sw-yellow);
     text-align: center;
@@ -40,14 +41,14 @@
     z-index: 1;
 }
 
-.auth-form {
+.authForm {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.form-group {
+.formGroup {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -55,8 +56,8 @@
     margin-bottom: 10px;
 }
 
-.form-group label,
-.auth-form label {
+.formGroup label,
+.authForm label {
     color: #fff !important;
     font-family: 'DINNext', sans-serif !important;
     font-size: 14px !important;
@@ -68,10 +69,10 @@
     display: block !important;
 }
 
-.form-group input,
-.form-group select,
-.auth-form input,
-.auth-form select {
+.formGroup input,
+.formGroup select,
+.authForm input,
+.authForm select {
     width: 100% !important;
     min-width: 0 !important;
     padding: 12px 15px !important;
@@ -87,26 +88,26 @@
 }
 
 /* Effet sabre laser au focus */
-.form-group input:focus[name="email"] {
+.formGroup input:focus[name="email"] {
     border-color: #00FF7F !important; /* Vert Luke */
     box-shadow: 0 0 12px 3px #00FF7F !important;
 }
 
-.form-group input:focus[name="password"] {
+.formGroup input:focus[name="password"] {
     border-color: #FF0000 !important; /* Rouge Sith */
     box-shadow: 0 0 12px 3px #FF0000 !important;
 }
 
 /* Par défaut, lueur jaune */
-.form-group input:focus,
-.form-group select:focus {
+.formGroup input:focus,
+.formGroup select:focus {
     border-color: var(--sw-yellow) !important;
     box-shadow: 0 0 8px 2px var(--sw-yellow) !important;
 }
 
-.form-actions {
+.formActions {
     width: 100%;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -151,7 +152,7 @@
     box-shadow: 0 0 20px var(--sw-yellow);
 }
 
-.error-message {
+.errorMessage {
     background-color: rgba(255, 0, 0, 0.1);
     border: 1px solid var(--sw-red);
     color: var(--sw-red);
@@ -165,7 +166,7 @@
     z-index: 1;
 }
 
-.auth-link {
+.authLink {
     width: 100%;
     text-align: center;
     margin-top: 10px;
@@ -176,13 +177,13 @@
     z-index: 1;
 }
 
-.auth-link a {
+.authLink a {
     color: var(--sw-blue);
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
-.auth-link a:hover {
+.authLink a:hover {
     color: var(--sw-yellow);
     text-shadow: 0 0 10px var(--sw-yellow);
 }
@@ -194,24 +195,24 @@
     100% { box-shadow: 0 0 20px var(--sw-holo); }
 }
 
-.auth-container {
+.authContainer {
     max-width: 400px;
     margin: 2rem auto;
     padding: 2rem;
-    background-color: white;
+    background-color: red;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-.auth-container h1 {
+.authContainer h1 {
     margin-bottom: 1rem;
 }
 
-.auth-container p {
+.authContainer p {
     margin-bottom: 1.5rem;
 }
 
-.auth-container button {
+.authContainer button {
     margin: 0.5rem;
 }

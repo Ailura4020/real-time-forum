@@ -1,17 +1,17 @@
 import { api, updateAuthUI, setCookie, deleteCookie } from '../main.js';
 import { router } from '../router.js';
 import { connectWebSocket } from '../websocket.js';
-import '../styles/Login.module.css';
+import classes from'../styles/Login.module.css';
 
 export function renderLoginPage(container) {
     // Check if user is already logged in
     if (localStorage.getItem('token')) {
         container.innerHTML = `
-      <div class="auth-container">
+      <div class="${classes.authContainer}">
         <h1>Already Logged In</h1>
         <p>You are already logged in.</p>
-        <button id="go-home" class="btn btn-primary">Go to Home</button>
-        <button id="logout" class="btn btn-secondary">Logout</button>
+        <button id="go-home" class="btn ${classes.btnPrimary}">Go to Home</button>
+        <button id="logout" class="btn ${classes.btnSecondary}">Logout</button>
       </div>
     `;
 
@@ -35,23 +35,23 @@ export function renderLoginPage(container) {
 
     // Render login form
     container.innerHTML = `
-    <div class="auth-form-container">
+    <div class="${classes.authFormContainer}">
       <h1>Login</h1>
-      <form id="login-form" class="auth-form">
-        <div class="form-group">
+      <form id="login-form" class="${classes.authForm}">
+        <div class="f${classes.ormGroup}">
           <label for="email">Email</label>
           <input type="email" id="email" name="email" required>
         </div>
-        <div class="form-group">
+        <div class="${classes.formGroup}">
           <label for="password">Password</label>
           <input type="password" id="password" name="password" required>
         </div>
-        <div id="login-error" class="error-message hidden"></div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Login</button>
+        <div id="login-error" class="${classes.errorMessage} hidden"></div>
+        <div class="${classes.formActions}">
+          <button type="submit" class="btn ${classes.btnPrimary}">Login</button>
         </div>
       </form>
-      <p class="auth-link">Don't have an account? <a href="/register" id="register-link">Register</a></p>
+      <p class="authLink">Don't have an account? <a href="/register" id="register-link">Register</a></p>
     </div>
   `;
 

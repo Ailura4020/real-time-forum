@@ -1,6 +1,6 @@
 /* src/styles/Registration.module.css */
 
-.auth-form-container {
+.authFormContainer {
     max-width: 400px;
     margin: 50px auto;
     padding: 40px;
@@ -16,7 +16,7 @@
     align-items: center;
 }
 
-.auth-form-container::before {
+.authFormContainer::before {
     content: '';
     position: absolute;
     top: 0;
@@ -25,9 +25,10 @@
     bottom: 0;
     background: linear-gradient(45deg, rgba(0, 191, 255, 0.1), rgba(255, 232, 31, 0.1));
     z-index: 0;
+    pointer-events: none;
 }
 
-.auth-form-container h1 {
+.authFormContainer h1 {
     font-family: 'Segoe UI', Arial, sans-serif;
     color: var(--sw-yellow);
     text-align: center;
@@ -40,23 +41,23 @@
     z-index: 1;
 }
 
-.auth-form {
+.authForm {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.form-row {
+.formRow {
     display: flex;
     gap: 20px;
 }
 
-.form-row .form-group {
+.formRow .formGroup {
     flex: 1;
 }
 
-.form-group {
+.formGroup {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -64,8 +65,8 @@
     margin-bottom: 10px;
 }
 
-.form-group label,
-.auth-form label {
+.formGroup label,
+.authForm label {
     color: #fff !important;
     font-family: 'DINNext', sans-serif !important;
     font-size: 14px !important;
@@ -77,10 +78,10 @@
     display: block !important;
 }
 
-.form-group input,
-.form-group select,
-.auth-form input,
-.auth-form select {
+.formGroup input,
+.formGroup select,
+.authForm input,
+.authForm select {
     width: 100% !important;
     min-width: 0 !important;
     padding: 12px 15px !important;
@@ -95,7 +96,7 @@
     display: block !important;
 }
 
-.form-group select {
+.formGroup select {
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300BFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
@@ -104,40 +105,40 @@
     padding-right: 40px;
 }
 
-.form-group input:focus[name="first_name"],
-.form-group input:focus[name="last_name"],
-.form-group input:focus[name="nickname"] {
+.formGroup input:focus[name="first_name"],
+.formGroup input:focus[name="last_name"],
+.formGroup input:focus[name="nickname"] {
     border-color: #00BFFF !important; /* Bleu Jedi */
     box-shadow: 0 0 12px 3px #00BFFF !important;
 }
 
-.form-group input:focus[name="email"] {
+.formGroup input:focus[name="email"] {
     border-color: #00FF7F !important; /* Vert Luke */
     box-shadow: 0 0 12px 3px #00FF7F !important;
 }
 
-.form-group input:focus[name="password"],
-.form-group input:focus[name="confirm_password"] {
+.formGroup input:focus[name="password"],
+.formGroup input:focus[name="confirm_password"] {
     border-color: #FF0000 !important; /* Rouge Sith */
     box-shadow: 0 0 12px 3px #FF0000 !important;
 }
 
-.form-group input:focus[name="age"],
-.form-group select:focus[name="gender"] {
+.formGroup input:focus[name="age"],
+.formGroup select:focus[name="gender"] {
     border-color: #8A2BE2 !important; /* Violet Mace Windu */
     box-shadow: 0 0 12px 3px #8A2BE2 !important;
 }
 
 /* Pour tous les autres champs, lueur jaune par défaut */
-.form-group input:focus,
-.form-group select:focus {
+.formGroup input:focus,
+.formGroup select:focus {
     border-color: var(--sw-yellow) !important;
     box-shadow: 0 0 8px 2px var(--sw-yellow) !important;
 }
 
-.form-actions {
+.formActions {
     width: 100%;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -170,6 +171,7 @@
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 232, 31, 0.2), transparent);
     transition: 0.5s;
+    pointer-events: none;
 }
 
 .btn:hover::before {
@@ -182,7 +184,7 @@
     box-shadow: 0 0 20px var(--sw-yellow);
 }
 
-.error-message {
+.errorMessage {
     background-color: rgba(255, 0, 0, 0.1);
     border: 1px solid var(--sw-red);
     color: var(--sw-red);
@@ -196,7 +198,7 @@
     z-index: 1;
 }
 
-.auth-link {
+.authLink {
     width: 100%;
     text-align: center;
     margin-top: 10px;
@@ -207,13 +209,13 @@
     z-index: 1;
 }
 
-.auth-link a {
+.authLink a {
     color: var(--sw-blue);
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
-.auth-link a:hover {
+.authLink a:hover {
     color: var(--sw-yellow);
     text-shadow: 0 0 10px var(--sw-yellow);
 }
@@ -226,26 +228,26 @@
 }
 
 /* Style spécifique pour le select */
-.form-group select option {
+.formGroup select option {
     background-color: var(--sw-dark);
     color: var(--sw-light);
     padding: 10px;
 }
 
 /* Style pour les champs requis */
-.form-group input:required,
-.form-group select:required {
+.formGroup input:required,
+.formGroup select:required {
     border-left: 3px solid var(--sw-blue);
 }
 
 /* Style pour les champs valides */
-.form-group input:valid,
-.form-group select:valid {
+.formGroup input:valid,
+.formGroup select:valid {
     border-left: 3px solid var(--sw-yellow);
 }
 
 /* Style pour les champs invalides */
-.form-group input:invalid,
-.form-group select:invalid {
+.formGroup input:invalid,
+.formGroup select:invalid {
     border-left: 3px solid var(--sw-red);
 }
