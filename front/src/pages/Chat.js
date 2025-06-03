@@ -77,17 +77,20 @@ export async function renderChat(container) {
     }
 
     // Display user ID and nickname if available
-    const userInfoElement = container.querySelector('#user-info');
-    if (currentUser) {
-        userInfoElement.innerHTML = `
-            <p>User ID: ${currentUser.id}</p>
-            <p>Nickname: ${currentUser.nickname}</p>
-        `;
-    } else {
-        userInfoElement.innerHTML = '<p>User not logged in or data could not be retrieved.</p>';
-    }
+    // const userInfoElement = container.querySelector('#user-info');
+    // if (currentUser) {
+    //     userInfoElement.innerHTML = `
+    //         <p>User ID: ${currentUser.id}</p>
+    //         <p>Nickname: ${currentUser.nickname}</p>
+    //     `;
+    // } else {
+    //     userInfoElement.innerHTML = '<p>User not logged in or data could not be retrieved.</p>';
+    // }
 
     const sendButton = document.getElementById('send-button');
+
+    console.log("[sendButton]",sendButton);
+
     sendButton.addEventListener('click', async () => {
         console.log('[Chat] Attempting to send message to', currentReceiver);
 
