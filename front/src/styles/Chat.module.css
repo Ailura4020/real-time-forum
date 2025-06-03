@@ -3,7 +3,7 @@
     font-family: 'Segoe UI', Arial, sans-serif;
     background-color: var(--sw-dark);
     color: var(--sw-light);
-    height: 100vh;
+    height: 60vh;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -71,12 +71,11 @@
 }
 
 .usersList {
-    max-height: 400px;
+    max-height: 200px;
     overflow-y: auto;
-    color: var(--sw-light);
-    border: 1px solid var(--sw-blue);
-    border-radius: 5px;
-    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 5px 0;
 }
 
 .chatContent {
@@ -91,28 +90,30 @@
 }
 
 .chatMessages {
-    flex: 1;
-    background-color: rgba(0, 0, 0, 0.7);
-    border: 1px solid var(--sw-blue);
-    border-radius: 10px;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* height: 100vh; */
     overflow-y: auto;
-    margin-bottom: 20px;
-    color: var(--sw-light);
+    padding: 10px;
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #ffffff;
 }
 
 .message {
     font-family: 'Segoe UI', Arial, sans-serif;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #3c3c3c;
+    color: #ffffff;
     max-width: 80%;
     word-wrap: break-word;
-    position: relative;
-    animation: messageAppear 0.3s ease-out;
+    animation: newMessage 0.3s ease-out;
 }
 
-@keyframes messageAppear {
+@keyframes newMessage {
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -124,24 +125,24 @@
 }
 
 .message.sent {
-    background-color: rgba(0, 191, 255, 0.2);
-    border: 1px solid var(--sw-blue);
-    margin-left: auto;
-    border-radius: 15px 5px 15px 15px;
+    background-color: #2a5885;
+    margin-left: 20%;
+    border-radius: 10px 2px 10px 10px;
+    align-self: flex-end;
 }
 
 .message.received {
-    background-color: rgba(255, 232, 31, 0.1);
-    border: 1px solid var(--sw-yellow);
-    margin-right: auto;
-    border-radius: 5px 15px 15px 15px;
+    background-color: #3c3c3c;
+    margin-right: 20%;
+    border-radius: 2px 10px 10px 10px;
+    align-self: flex-start;
 }
 
 .message small {
     display: block;
     margin-top: 5px;
-    color: var(--sw-blue);
-    font-size: 12px;
+    color: #aaa;
+    font-size: 11px;
     text-align: right;
 }
 
@@ -168,6 +169,10 @@
     outline: none;
 }
 
+.chatInput input::placeholder {
+    color: #aaaaaa;
+}
+
 .sendButton {
     padding: 15px 30px;
     background-color: transparent;
@@ -187,36 +192,32 @@
     box-shadow: 0 0 20px var(--sw-yellow);
 }
 
-.userItem {
-    padding: 12px;
-    margin: 5px 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    border: 1px solid var(--sw-blue);
-    border-radius: 8px;
+.userItem, .user-item {
+    padding: 8px 12px;
+    margin: 2px 0;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    background-color: #3c3c3c;
+    margin-bottom: 5px;
 }
 
-.userItem:hover {
-    background-color: rgba(0, 191, 255, 0.1);
-    transform: translateX(5px);
-    border-color: var(--sw-yellow);
+.userItem:hover, .user-item:hover {
+    background-color: #4c4c4c;
 }
 
 .userOnline {
-    width: 10px;
-    height: 10px;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background-color: var(--sw-blue);
-    box-shadow: 0 0 10px var(--sw-blue);
+    background-color: #4CAF50;
+    margin-right: 5px;
 }
 
 .conversationItem {
-    padding: 12px;
-    margin: 5px 0;
+    padding: 8px 12px;
+    margin: 2px 0;
     background-color: rgba(0, 0, 0, 0.7);
     border: 1px solid var(--sw-blue);
     border-radius: 8px;
@@ -236,314 +237,6 @@
     box-shadow: 0 0 15px var(--sw-yellow);
 }
 
-.ws-status {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    z-index: 1000;
-    transition: all 0.3s ease;
-}
-
-.ws-status.connecting {
-    background-color: rgba(255, 232, 31, 0.2);
-    border: 2px solid var(--sw-yellow);
-    color: var(--sw-yellow);
-}
-
-.ws-status.connected {
-    background-color: rgba(0, 191, 255, 0.2);
-    border: 2px solid var(--sw-blue);
-    color: var(--sw-blue);
-}
-
-.ws-status.disconnected {
-    background-color: rgba(255, 0, 0, 0.2);
-    border: 2px solid var(--sw-red);
-    color: var(--sw-red);
-}
-
-.ws-status.reconnecting {
-    background-color: rgba(255, 232, 31, 0.2);
-    border: 2px solid var(--sw-yellow);
-    color: var(--sw-yellow);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-.sidebarSection {
-    margin-bottom: 20px;
-}
-
-/* Online Users section en haut, hauteur fixe */
-.sidebarSection:first-child {
-    flex: 0 0 auto;
-    min-height: unset;
-    max-height: unset;
-    overflow-y: unset;
-}
-
-/* Recent Conversations prend tout l'espace restant */
-.sidebarSection:last-child {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.conversationsList {
-    flex: 1 1 auto;
-    max-height: 100%;
-    overflow-y: auto;
-    border: 1px solid #444;
-    border-radius: 4px;
-    padding: 5px 0;
-    background-color: #2c2c2c;
-}
-
-.conversationItem {
-    padding: 8px 12px;
-    margin: 2px 0;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    background-color: #3c3c3c; /* Dark background for items */
-    color: #ffffff; /* Light text color */
-    border-bottom: 1px solid #444; /* Subtle separator between conversations */
-}
-
-.conversationItem:hover {
-    background-color: #4c4c4c; /* Slightly lighter on hover */
-}
-
-.conversationItem.active {
-    background-color: #007bff; /* Highlight active conversation */
-    font-weight: bold;
-}
-
-/* Style for conversation separators */
-.conversationSeparator {
-    text-align: center;
-    padding: 5px 0;
-    margin: 10px 0;
-    position: relative;
-}
-
-.conversationSeparator::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: #444; /* Line color */
-    z-index: 1;
-}
-
-.conversationSeparator span {
-    background-color: #2c2c2c; /* Same as message background */
-    padding: 0 10px;
-    position: relative;
-    z-index: 2;
-    color: #888; /* Subtle text color */
-    font-size: 12px;
-}
-
-.usersList {
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    padding: 5px 0;
-}
-
-/* Fix user item styling with the correct class name */
-.userItem, 
-.user-item {
-    padding: 8px 12px;
-    margin: 2px 0;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    background-color: #3c3c3c;
-    margin-bottom: 5px;
-}
-
-.userItem:hover, 
-.user-item:hover {
-    background-color: #4c4c4c;
-}
-
-/* Add styles for status indicators */
-.userOnline {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #4CAF50;
-    margin-right: 5px;
-}
-
-/* Add some styling for no-users message */
-.no-users {
-    padding: 10px;
-    text-align: center;
-    color: #888;
-    font-style: italic;
-}
-
-.message {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    background-color: #3c3c3c; /* Darker background for messages */
-    color: #ffffff; /* Light text color */
-    max-width: 80%;
-    word-wrap: break-word;
-}
-
-.message.sent {
-    background-color: #2a5885; /* Blue background for sent messages */
-    margin-left: 20%;
-    border-radius: 10px 2px 10px 10px;
-    align-self: flex-end;
-}
-
-.message.received {
-    background-color: #3c3c3c; /* Darker background for received messages */
-    margin-right: 20%;
-    border-radius: 2px 10px 10px 10px;
-    align-self: flex-start;
-}
-
-.chatMessages {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow-y: auto;
-    padding: 10px;
-    background-color: #2c2c2c; /* Dark background for chat */
-    border: 1px solid #444; /* Darker border */
-    border-radius: 5px;
-    color: #ffffff; /* Light text color */
-}
-
-/* New message time styling */
-.message small {
-    display: block;
-    margin-top: 5px;
-    color: #aaa;
-    font-size: 11px;
-    text-align: right;
-}
-
-.lastMessagePreview {
-    color: #666;
-    font-size: 0.8em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 180px;
-}
-
-.conversationTime {
-    font-size: 0.75em;
-    color: #888;
-}
-
-.chatInput input::placeholder {
-    color: #aaaaaa; /* Light gray placeholder text for better visibility */
-}
-
-.chatRecipient {
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #3c3c3c;
-    border-radius: 5px;
-    color: #ffffff;
-    border: 1px solid #444;
-    font-weight: bold;
-}
-
-/* Empty conversation message */
-.empty-conversation {
-    text-align: center;
-    padding: 20px;
-    color: #888;
-    font-style: italic;
-}
-
-/* Animation for new messages */
-@keyframes newMessage {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.message {
-    animation: newMessage 0.3s ease-out;
-}
-
-/* NOTIFICATIONS */
-/* Style pour la pastille rouge de notification */
-.user-notification {
-    position: relative;
-}
-
-.user-notification::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: red;
-    border: 2px solid white; /* Pour bien la faire ressortir */
-}
-
-/*ARCH*/
-
-/*.chatLayout {*/
-/*    display: flex;*/
-/*    border: 1px solid #ccc;*/
-/*    height: 400px;*/
-/*}*/
-/*.chatSidebar {*/
-/*    width: 200px;*/
-/*    border-right: 1px solid #ccc;*/
-/*    padding: 10px;*/
-/*    overflow-y: auto;*/
-/*    background: #f0f0f0;*/
-/*}*/
-/*.chatSidebar h3{*/
-/*    color: green;*/
-/*}*/
-
-/*.usersList {*/
-/*    border: 1px solid #aaa;*/
-/*    padding: 10px;*/
-/*    background: white;*/
-/*    height: 300px;*/
-/*    overflow-y: auto;*/
-/*}*/
-/*.userItem {*/
-/*    padding: 5px;*/
-/*    margin-bottom: 5px;*/
-/*    background: #e8e8e8;*/
-/*    border-radius: 4px;*/
-/*    cursor: pointer;*/
-/*}*/
-
-/* WebSocket Status Indicator */
 .ws-status {
     position: fixed;
     top: 10px;
@@ -601,6 +294,115 @@
 }
 
 #messages {
-    height: 400px; /* or whatever fits your layout */
+    height: 400px;
     overflow-y: auto;
+}
+
+.chatRecipient {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #3c3c3c;
+    border-radius: 5px;
+    color: #ffffff;
+    border: 1px solid #444;
+    font-weight: bold;
+}
+
+.empty-conversation {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+}
+
+.conversationSeparator {
+    text-align: center;
+    padding: 5px 0;
+    margin: 10px 0;
+    position: relative;
+}
+
+.conversationSeparator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #444;
+    z-index: 1;
+}
+
+.conversationSeparator span {
+    background-color: #2c2c2c;
+    padding: 0 10px;
+    position: relative;
+    z-index: 2;
+    color: #888;
+    font-size: 12px;
+}
+
+.conversationsList {
+    flex: 1 1 auto;
+    max-height: 100%;
+    overflow-y: auto;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 5px 0;
+    background-color: #2c2c2c;
+}
+
+.lastMessagePreview {
+    color: #666;
+    font-size: 0.8em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.conversationTime {
+    font-size: 0.75em;
+    color: #888;
+}
+
+.no-users {
+    padding: 10px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+.user-notification {
+    position: relative;
+}
+
+.user-notification::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: red;
+    border: 2px solid white;
+}
+
+.sidebarSection {
+    margin-bottom: 20px;
+}
+
+.sidebarSection:first-child {
+    flex: 0 0 auto;
+    min-height: unset;
+    max-height: unset;
+    overflow-y: unset;
+}
+
+.sidebarSection:last-child {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
