@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"real-time-forum/middleware"
 	"real-time-forum/models"
 	"real-time-forum/repository"
 	"real-time-forum/service"
 	"real-time-forum/utils"
-	"real-time-forum/middleware"
 	"strconv"
 	"time"
 
@@ -186,7 +186,43 @@ func HandleWebSocket(hub *utils.Hub, db *sql.DB) http.HandlerFunc {
 					}
 				}
 				hub.Mutex.Unlock()
+			} else if msg["type"] == "typing" {
+				fmt.Printf("Typing notification received from user %d at %s\n", userID, time.Now().Format(time.RFC3339))
+
+				var receiverID int
+				switch v := msg["to"].(type) {
+				case float64:
+					receiverID = int(v)
+				case string:
+					id, err := strconv.Atoi(v)
+					if err != nil {
+						fmt.Println("Erreur de conversion pour 'to' :", err)
+						continue
+					}
+					receiverID = id
+				default:
+					fmt.Println("Type de 'to' inconnu :", v)
+					continue
+				}
+
+				hub.Mutex.Lock()
+				for clientConn, user := range hub.Clients {
+					if user.UserID == receiverID {
+						typingMessage := map[string]interface{}{
+							"type":     "typing",
+							"from_id":  userID,
+							"nickname": userList.Nickname,
+						}
+						err := clientConn.WriteJSON(typingMessage)
+						if err != nil {
+							fmt.Println("Erreur lors de l'envoi du typing :", err)
+						}
+						break
+					}
+				}
+				hub.Mutex.Unlock()
 			}
+
 		}
 	}
 }

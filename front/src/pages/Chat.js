@@ -718,6 +718,32 @@ export function setCurrentReceiver(user) {
         }
         return;
     }
+    const messageInput = document.getElementById('messageInput');
+let typingTimeout = null;
+
+if (messageInput) {
+  messageInput.addEventListener('input', () => {
+    const socket = window.getSocket && window.getSocket();
+    const currentUser = window.currentUser;
+    const receiver = window.currentReceiver;
+
+    if (!socket || socket.readyState !== WebSocket.OPEN || !currentUser || !receiver) return;
+
+    // Envoie "typing" uniquement si conditions remplies
+    socket.send(JSON.stringify({
+      type: "typing",
+      from_id: currentUser.id,
+      to: receiver.id
+    }));
+
+    // Optionnel : on pourrait aussi gérer un "stop_typing" ici si besoin
+    if (typingTimeout) clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      // à implémenter plus tard si tu veux envoyer "stop_typing"
+    }, 3000);
+  });
+}
+
 
     const recipientElement = document.getElementById('chat-recipient');
     if (recipientElement) {
@@ -858,4 +884,25 @@ export function setupUserClickListener() {
             setCurrentReceiver({ id: userId, nickname });
         });
     });
+}
+export function showTypingIndicator(userId, nickname) {
+  const messagesContainer = document.getElementById("messages");
+  if (!messagesContainer) return;
+
+  const typingId = `typing-indicator-${userId}`;
+  let typingEl = document.getElementById(typingId);
+
+  if (!typingEl) {
+    typingEl = document.createElement("div");
+    typingEl.id = typingId;
+    typingEl.className = "typing-indicator";
+    typingEl.textContent = `${nickname} est en train d'écrire...`;
+    messagesContainer.appendChild(typingEl);
+  }
+
+  // Reset le timer de disparition
+  clearTimeout(typingEl._timeout);
+  typingEl._timeout = setTimeout(() => {
+    typingEl.remove();
+  }, 3000);
 }

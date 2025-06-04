@@ -1,5 +1,6 @@
 import { setupUserClickListener } from "./pages/Chat";
 import { deleteCookie } from "./main.js";
+import {showTypingIndicator} from "./pages/Chat.js"
 
 // Singleton WebSocket instance
 let socket = null;
@@ -350,6 +351,10 @@ export function connectWebSocket(token) {
           });
         });
       }
+      else if (data.type === "typing") {
+  showTypingIndicator(data.from_id, data.nickname);
+}
+
       else if (data.type === 'notification') {
         console.log('[WebSocket] 🔔 Notification reçue :', data);
         updateNotificationBadge();
